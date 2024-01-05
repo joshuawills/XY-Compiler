@@ -1,4 +1,4 @@
-package compiler.nodes;
+package compiler.nodes.statement_nodes;
 
 import compiler.Generator;
 

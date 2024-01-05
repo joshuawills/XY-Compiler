@@ -2,6 +2,8 @@ package compiler.nodes;
 
 import java.util.ArrayList;
 
+import compiler.nodes.statement_nodes.NodeStatement;
+
 public class NodeProgram {
     
     private ArrayList<NodeStatement> statements = new ArrayList<>();

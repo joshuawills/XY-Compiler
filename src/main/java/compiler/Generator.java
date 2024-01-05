@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import compiler.nodes.NodeProgram;
-import compiler.nodes.NodeStatement;
+import compiler.nodes.statement_nodes.NodeStatement;
 
 public class Generator {
 

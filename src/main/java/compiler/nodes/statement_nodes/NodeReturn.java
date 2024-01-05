@@ -1,4 +1,4 @@
-package compiler.nodes;
+package compiler.nodes.statement_nodes;
 
 import compiler.Generator;
 import compiler.nodes.expression_nodes.NodeExpression;
@@ -23,6 +23,9 @@ public class NodeReturn implements NodeStatement {
 
     @Override
     public String toString() {
+        if (expression == null || expression.getToken() == null)
+            return "{NodeReturn}";
+
         return String.format("{NodeReturn: %s}", expression.getToken().getValue());
     }
 

@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import compiler.nodes.NodeProgram;
-import compiler.nodes.NodeStatement;
+import compiler.nodes.statement_nodes.NodeStatement;
 
 public class Main {
 

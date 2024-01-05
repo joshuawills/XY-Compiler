@@ -1,7 +1,8 @@
-package compiler.nodes.expression_nodes;
+package compiler.nodes.expression_nodes.term_nodes;
 
 
 import compiler.Token;
+import compiler.nodes.expression_nodes.NodeExpression;
 
 public abstract class NodeTerm implements NodeExpression {
     
@@ -16,9 +17,7 @@ public abstract class NodeTerm implements NodeExpression {
         this.expression = expression;
     }
 
-    public NodeTerm() {
-        
-    }
+    public NodeTerm() {}
 
     public void setToken(Token token) {
         this.token = token; 

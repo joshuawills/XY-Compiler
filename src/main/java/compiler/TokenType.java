@@ -15,7 +15,9 @@ public enum TokenType {
     DIVIDE,
 
     OPEN_PAREN,
-    CLOSE_PAREN
+    CLOSE_PAREN,
+
+    PRINT_I
 }
 /* 
  * Precedence level for operators:

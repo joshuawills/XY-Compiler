@@ -1,19 +1,16 @@
 package compiler;
 import java.util.ArrayList;
 
-import compiler.nodes.NodeLet;
 import compiler.nodes.NodeProgram;
-import compiler.nodes.NodeReturn;
-import compiler.nodes.NodeStatement;
 import compiler.nodes.expression_nodes.NodeExpression;
-import compiler.nodes.expression_nodes.NodeTerm;
-import compiler.nodes.expression_nodes.binary_nodes.AdditionBinExp;
-import compiler.nodes.expression_nodes.binary_nodes.DivisionBinExp;
-import compiler.nodes.expression_nodes.binary_nodes.MultBinExp;
-import compiler.nodes.expression_nodes.binary_nodes.SubtractBinExp;
+import compiler.nodes.expression_nodes.binary_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
+import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
+import compiler.nodes.statement_nodes.NodeLet;
+import compiler.nodes.statement_nodes.NodeReturn;
+import compiler.nodes.statement_nodes.NodeStatement;
 
 public class Parser {
 
@@ -77,35 +74,23 @@ public class Parser {
                 System.exit(1);
             }
 
+            BinaryExpression myExpression = new BinaryExpression() {
+                
+            };
             switch (operator.getType()) {
                 case ADD:
-                    AdditionBinExp add = new AdditionBinExp();
-                    add.setLHS(lhs);
-                    add.setRHS(rhs);
-                    lhs = add;
-                    break;
                 case TIMES:
-                    MultBinExp times = new MultBinExp();
-                    times.setLHS(lhs);
-                    times.setRHS(rhs);
-                    lhs = times;
-                    break;
                 case MINUS:
-                    SubtractBinExp minus = new SubtractBinExp();
-                    minus.setLHS(lhs);
-                    minus.setRHS(rhs);
-                    lhs = minus;
-                    break;
                 case DIVIDE:
-                    DivisionBinExp divide = new DivisionBinExp();
-                    divide.setLHS(lhs);
-                    divide.setRHS(rhs);
-                    lhs = divide;
+                    myExpression.setOperator(operator.getType());
                     break;
                 default:
                     System.err.println("You messed up lmao");
-                    break;
+                    System.exit(1);
             }
+            myExpression.setLHS(lhs);
+            myExpression.setRHS(rhs);
+            lhs = myExpression;
 
         }
 

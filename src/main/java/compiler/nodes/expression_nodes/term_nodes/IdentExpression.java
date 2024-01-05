@@ -1,7 +1,6 @@
 package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Token;
-import compiler.nodes.expression_nodes.NodeTerm;
 import compiler.Generator;
 
 
