@@ -1,6 +1,6 @@
-package main.java.nodes;
+package compiler.nodes;
 
-import main.java.Generator;
+import compiler.Generator;
 
 public interface NodeStatement {
     

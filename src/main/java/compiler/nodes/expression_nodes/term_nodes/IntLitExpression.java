@@ -1,8 +1,8 @@
-package main.java.nodes.expression_nodes.term_nodes;
+package compiler.nodes.expression_nodes.term_nodes;
 
-import main.java.Token;
-import main.java.nodes.expression_nodes.NodeTerm;
-import main.java.Generator;
+import compiler.Token;
+import compiler.nodes.expression_nodes.NodeTerm;
+import compiler.Generator;
 
 public class IntLitExpression extends NodeTerm {
     

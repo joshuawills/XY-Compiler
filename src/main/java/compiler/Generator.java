@@ -1,9 +1,9 @@
-package main.java;
+package compiler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import main.java.nodes.NodeProgram;
-import main.java.nodes.NodeStatement;
+import compiler.nodes.NodeProgram;
+import compiler.nodes.NodeStatement;
 
 public class Generator {
 

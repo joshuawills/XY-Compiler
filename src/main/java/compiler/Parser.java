@@ -1,16 +1,16 @@
-package main.java;
+package compiler;
 import java.util.ArrayList;
 
-import main.java.nodes.NodeLet;
-import main.java.nodes.NodeProgram;
-import main.java.nodes.NodeReturn;
-import main.java.nodes.NodeStatement;
-import main.java.nodes.expression_nodes.BinaryExpression;
-import main.java.nodes.expression_nodes.NodeExpression;
-import main.java.nodes.expression_nodes.NodeTerm;
-import main.java.nodes.expression_nodes.binary_nodes.AdditionBinExp;
-import main.java.nodes.expression_nodes.term_nodes.IdentExpression;
-import main.java.nodes.expression_nodes.term_nodes.IntLitExpression;
+import compiler.nodes.NodeLet;
+import compiler.nodes.NodeProgram;
+import compiler.nodes.NodeReturn;
+import compiler.nodes.NodeStatement;
+import compiler.nodes.expression_nodes.BinaryExpression;
+import compiler.nodes.expression_nodes.NodeExpression;
+import compiler.nodes.expression_nodes.NodeTerm;
+import compiler.nodes.expression_nodes.binary_nodes.AdditionBinExp;
+import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
+import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
 
 public class Parser {
 
@@ -35,34 +35,12 @@ public class Parser {
         return program;
     }
 
-    private BinaryExpression parseBinExpression() { // RETURN NULL IF FAILS TODO
-        NodeExpression lhs = parseExpression();
-        if (lhs == null) return null;
-
-        if (peek() != null && peek().getType().equals(TokenType.ADD)) { // Addition
-            System.out.println("IN HERE");
-            BinaryExpression additionExpr = new AdditionBinExp();
-            additionExpr.setLHS(lhs);
-            consume(); // Consume addition
-            NodeExpression rhs = parseExpression();
-            if (rhs == null) return null;
-            additionExpr.setRHS(rhs);
-            return additionExpr;
-        } else {
-            System.err.println("<Parser> Unsupported binary expression");
-            System.exit(1);
-        }
-
-        return null;
-    }
-
     private NodeTerm parseTerm() {
         
-        System.out.println("A: " + peek().getType());
         if (peek() != null && peek().getType().equals(TokenType.INT_LIT)) {
             IntLitExpression term = new IntLitExpression(consume());
             return term;
-        } else if (peek() != null && peek().getType().equals(TokenType.INT_TYPE)) { // int x = 5;
+        } else if (peek() != null && peek().getType().equals(TokenType.STRING)) { // int x = 5;
             IdentExpression term  = new IdentExpression(consume());
             return term;
         }
@@ -71,22 +49,18 @@ public class Parser {
 
     private NodeExpression parseExpression() {
         NodeTerm term = parseTerm();
-        System.out.println("CRITICAL: " + term.toString());
         if (term != null) {
             Token additionToken = tryConsume(TokenType.ADD);
             if (additionToken != null) {
                 AdditionBinExp addExp = new AdditionBinExp();
                 addExp.setLHS(term);
-                consume(); // consume addition
                 NodeExpression rhs = parseExpression();
                 if (rhs == null) return null;
                 addExp.setRHS(rhs);
                 return addExp;
-            } else {
-                return term;
-            }
+            } 
         }
-        return null;
+        return term;
     }
 
     private NodeStatement parseStatement() {

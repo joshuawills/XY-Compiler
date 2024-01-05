@@ -1,7 +1,7 @@
-package main.java.nodes.expression_nodes;
+package compiler.nodes.expression_nodes;
 
-import main.java.Generator;
-import main.java.Token;
+import compiler.Generator;
+import compiler.Token;
 
 public abstract class BinaryExpression implements NodeExpression {
     

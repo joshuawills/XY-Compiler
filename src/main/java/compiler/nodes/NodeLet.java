@@ -1,8 +1,8 @@
-package main.java.nodes;
+package compiler.nodes;
 
-import main.java.Generator;
-import main.java.Token;
-import main.java.nodes.expression_nodes.NodeExpression;
+import compiler.Generator;
+import compiler.Token;
+import compiler.nodes.expression_nodes.NodeExpression;
 
 public class NodeLet implements NodeStatement  {
 
@@ -34,7 +34,7 @@ public class NodeLet implements NodeStatement  {
 
     @Override
     public String toString() {
-        return String.format("{NodeLet: %s = %s}", identifier.getValue(), expression.getToken().getValue());
+        return String.format("{NodeLet: %s = %s}", identifier.getValue(), expression.toString());
     }
 
     public void operator(Generator generator) {

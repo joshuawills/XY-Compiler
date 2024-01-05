@@ -1,8 +1,8 @@
-package main.java.nodes.expression_nodes.binary_nodes;
+package compiler.nodes.expression_nodes.binary_nodes;
 
-import main.java.Generator;
-import main.java.nodes.expression_nodes.BinaryExpression;
-import main.java.nodes.expression_nodes.NodeExpression;
+import compiler.Generator;
+import compiler.nodes.expression_nodes.BinaryExpression;
+import compiler.nodes.expression_nodes.NodeExpression;
 
 public class MultBinExp extends BinaryExpression {
 
@@ -20,7 +20,7 @@ public class MultBinExp extends BinaryExpression {
     }
 
     public void operator(Generator generator) {
-        // to do   
+        assert(false);
     }
 
 }

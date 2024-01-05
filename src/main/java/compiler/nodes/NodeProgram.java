@@ -1,4 +1,4 @@
-package main.java.nodes;
+package compiler.nodes;
 
 import java.util.ArrayList;
 

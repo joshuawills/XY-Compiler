@@ -1,6 +1,6 @@
-package main.java.nodes.expression_nodes;
+package compiler.nodes.expression_nodes;
 
-import main.java.Token;
+import compiler.Token;
 
 public abstract class NodeTerm implements NodeExpression {
     
