@@ -6,5 +6,7 @@ public enum TokenType {
     DEFAULT,
     INT_TYPE,
     ASSIGN,
-    STRING
+    STRING,
+    ADD,
+    TIMES
 }

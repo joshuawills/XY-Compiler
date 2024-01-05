@@ -13,7 +13,6 @@ public class Main {
     private String source;
 
     public String getFileSource() {
-        System.out.println(this.source);
         return this.source;
     }
 
@@ -40,7 +39,7 @@ public class Main {
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
         for (Token x: tokens) 
-            System.out.println(x.toString()); 
+            System.out.println(x.toString());
             
         Parser myParser = new Parser(tokens);
         NodeProgram myNode = myParser.parseProgram();
@@ -48,17 +47,17 @@ public class Main {
         for (NodeStatement statement: myNode.getStatements())
             System.out.println(statement.toString());
 
-        Generator myGenerator = new Generator(myNode);
-        String contents = myGenerator.generateProgram();
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("out.asm"));
-            writer.write(contents);
-            writer.close();
-            Runtime.getRuntime().exec("nasm -felf64 out.asm");
-            Runtime.getRuntime().exec("ld out.o -o test");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Generator myGenerator = new Generator(myNode);
+        // String contents = myGenerator.generateProgram();
+        // try {
+        //     BufferedWriter writer = new BufferedWriter(new FileWriter("out.asm"));
+        //     writer.write(contents);
+        //     writer.close();
+        //     Runtime.getRuntime().exec("nasm -felf64 out.asm");
+        //     Runtime.getRuntime().exec("ld out.o -o test");
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
 
     }
 }

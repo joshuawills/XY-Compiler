@@ -1,7 +1,7 @@
 package main.java.nodes.expression_nodes;
 
-import main.java.Token;
 import main.java.Generator;
+import main.java.Token;
 
 public interface NodeExpression {
     

@@ -5,9 +5,12 @@ import main.java.nodes.NodeLet;
 import main.java.nodes.NodeProgram;
 import main.java.nodes.NodeReturn;
 import main.java.nodes.NodeStatement;
-import main.java.nodes.expression_nodes.IdentExpression;
-import main.java.nodes.expression_nodes.IntLitExpression;
+import main.java.nodes.expression_nodes.BinaryExpression;
 import main.java.nodes.expression_nodes.NodeExpression;
+import main.java.nodes.expression_nodes.NodeTerm;
+import main.java.nodes.expression_nodes.binary_nodes.AdditionBinExp;
+import main.java.nodes.expression_nodes.term_nodes.IdentExpression;
+import main.java.nodes.expression_nodes.term_nodes.IntLitExpression;
 
 public class Parser {
 
@@ -32,11 +35,56 @@ public class Parser {
         return program;
     }
 
-    private NodeExpression parseExpression() {
+    private BinaryExpression parseBinExpression() { // RETURN NULL IF FAILS TODO
+        NodeExpression lhs = parseExpression();
+        if (lhs == null) return null;
+
+        if (peek() != null && peek().getType().equals(TokenType.ADD)) { // Addition
+            System.out.println("IN HERE");
+            BinaryExpression additionExpr = new AdditionBinExp();
+            additionExpr.setLHS(lhs);
+            consume(); // Consume addition
+            NodeExpression rhs = parseExpression();
+            if (rhs == null) return null;
+            additionExpr.setRHS(rhs);
+            return additionExpr;
+        } else {
+            System.err.println("<Parser> Unsupported binary expression");
+            System.exit(1);
+        }
+
+        return null;
+    }
+
+    private NodeTerm parseTerm() {
+        
+        System.out.println("A: " + peek().getType());
         if (peek() != null && peek().getType().equals(TokenType.INT_LIT)) {
-            return new IntLitExpression(consume());
-        } else if (peek() != null && peek().getType().equals(TokenType.STRING)) {
-            return new IdentExpression(consume());
+            IntLitExpression term = new IntLitExpression(consume());
+            return term;
+        } else if (peek() != null && peek().getType().equals(TokenType.INT_TYPE)) { // int x = 5;
+            IdentExpression term  = new IdentExpression(consume());
+            return term;
+        }
+        return null;
+    }
+
+    private NodeExpression parseExpression() {
+        NodeTerm term = parseTerm();
+        System.out.println("CRITICAL: " + term.toString());
+        if (term != null) {
+            Token additionToken = tryConsume(TokenType.ADD);
+            if (additionToken != null) {
+                AdditionBinExp addExp = new AdditionBinExp();
+                addExp.setLHS(term);
+                consume(); // consume addition
+                NodeExpression rhs = parseExpression();
+                if (rhs == null) return null;
+                addExp.setRHS(rhs);
+                return addExp;
+            } else {
+                return term;
+            }
         }
         return null;
     }
@@ -83,6 +131,13 @@ public class Parser {
         }
         this.iterator++;
         return currentToken;
+    }
+
+    private Token tryConsume(TokenType type) {
+        if (peek() != null && peek().getType().equals(type)) {
+            return consume();
+        }
+        return null;
     }
 
     private Token consume() {

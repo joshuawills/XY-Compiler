@@ -43,7 +43,18 @@ public class Lexer {
                 appendToken(new Token(TokenType.ASSIGN));
                 consume();
             
-            } else if (Character.isWhitespace(peek())) {
+            } else if (peek().toString().equals("+")) {
+
+                appendToken(new Token(TokenType.ADD));
+                consume();
+                                
+            }  else if (peek().toString().equals("*")) {
+
+                appendToken(new Token(TokenType.TIMES));
+                consume();
+
+            } 
+            else if (Character.isWhitespace(peek())) {
             
                 consume();
             

@@ -1,28 +1,27 @@
-package main.java.nodes.expression_nodes;
+package main.java.nodes.expression_nodes.term_nodes;
 
 import main.java.Token;
+import main.java.nodes.expression_nodes.NodeTerm;
 import main.java.Generator;
 
 
-public class IdentExpression implements NodeExpression {
+public class IdentExpression extends NodeTerm {
     
-    public Token identifier;
-
-    public IdentExpression(Token identifier) {
-        this.identifier = identifier; 
+    public IdentExpression(Token token) {
+        super(token); 
     }
 
-    public Token getToken() {
-        return this.identifier;
+    public IdentExpression() {
+        super();
     }
     
     @Override
     public String toString() {
-        return String.format("{IdentExpression: %s}", identifier.toString());
+        return String.format("{IdentExpression: %s}", getToken().toString());
     }
 
     public void operator(Generator generator) {
-        String variableName = identifier.getValue();
+        String variableName = getToken().getValue();
         if (!generator.getVariables().containsKey(variableName)) { // Doesn't exist
             System.err.println("<Generator> Identifier doesn't exist: " + variableName);
             System.exit(1);
