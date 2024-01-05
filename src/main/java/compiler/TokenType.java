@@ -1,4 +1,5 @@
 package compiler;
+
 public enum TokenType {
     INT_LIT,
     SEMI,
@@ -7,6 +8,19 @@ public enum TokenType {
     INT_TYPE,
     ASSIGN,
     STRING,
+
     ADD,
-    TIMES
+    MINUS,
+    TIMES,
+    DIVIDE,
+
+    OPEN_PAREN,
+    CLOSE_PAREN
 }
+/* 
+ * Precedence level for operators:
+ *  Division
+ *  Multiplication
+ *  Addition
+ *  Subtraction
+ */

@@ -5,12 +5,15 @@ import compiler.nodes.NodeLet;
 import compiler.nodes.NodeProgram;
 import compiler.nodes.NodeReturn;
 import compiler.nodes.NodeStatement;
-import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.binary_nodes.AdditionBinExp;
+import compiler.nodes.expression_nodes.binary_nodes.DivisionBinExp;
+import compiler.nodes.expression_nodes.binary_nodes.MultBinExp;
+import compiler.nodes.expression_nodes.binary_nodes.SubtractBinExp;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
+import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
 
 public class Parser {
 
@@ -43,30 +46,77 @@ public class Parser {
         } else if (peek() != null && peek().getType().equals(TokenType.STRING)) { // int x = 5;
             IdentExpression term  = new IdentExpression(consume());
             return term;
+        } else if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
+            consume();
+            NodeExpression expression = parseExpression(0);
+            if (expression == null) {
+                System.err.println("<Parser> Expected expression");
+                System.exit(1);
+            }
+            expect(TokenType.CLOSE_PAREN);
+            return new ParenExpression(expression);
         }
         return null;
     }
 
-    private NodeExpression parseExpression() {
-        NodeTerm term = parseTerm();
-        if (term != null) {
-            Token additionToken = tryConsume(TokenType.ADD);
-            if (additionToken != null) {
-                AdditionBinExp addExp = new AdditionBinExp();
-                addExp.setLHS(term);
-                NodeExpression rhs = parseExpression();
-                if (rhs == null) return null;
-                addExp.setRHS(rhs);
-                return addExp;
-            } 
+    private NodeExpression parseExpression(int minimumPrecedence) { // set to 0 as default
+        NodeExpression lhs = parseTerm();
+        if (lhs == null) return lhs;
+        Integer precedenceLevel;
+        while (true) {
+            Token currentToken = peek();
+            if (currentToken == null) break;
+            precedenceLevel = Token.getBinaryPrecedenceLevel(currentToken.getType());
+            if (precedenceLevel == null || precedenceLevel < minimumPrecedence) break;
+
+            Token operator = consume();
+            int nextMinPrec = precedenceLevel + 1;
+            NodeExpression rhs = parseExpression(nextMinPrec);
+            if (rhs == null) {
+                System.err.println("Unable to parse expression");
+                System.exit(1);
+            }
+
+            switch (operator.getType()) {
+                case ADD:
+                    AdditionBinExp add = new AdditionBinExp();
+                    add.setLHS(lhs);
+                    add.setRHS(rhs);
+                    lhs = add;
+                    break;
+                case TIMES:
+                    MultBinExp times = new MultBinExp();
+                    times.setLHS(lhs);
+                    times.setRHS(rhs);
+                    lhs = times;
+                    break;
+                case MINUS:
+                    SubtractBinExp minus = new SubtractBinExp();
+                    minus.setLHS(lhs);
+                    minus.setRHS(rhs);
+                    lhs = minus;
+                    break;
+                case DIVIDE:
+                    DivisionBinExp divide = new DivisionBinExp();
+                    divide.setLHS(lhs);
+                    divide.setRHS(rhs);
+                    lhs = divide;
+                    break;
+                default:
+                    System.err.println("You messed up lmao");
+                    break;
+            }
+
         }
-        return term;
+
+        return lhs;
+
     }
 
     private NodeStatement parseStatement() {
         if (peek() != null && peek().getType().equals(TokenType.RETURN)) {
             consume();
-            NodeExpression expression = parseExpression();
+            NodeExpression expression = parseExpression(0);
             NodeReturn statementNode = new NodeReturn();
             if (expression != null) {
                 statementNode.setExpression(expression);
@@ -80,7 +130,7 @@ public class Parser {
             consume();
             Token ident = expect(TokenType.STRING);
             expect(TokenType.ASSIGN);
-            NodeExpression expression = parseExpression();
+            NodeExpression expression = parseExpression(0);
             if (expression == null) {
                 System.err.println("<Parser> Invalid");
             } else {
@@ -105,13 +155,6 @@ public class Parser {
         }
         this.iterator++;
         return currentToken;
-    }
-
-    private Token tryConsume(TokenType type) {
-        if (peek() != null && peek().getType().equals(type)) {
-            return consume();
-        }
-        return null;
     }
 
     private Token consume() {

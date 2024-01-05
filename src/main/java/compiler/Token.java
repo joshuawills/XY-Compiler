@@ -13,6 +13,19 @@ public class Token {
         this.type = type;
     }
 
+    public static Integer getBinaryPrecedenceLevel(TokenType type) {
+        switch (type) {
+            case ADD:
+            case MINUS:
+                return 0;
+            case TIMES: 
+            case DIVIDE:
+                return 1;
+            default:
+                return null;
+        }
+    }
+
     @Override
     public String toString() {
         if (value == null)

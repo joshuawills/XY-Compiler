@@ -53,8 +53,12 @@ public class Lexer {
                 appendToken(new Token(TokenType.TIMES));
                 consume();
 
-            } 
-            else if (Character.isWhitespace(peek())) {
+            } else if (peek().toString().equals("-")) {
+
+                appendToken(new Token(TokenType.MINUS));
+                consume();
+
+            } else if (Character.isWhitespace(peek())) {
             
                 consume();
             
@@ -62,6 +66,21 @@ public class Lexer {
                 handleCommentsStandard();
             } else if (isCommentMulti()) {
                 handleCommentsMulti();
+            } else if (peek().toString().equals("/")) {
+
+                appendToken(new Token(TokenType.DIVIDE));
+                consume();
+
+            } else if (peek().toString().equals("(")) {
+
+                appendToken(new Token(TokenType.OPEN_PAREN));
+                consume();
+
+            } else if (peek().toString().equals(")")) {
+
+                appendToken(new Token(TokenType.CLOSE_PAREN));
+                consume();
+
             }
             flushBuffer();
         }

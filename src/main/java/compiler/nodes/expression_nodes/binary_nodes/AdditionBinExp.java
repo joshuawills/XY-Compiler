@@ -18,8 +18,8 @@ public class AdditionBinExp extends BinaryExpression {
     }
 
     public void operator(Generator generator) {
-        this.getLHS().operator(generator);
         this.getRHS().operator(generator);
+        this.getLHS().operator(generator);
         generator.pop("rax");
         generator.pop("rbx");
         generator.appendContents("    add rax, rbx");

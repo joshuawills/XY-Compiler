@@ -4,19 +4,17 @@ import compiler.Generator;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 
-public class MultBinExp extends BinaryExpression {
-
-    public MultBinExp(NodeExpression one, NodeExpression two) {
+public class DivisionBinExp extends BinaryExpression {
+    
+    public DivisionBinExp(NodeExpression one, NodeExpression two) {
         super(one, two);
     }
 
-    public MultBinExp() {
-        
-    }
+    public DivisionBinExp() {}
 
     @Override 
     public String toString() {
-        return String.format("{%s * %s}", super.getLHS().toString(), super.getRHS().toString());
+        return String.format("{%s / %s}", super.getLHS().toString(), super.getRHS().toString());
     }
 
     public void operator(Generator generator) {
@@ -24,7 +22,7 @@ public class MultBinExp extends BinaryExpression {
         this.getLHS().operator(generator);
         generator.pop("rax");
         generator.pop("rbx");
-        generator.appendContents("    mul rbx");
+        generator.appendContents("    div rbx"); 
         generator.push("rax");
     }
 

@@ -1,7 +1,5 @@
 package compiler.nodes;
 
-import java.util.ArrayList;
-
 import compiler.Generator;
 import compiler.nodes.expression_nodes.NodeExpression;
 

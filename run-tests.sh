@@ -37,7 +37,7 @@ do
     file=$(basename $file)
 
     # Ignoring any other random files that aren't .txt or .xy
-    if ! (echo $file | grep -Eq "test_[a-z]+\.(xy|txt)$")
+    if ! (echo $file | grep -Eq "test_[0-9]+\.(xy|txt)$")
     then
         echo "Skipping over ${YELLOW}${file}${RESET}: invalid filename"
         continue
@@ -70,7 +70,7 @@ do
     fi 
 
     # Now execute commands and compare to the test_one.txt file
-    rootName=$(echo "$file" | grep -Eo "^test_[a-z]+")
+    rootName=$(echo "$file" | grep -Eo "^test_[0-9]+")
     if [ -f "tests/${rootName}.txt" ]
     then 
         # Also need to compare stdout
