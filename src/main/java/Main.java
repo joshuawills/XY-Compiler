@@ -1,19 +1,19 @@
-package main;
+package main.java;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import main.nodes.NodeProgram;
-import main.nodes.NodeReturn;
-import main.nodes.NodeStatement;
+import main.java.nodes.NodeProgram;
+import main.java.nodes.NodeStatement;
 
 public class Main {
 
     private String source;
 
     public String getFileSource() {
+        System.out.println(this.source);
         return this.source;
     }
 
@@ -29,7 +29,14 @@ public class Main {
 
     public static void main(String[] args) {
         
-        Main myCompiler = new Main("test.xy");
+        String filename;
+        if (args.length == 0)
+            filename = "test.xy";
+        else
+            filename = args[0];
+
+
+        Main myCompiler = new Main(filename);
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
         for (Token x: tokens) 
@@ -41,9 +48,6 @@ public class Main {
         for (NodeStatement statement: myNode.getStatements())
             System.out.println(statement.toString());
 
-
-
-
         Generator myGenerator = new Generator(myNode);
         String contents = myGenerator.generateProgram();
         try {
@@ -52,7 +56,6 @@ public class Main {
             writer.close();
             Runtime.getRuntime().exec("nasm -felf64 out.asm");
             Runtime.getRuntime().exec("ld out.o -o test");
-
         } catch (Exception e) {
             e.printStackTrace();
         }

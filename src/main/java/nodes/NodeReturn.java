@@ -1,9 +1,9 @@
-package main.nodes;
+package main.java.nodes;
 
 import java.util.ArrayList;
 
-import main.Generator;
-import main.nodes.expression_nodes.NodeExpression;
+import main.java.Generator;
+import main.java.nodes.expression_nodes.NodeExpression;
 
 public class NodeReturn implements NodeStatement {
 

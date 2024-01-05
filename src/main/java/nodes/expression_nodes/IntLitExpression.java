@@ -1,9 +1,9 @@
-package main.nodes.expression_nodes;
+package main.java.nodes.expression_nodes;
 
 import java.util.ArrayList;
 
-import main.Generator;
-import main.Token;
+import main.java.Token;
+import main.java.Generator;
 
 public class IntLitExpression implements NodeExpression {
     

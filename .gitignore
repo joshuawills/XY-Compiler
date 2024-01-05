@@ -3,3 +3,7 @@ target
 *.asm
 test
 *.o
+.gradle
+.vscode
+build
+examples/

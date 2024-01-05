@@ -1,9 +1,8 @@
-package main.nodes.expression_nodes;
+package main.java.nodes.expression_nodes;
 
-import java.util.ArrayList;
+import main.java.Token;
+import main.java.Generator;
 
-import main.Generator;
-import main.Token;
 
 public class IdentExpression implements NodeExpression {
     

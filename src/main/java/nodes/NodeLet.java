@@ -1,8 +1,8 @@
-package main.nodes;
+package main.java.nodes;
 
-import main.Generator;
-import main.Token;
-import main.nodes.expression_nodes.NodeExpression;
+import main.java.Generator;
+import main.java.Token;
+import main.java.nodes.expression_nodes.NodeExpression;
 
 public class NodeLet implements NodeStatement  {
 

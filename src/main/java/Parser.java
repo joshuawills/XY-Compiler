@@ -1,13 +1,13 @@
-package main;
+package main.java;
 import java.util.ArrayList;
 
-import main.nodes.NodeLet;
-import main.nodes.NodeProgram;
-import main.nodes.NodeReturn;
-import main.nodes.NodeStatement;
-import main.nodes.expression_nodes.IdentExpression;
-import main.nodes.expression_nodes.IntLitExpression;
-import main.nodes.expression_nodes.NodeExpression;
+import main.java.nodes.NodeLet;
+import main.java.nodes.NodeProgram;
+import main.java.nodes.NodeReturn;
+import main.java.nodes.NodeStatement;
+import main.java.nodes.expression_nodes.IdentExpression;
+import main.java.nodes.expression_nodes.IntLitExpression;
+import main.java.nodes.expression_nodes.NodeExpression;
 
 public class Parser {
 

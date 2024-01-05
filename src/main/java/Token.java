@@ -1,4 +1,5 @@
-package main;
+package main.java;
+
 public class Token {
  
     private TokenType type;
