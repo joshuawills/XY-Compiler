@@ -1,8 +1,13 @@
+package main;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
+import main.nodes.NodeProgram;
+import main.nodes.NodeReturn;
+import main.nodes.NodeStatement;
 
 public class Main {
 
@@ -17,6 +22,7 @@ public class Main {
             this.source = Files.readString(Paths.get(file_path));
         } catch (Exception e) {
             this.source = "";
+            System.exit(1);
         }
     }
 
@@ -26,11 +32,20 @@ public class Main {
         Main myCompiler = new Main("test.xy");
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
-
         for (Token x: tokens) 
-            System.out.println(x.toString());   
+            System.out.println(x.toString()); 
             
-        String contents = Generator.tokensToASM(tokens);
+        Parser myParser = new Parser(tokens);
+        NodeProgram myNode = myParser.parseProgram();
+
+        for (NodeStatement statement: myNode.getStatements())
+            System.out.println(statement.toString());
+
+
+
+
+        Generator myGenerator = new Generator(myNode);
+        String contents = myGenerator.generateProgram();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("out.asm"));
             writer.write(contents);
@@ -41,7 +56,6 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
     }
 }
