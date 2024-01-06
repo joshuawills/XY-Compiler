@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 import compiler.nodes.NodeProgram;
 import compiler.nodes.statement_nodes.NodeStatement;
+import compiler.nodes.statement_nodes.conditionals.NodeIfPredicate;
 
 public class Generator {
 
@@ -12,9 +13,18 @@ public class Generator {
     private ArrayList<Variable> variables = new ArrayList<>(); 
     private ArrayList<Integer> scopes = new ArrayList<>();   
     private Integer labelIncrementer = -1;
+    private String endLabel = null;
 
     public ArrayList<Variable> getVariables() {
         return this.variables;
+    }
+
+    public void setEndLabel(String endLabel) {
+        this.endLabel = endLabel;
+    } 
+
+    public String getEndLabel() {
+        return this.endLabel;
     }
 
     public int getStackSize() {
@@ -24,6 +34,10 @@ public class Generator {
     public String createLabel() {
         labelIncrementer++;
         return "label" + labelIncrementer.toString();
+    }
+
+    public void generateIfPredicate(NodeIfPredicate predicate) {
+
     }
 
 

@@ -37,7 +37,7 @@ public class NodeLet implements NodeStatement  {
         if (identifier == null || expression == null)
             return "{}";
 
-        return String.format("int %s = %s", identifier.getValue(), expression.toString());
+        return String.format("%s = %s", identifier.getValue(), expression.toString());
     }
 
     public void operator(Generator generator) {

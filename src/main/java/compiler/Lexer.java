@@ -119,15 +119,23 @@ public class Lexer {
         while (peek() != null && isAlphaNumeric(peek()))
             appendBuffer(consume()); 
 
+        if (this.buffer.equals("else")) {
+            String potentialIf = peekAhead(3);
+            if (potentialIf != null && potentialIf.equals(" if")) {
+                this.buffer = this.buffer.concat(potentialIf);
+                consume(); consume(); consume();
+            }
+        }
+
         switch (this.buffer) {
             case "return":
                 appendToken(TokenType.RETURN); break;
             case "int":
-            case "i32":
+            case "s32":
                 appendToken(TokenType.INIT_INT); break;
             case "if":
                 appendToken(TokenType.IF); break;
-            case "elif":
+            case "else if":
                 appendToken(TokenType.ELIF); break;
             case "else":
                 appendToken(TokenType.ELSE); break;
@@ -145,6 +153,12 @@ public class Lexer {
             current = this.contents.charAt(this.iterator);
         this.iterator++;
         return current;
+    }
+
+    private String peekAhead(int over) {
+        if (this.iterator + over >= contents.length())
+            return null;
+        return this.contents.substring(this.iterator, this.iterator + over);
     }
 
     private Character peek(int over) {

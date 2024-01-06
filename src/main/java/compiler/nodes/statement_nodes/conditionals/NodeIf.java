@@ -1,14 +1,22 @@
-package compiler.nodes.statement_nodes;
+package compiler.nodes.statement_nodes.conditionals;
 
 
 import compiler.Generator;
 import compiler.nodes.expression_nodes.NodeExpression;
+import compiler.nodes.statement_nodes.NodeScope;
+import compiler.nodes.statement_nodes.NodeStatement;
 
 public class NodeIf implements NodeStatement {
     
     private NodeExpression expression = null;
     private NodeScope scope = null;
+    private NodeIfPredicate predicate = null;
 
+    public NodeIf(NodeExpression expression, NodeScope scope, NodeIfPredicate predicate) {
+        this.expression = expression;
+        this.scope = scope;
+        this.predicate = predicate;
+    }
     public NodeIf(NodeExpression expression, NodeScope scope) {
         this.expression = expression;
         this.scope = scope;
@@ -25,6 +33,10 @@ public class NodeIf implements NodeStatement {
         return this.scope;
     }
 
+    public NodeIfPredicate getPredicate() {
+        return this.predicate;
+    }
+
     public void setExpression(NodeExpression expression) {
         this.expression = expression;
     }
@@ -38,7 +50,11 @@ public class NodeIf implements NodeStatement {
         if (expression == null || scope == null)
             return "{}";
 
-        return String.format("if %s %s" , expression.toString(), scope.toString());
+        if (this.predicate == null)
+            return String.format("if %s %s" , expression.toString(), scope.toString());
+        else
+            return String.format("if %s %s %s" , expression.toString(), scope.toString(), predicate.toString());
+
     }
 
     public void operator(Generator generator) {
@@ -49,6 +65,12 @@ public class NodeIf implements NodeStatement {
         generator.appendContents("    jz " + label + " ;; if " + expression.toString());
         scope.operator(generator);
         generator.appendContents(label + ":");
+        if (predicate != null) {
+            String endLabel = generator.createLabel();
+            generator.setEndLabel(endLabel);
+            predicate.operator(generator);
+            generator.appendContents(endLabel + ":");
+        }
     }
 
 

@@ -8,11 +8,14 @@ import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
-import compiler.nodes.statement_nodes.NodeIf;
 import compiler.nodes.statement_nodes.NodeLet;
 import compiler.nodes.statement_nodes.NodeReturn;
 import compiler.nodes.statement_nodes.NodeScope;
 import compiler.nodes.statement_nodes.NodeStatement;
+import compiler.nodes.statement_nodes.conditionals.NodeIf;
+import compiler.nodes.statement_nodes.conditionals.NodeIfPredicate;
+import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElif;
+import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
 
 public class Parser {
 
@@ -119,13 +122,13 @@ public class Parser {
             expect(TokenType.ASSIGN);
             NodeExpression expression = parseExpression(0);
             if (expression == null) {
-                System.err.println("<Parser> Invalid");
+                System.err.println("<Parser> Invalid"); System.exit(1);
             } else {
                 NodeLet statementNode = new NodeLet(ident, expression);
                 expect(TokenType.SEMI);
                 return statementNode;
             }
-        } else if (peek() != null && peek().getType().equals(TokenType.IF)) {
+        } else if (peek() != null && peek().getType().equals(TokenType.IF)) { // if () {}
             consume();
             NodeExpression expression = parseExpression(0);
             expect(TokenType.OPEN_CURLY);
@@ -136,7 +139,8 @@ public class Parser {
                 statement = parseStatement();
             }
             expect(TokenType.CLOSE_CURLY);
-            return new NodeIf(expression, scope);
+            // PARSE IF PREDICATE
+            return new NodeIf(expression, scope, parseIfPred());
 
         } else if (peek() != null && peek().getType().equals(TokenType.OPEN_CURLY)) { // Entered a scope
             consume(); // consuming the curly;
@@ -152,6 +156,39 @@ public class Parser {
         return null;
     }
 
+    private NodeIfPredicate parseIfPred() {
+        Token currentToken = peek();
+        if (currentToken != null && currentToken.getType().equals(TokenType.ELIF)) {
+            consume();
+            NodeExpression expression = parseExpression(0);
+            if (expression == null) {
+                System.err.println("Unable to parse expression"); System.exit(1);
+            }
+            expect(TokenType.OPEN_CURLY);
+            NodeScope scope = new NodeScope();
+            NodeStatement statement = parseStatement();
+            while (statement != null) {
+                scope.addStatement(statement);
+                statement = parseStatement();
+            }
+            expect(TokenType.CLOSE_CURLY);
+            return new NodeIfPredicateElif(expression, scope, parseIfPred());
+        } else if (currentToken != null && currentToken.getType().equals(TokenType.ELSE)) {
+            // handle else
+            consume();
+            expect(TokenType.OPEN_CURLY);
+            NodeScope scope = new NodeScope();
+            NodeStatement statement = parseStatement();
+            while (statement != null) {
+                scope.addStatement(statement);
+                statement = parseStatement();
+            }
+            expect(TokenType.CLOSE_CURLY);
+            return new NodeIfPredicateElse(scope);
+        }
+
+        return null;
+    }
 
     private Token expect(TokenType type) {
         Token currentToken = peek();
