@@ -1,7 +1,6 @@
 target
 *.xy
 *.asm
-test
 *.o
 .gradle
 .vscode
