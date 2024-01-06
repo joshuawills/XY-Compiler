@@ -34,12 +34,12 @@ public class NodeLet implements NodeStatement  {
 
     @Override
     public String toString() {
-        return String.format("{NodeLet: %s = %s}", identifier.getValue(), expression.toString());
+        return String.format("int %s = %s", identifier.getValue(), expression.toString());
     }
 
     public void operator(Generator generator) {
         String variableName = identifier.getValue();
-        if (generator.getVariables().containsKey(variableName)) { // Already defined
+        if (generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName))) { // Already defined
             System.err.println("<Generator> Identifier already declared: " + variableName);
             System.exit(1);
         }

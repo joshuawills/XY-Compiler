@@ -8,8 +8,10 @@ import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
+import compiler.nodes.statement_nodes.NodeIf;
 import compiler.nodes.statement_nodes.NodeLet;
 import compiler.nodes.statement_nodes.NodeReturn;
+import compiler.nodes.statement_nodes.NodeScope;
 import compiler.nodes.statement_nodes.NodeStatement;
 
 public class Parser {
@@ -123,6 +125,29 @@ public class Parser {
                 expect(TokenType.SEMI);
                 return statementNode;
             }
+        } else if (peek() != null && peek().getType().equals(TokenType.IF)) {
+            consume();
+            NodeExpression expression = parseExpression(0);
+            expect(TokenType.OPEN_CURLY);
+            NodeScope scope = new NodeScope();
+            NodeStatement statement = parseStatement();
+            while (statement != null) {
+                scope.addStatement(statement);
+                statement = parseStatement();
+            }
+            expect(TokenType.CLOSE_CURLY);
+            return new NodeIf(expression, scope);
+
+        } else if (peek() != null && peek().getType().equals(TokenType.OPEN_CURLY)) { // Entered a scope
+            consume(); // consuming the curly;
+            NodeScope scope = new NodeScope();
+            NodeStatement statement = parseStatement();
+            while (statement != null) {
+                scope.addStatement(statement);
+                statement = parseStatement();
+            }
+            expect(TokenType.CLOSE_CURLY);
+            return scope;
         }
         return null;
     }

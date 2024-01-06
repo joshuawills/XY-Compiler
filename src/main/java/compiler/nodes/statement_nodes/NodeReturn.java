@@ -24,16 +24,16 @@ public class NodeReturn implements NodeStatement {
     @Override
     public String toString() {
         if (expression == null || expression.getToken() == null)
-            return "{NodeReturn}";
+            return "{}";
 
-        return String.format("{NodeReturn: %s}", expression.getToken().getValue());
+        return String.format("return %s", expression.getToken().getValue());
     }
 
     public void operator(Generator generator) {
         this.expression.operator(generator);
         generator.appendContents("    mov rax, 60");
         generator.pop("rdi");
-        generator.appendContents("    syscall");
+        generator.appendContents("    syscall ;; " + this.toString());
     }
 
 }

@@ -15,7 +15,9 @@ public class IntLitExpression extends NodeTerm {
 
     @Override
     public String toString() {
-        return String.format("{IntLitExpression: %s}", getToken().toString());
+        if (getToken() == null || getToken().getValue() == null)
+            return "{}";
+        return String.format("%s", getToken().getValue().toString());
     }
 
     public void operator(Generator generator) {

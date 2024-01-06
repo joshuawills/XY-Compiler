@@ -50,13 +50,13 @@ public class BinaryExpression implements NodeExpression {
     public String toString() {
         switch (operator) {
             case ADD:
-                return String.format("{%s + %s}", getLHS().toString(), getRHS().toString());
+                return String.format("%s + %s", getLHS().toString(), getRHS().toString());
             case MINUS:
-                return String.format("{%s - %s}", getLHS().toString(), getRHS().toString());
+                return String.format("%s - %s", getLHS().toString(), getRHS().toString());
             case TIMES:
-                return String.format("{%s * %s}", getLHS().toString(), getRHS().toString());
+                return String.format("%s * %s", getLHS().toString(), getRHS().toString());
             case DIVIDE:
-                return String.format("{%s / %s}", getLHS().toString(), getRHS().toString());
+                return String.format("%s / %s", getLHS().toString(), getRHS().toString());
             default:
                 return "{}";
         }
@@ -69,16 +69,16 @@ public class BinaryExpression implements NodeExpression {
         generator.pop("rbx");
         switch (this.operator) {
             case ADD:
-                generator.appendContents("    add rax, rbx");
+                generator.appendContents("    add rax, rbx ;; " + this.toString());
                 break;
             case MINUS:
-                generator.appendContents("    sub rax, rbx"); 
+                generator.appendContents("    sub rax, rbx ;; " + this.toString()); 
                 break;
             case TIMES:
-                generator.appendContents("    mul rbx");
+                generator.appendContents("    mul rbx ;; " + this.toString());
                 break;
             case DIVIDE:
-                generator.appendContents("    div rbx"); 
+                generator.appendContents("    div rbx ;; " + this.toString()); 
                 break;
             default:
                 System.err.println("How did you manage that?");

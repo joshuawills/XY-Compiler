@@ -17,8 +17,12 @@ public enum TokenType {
     OPEN_PAREN,
     CLOSE_PAREN,
 
-    PRINT_I
+    OPEN_CURLY,
+    CLOSE_CURLY,
+
+    IF
 }
+
 /* 
  * Precedence level for operators:
  *  Division

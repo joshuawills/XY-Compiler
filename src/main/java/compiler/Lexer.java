@@ -81,6 +81,16 @@ public class Lexer {
                 appendToken(new Token(TokenType.CLOSE_PAREN));
                 consume();
 
+            } else if (peek().toString().equals("{")) {
+
+                appendToken(new Token(TokenType.OPEN_CURLY));
+                consume();
+
+            } else if (peek().toString().equals("}")) {
+
+                appendToken(new Token(TokenType.CLOSE_CURLY));
+                consume();
+
             }
             flushBuffer();
         }
@@ -118,6 +128,9 @@ public class Lexer {
                 break;
             case "int":
                 t.setType(TokenType.INT_TYPE);
+                break;
+            case "if":
+                t.setType(TokenType.IF);
                 break;
             default:
                 t.setType(TokenType.STRING);
