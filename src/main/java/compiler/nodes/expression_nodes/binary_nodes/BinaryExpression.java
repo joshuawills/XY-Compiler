@@ -49,13 +49,13 @@ public class BinaryExpression implements NodeExpression {
     @Override 
     public String toString() {
         switch (operator) {
-            case ADD:
+            case PLUS:
                 return String.format("%s + %s", getLHS().toString(), getRHS().toString());
-            case MINUS:
+            case DASH:
                 return String.format("%s - %s", getLHS().toString(), getRHS().toString());
-            case TIMES:
+            case STAR:
                 return String.format("%s * %s", getLHS().toString(), getRHS().toString());
-            case DIVIDE:
+            case F_SLASH:
                 return String.format("%s / %s", getLHS().toString(), getRHS().toString());
             default:
                 return "{}";
@@ -68,16 +68,16 @@ public class BinaryExpression implements NodeExpression {
         generator.pop("rax");
         generator.pop("rbx");
         switch (this.operator) {
-            case ADD:
+            case PLUS:
                 generator.appendContents("    add rax, rbx ;; " + this.toString());
                 break;
-            case MINUS:
+            case DASH:
                 generator.appendContents("    sub rax, rbx ;; " + this.toString()); 
                 break;
-            case TIMES:
+            case STAR:
                 generator.appendContents("    mul rbx ;; " + this.toString());
                 break;
-            case DIVIDE:
+            case F_SLASH:
                 generator.appendContents("    div rbx ;; " + this.toString()); 
                 break;
             default:

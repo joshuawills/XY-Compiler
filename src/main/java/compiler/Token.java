@@ -15,11 +15,11 @@ public class Token {
 
     public static Integer getBinaryPrecedenceLevel(TokenType type) {
         switch (type) {
-            case ADD:
-            case MINUS:
+            case PLUS:
+            case DASH:
                 return 0;
-            case TIMES: 
-            case DIVIDE:
+            case STAR: 
+            case F_SLASH:
                 return 1;
             default:
                 return null;

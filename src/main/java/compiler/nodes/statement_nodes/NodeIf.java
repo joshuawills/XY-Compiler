@@ -35,6 +35,9 @@ public class NodeIf implements NodeStatement {
 
     @Override
     public String toString() {
+        if (expression == null || scope == null)
+            return "{}";
+
         return String.format("if %s %s" , expression.toString(), scope.toString());
     }
 

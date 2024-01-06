@@ -15,6 +15,9 @@ public class ParenExpression extends NodeTerm {
 
     @Override
     public String toString() {
+        if (getExpression() == null)
+            return "{}";
+
         return String.format("(%s)", getExpression().toString());
     }
 

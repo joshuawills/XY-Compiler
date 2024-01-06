@@ -42,7 +42,7 @@ public class Parser {
         if (peek() != null && peek().getType().equals(TokenType.INT_LIT)) {
             IntLitExpression term = new IntLitExpression(consume());
             return term;
-        } else if (peek() != null && peek().getType().equals(TokenType.STRING)) { // int x = 5;
+        } else if (peek() != null && peek().getType().equals(TokenType.IDENT)) { // int x = 5;
             IdentExpression term  = new IdentExpression(consume());
             return term;
         } else if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
@@ -80,10 +80,10 @@ public class Parser {
                 
             };
             switch (operator.getType()) {
-                case ADD:
-                case TIMES:
-                case MINUS:
-                case DIVIDE:
+                case PLUS:
+                case STAR:
+                case DASH:
+                case F_SLASH:
                     myExpression.setOperator(operator.getType());
                     break;
                 default:
@@ -113,9 +113,9 @@ public class Parser {
             }
             expect(TokenType.SEMI);
             return statementNode;
-        } else if (peek() != null && peek().getType().equals(TokenType.INT_TYPE)) { // int x = 32;
+        } else if (peek() != null && peek().getType().equals(TokenType.INIT_INT)) { // int x = 32;
             consume();
-            Token ident = expect(TokenType.STRING);
+            Token ident = expect(TokenType.IDENT);
             expect(TokenType.ASSIGN);
             NodeExpression expression = parseExpression(0);
             if (expression == null) {

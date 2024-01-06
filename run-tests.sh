@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 
 help() {
     echo "How to use test suite:"
@@ -32,10 +32,10 @@ then
 fi
 
 
-for file in tests/*
+while IFS= read -r file
 do
-    file=$(basename $file)
-
+    rawName=$file
+    file=$(basename $file)  
     # Ignoring any other random files that aren't .txt or .xy
     if ! (echo $file | grep -Eq "test_[0-9]+\.(xy|txt)$")
     then
@@ -50,45 +50,47 @@ do
     fi
 
 
-    EXIT_CODE=$(head -n1 tests/"$file" | grep -Eo "[0-9]+$")
+    EXIT_CODE=$(head -n1 "$rawName" | grep -Eo "[0-9]+$")
     if  [ "$EXIT_CODE" = "" ]
     then 
         echo "Skipping over ${YELLOW}${file}${RESET}: please provide exit code in first line"
         continue
     fi
 
+    SUMMARY=$(head -n2 "$rawName" | tail -n1 | sed -e "s/\/\/ //g" | tr a-z A-Z)
+
     # Attempt to build the executable
-    java -jar build/libs/javaCompiler-1.0-SNAPSHOT.jar "tests/$file"  >> /dev/null 2>&1
+    java -jar build/libs/javaCompiler-1.0-SNAPSHOT.jar "$rawName"  >> /dev/null 2>&1
 
     # Build failed
     if [ "$?" -ne "0" ]
     then
-        echo "${RED}Build error${RESET} for ${YELLOW}${file}${RESET}, counting as fail"
+        echo "${SUMMARY}: ${RED}Build error${RESET} for ${YELLOW}${file}${RESET}, counting as fail"
         FAIL=$((FAIL + 1))
         TOTAL=$((TOTAL + 1)) 
         continue
     fi 
 
     # Now execute commands and compare to the test_one.txt file
-    rootName=$(echo "$file" | grep -Eo "^test_[0-9]+")
-    if [ -f "tests/${rootName}.txt" ]
+    testFile=$(echo "$rawName" | sed -E "s/xy/txt/g")
+    if [ -f "$testFile" ]
     then 
         # Also need to compare stdout
         ./out > "tests/current_output"
         if [ "$EXIT_CODE" -ne "$?" ]
         then 
-            echo "${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing exit codes"
+            echo "${SUMMARY}: ${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing exit codes"
             FAIL=$((FAIL + 1))
         else
 
-            if diff "tests/current_output" "tests/${rootName}.txt" > /dev/null
+            if diff "tests/current_output" "$testFile" > /dev/null
             then
                 # They are identical
-                echo "${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, same exit code and stdout"
+                echo "${SUMMARY}: ${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, same exit code and stdout"
                 PASS=$((PASS + 1))
             else
                 # They aren't identical
-                echo "${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing stdout, same exit code"
+                echo "${SUMMARY}: ${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing stdout, same exit code"
                 FAIL=$((FAIL + 1))
             fi 
             TOTAL=$((TOTAL + 1)) 
@@ -99,16 +101,16 @@ do
         ./test
         if [ "$EXIT_CODE" -eq "$?" ]
         then
-            echo "${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, same exit code"
+            echo "${SUMMARY}: ${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, same exit code"
             PASS=$((PASS + 1))
         else 
-            echo "${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing exit codes"
+            echo "${SUMMARY}: ${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing exit codes"
             FAIL=$((FAIL + 1))
         fi 
         TOTAL=$((TOTAL + 1)) 
     fi
 
-done
+done < <(find "tests" -type f)
 
 if [ -f "tests/current_output" ]
 then 
@@ -132,6 +134,13 @@ fi
 
 echo
 echo "Test suite completed: "
-echo "\t${GREEN}${PASS} passed${RESET}"
-echo "\t${RED}${FAIL} failed${RESET}"
-echo "\t${TOTAL} total"
+
+if [ "$PASS" = "$TOTAL" ] 
+then 
+    echo "\t${GREEN}All passed${RESET}"
+    echo "\t${TOTAL} total"
+else
+    echo "\t${GREEN}${PASS} passed${RESET}"
+    echo "\t${RED}${FAIL} failed${RESET}"
+    echo "\t${TOTAL} total"
+fi

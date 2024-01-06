@@ -34,6 +34,9 @@ public class NodeLet implements NodeStatement  {
 
     @Override
     public String toString() {
+        if (identifier == null || expression == null)
+            return "{}";
+
         return String.format("int %s = %s", identifier.getValue(), expression.toString());
     }
 

@@ -1,18 +1,20 @@
 package compiler;
 
 public enum TokenType {
-    INT_LIT,
-    SEMI,
-    RETURN,
     DEFAULT,
-    INT_TYPE,
-    ASSIGN,
-    STRING,
+    SEMI,
 
-    ADD,
-    MINUS,
-    TIMES,
-    DIVIDE,
+    INT_LIT,
+    
+    RETURN,
+    INIT_INT,
+    ASSIGN,
+    IDENT,
+
+    PLUS,
+    DASH,
+    STAR,
+    F_SLASH,
 
     OPEN_PAREN,
     CLOSE_PAREN,
@@ -20,7 +22,9 @@ public enum TokenType {
     OPEN_CURLY,
     CLOSE_CURLY,
 
-    IF
+    IF,
+    ELIF,
+    ELSE
 }
 
 /* 
@@ -30,3 +34,8 @@ public enum TokenType {
  *  Addition
  *  Subtraction
  */
+
+//  (): Parentheses
+// *, /: Multiplication and Division
+// +, -: Addition and Subtraction
+// <, >, <=, >=: Relational operators
