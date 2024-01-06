@@ -1,0 +1,11 @@
+// 1
+// Basic if 2
+
+int x = 1;
+
+if x {
+    return x;
+}
+
+int y = 3;
+return y;

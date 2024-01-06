@@ -1,0 +1,11 @@
+// 7
+// Constructing scope
+
+int x = (10 - 2 * 3) / 2;
+
+{
+    int y = 2;
+}
+int y = x + 5;
+
+return y;

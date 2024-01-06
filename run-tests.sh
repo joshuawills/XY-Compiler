@@ -60,7 +60,7 @@ do
     SUMMARY=$(head -n2 "$rawName" | tail -n1 | sed -e "s/\/\/ //g" | tr a-z A-Z)
 
     # Attempt to build the executable
-    java -jar build/libs/javaCompiler-1.0-SNAPSHOT.jar "$rawName"  >> /dev/null 2>&1
+    java -jar build/libs/xy_java-1.0-SNAPSHOT.jar "$rawName"  >> /dev/null 2>&1
 
     # Build failed
     if [ "$?" -ne "0" ]

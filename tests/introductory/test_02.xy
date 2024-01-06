@@ -1,0 +1,5 @@
+// 8
+// Return variable
+
+int x = 8;
+return x;
