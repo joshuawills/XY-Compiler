@@ -64,9 +64,13 @@ public class NodeIf implements NodeStatement {
         generator.appendContents("    test rax, rax");
         generator.appendContents("    jz " + label + " ;; if " + expression.toString());
         scope.operator(generator);
+        String endLabel = generator.createLabel();
+        if (predicate != null) {
+            generator.appendContents("    jmp " + endLabel);
+        }
+
         generator.appendContents(label + ":");
         if (predicate != null) {
-            String endLabel = generator.createLabel();
             generator.setEndLabel(endLabel);
             predicate.operator(generator);
             generator.appendContents(endLabel + ":");

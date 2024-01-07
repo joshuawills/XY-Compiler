@@ -3,6 +3,7 @@ package compiler.nodes.expression_nodes.binary_nodes;
 import compiler.Generator;
 import compiler.Token;
 import compiler.TokenType;
+import compiler.Error;
 import compiler.nodes.expression_nodes.NodeExpression;
 
 public class BinaryExpression implements NodeExpression {
@@ -81,8 +82,7 @@ public class BinaryExpression implements NodeExpression {
                 generator.appendContents("    div rbx ;; " + this.toString()); 
                 break;
             default:
-                System.err.println("How did you manage that?");
-                System.exit(1);
+                Error.handleError("GENERATOR", "Unknown operator: " + this.toString());
 
 
         } 

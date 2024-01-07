@@ -1,5 +1,6 @@
 package compiler.nodes.statement_nodes;
 
+import compiler.Error;
 import compiler.Generator;
 import compiler.Token;
 import compiler.nodes.expression_nodes.NodeExpression;
@@ -37,16 +38,15 @@ public class NodeLet implements NodeStatement  {
         if (identifier == null || expression == null)
             return "{}";
 
-        return String.format("%s = %s", identifier.getValue(), expression.toString());
+        return String.format("let %s = %s", identifier.getValue(), expression.toString());
     }
 
     public void operator(Generator generator) {
         String variableName = identifier.getValue();
-        if (generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName))) { // Already defined
-            System.err.println("<Generator> Identifier already declared: " + variableName);
-            System.exit(1);
-        }
-        generator.addVariable(variableName);
+        if (generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
+            Error.handleError("GENERATOR", "Attempted redeclaration of previously declared identifier: " + variableName);
+        
+            generator.addVariable(variableName);
         this.expression.operator(generator);
     }   
 

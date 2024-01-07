@@ -1,18 +1,23 @@
 package compiler;
 
 public class Token {
- 
+    
     private TokenType type;
     private String value = null;
-
-    public Token() {
-        this.type = TokenType.DEFAULT;
-    }
-
-    public Token(TokenType type) {
+    private Integer line; private Integer col;
+    
+    public Token(TokenType type, int line, int col) {
         this.type = type;
+        this.line = line;
+        this.col = col;
     }
-
+    
+    public Token(TokenType type, String value, int line, int col) {
+        this.type = type;
+        this.value = value;
+        this.line = line;
+        this.col = col;
+    }
     public static Integer getBinaryPrecedenceLevel(TokenType type) {
         switch (type) {
             case PLUS:
@@ -26,11 +31,19 @@ public class Token {
         }
     }
 
+    public Integer getLine() {
+        return this.line;
+    }
+
+    public Integer getCol() {
+        return this.col;
+    }
+
     @Override
     public String toString() {
         if (value == null)
-            return String.format("{type: %s}", this.getType());
-        return String.format("{type: %s, val: %s}", this.getType(), this.getValue());
+            return String.format("{type: %s (%s, %s)}", this.getType(), this.getLine().toString(), this.getCol().toString());
+        return String.format("{type: %s, val: %s (%s, %s)}", this.getType(), this.getValue(), this.getLine().toString(), this.getCol().toString());
     }
 
     public void setType(TokenType t) {
@@ -41,10 +54,6 @@ public class Token {
         this.value = v;
     }
 
-    public Token(TokenType type, String value) {
-        this.type = type;
-        this.value = value;
-    }
 
     public TokenType getType() {
         return this.type;

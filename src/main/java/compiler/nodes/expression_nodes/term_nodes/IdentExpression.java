@@ -2,7 +2,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Token;
 import compiler.Variable;
-
+import compiler.Error;
 import java.util.Optional;
 
 import compiler.Generator;
@@ -28,10 +28,8 @@ public class IdentExpression extends NodeTerm {
 
     public void operator(Generator generator) {
         String variableName = getToken().getValue();
-        if (!generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName))) { // Already defined
-            System.err.println("<Generator> Identifier doesn't exist: " + variableName);
-            System.exit(1);
-        }
+        if (!generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
+            Error.handleError("GENERATOR", "Identifier doesn't exist: " + variableName);
 
         Optional<Integer> stackLocation = generator.getVariables()
                 .stream()
@@ -40,7 +38,7 @@ public class IdentExpression extends NodeTerm {
                 .findFirst();
         if (stackLocation.isPresent()) {
             Integer offset = 8 * (generator.getStackSize() - stackLocation.get() - 1);
-            generator.push("QWORD [rsp + " + offset + "]");
+            generator.push("QWORD [rsp + " + offset + "] ;; " + this.toString());
         }
 
     }

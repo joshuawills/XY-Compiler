@@ -3,6 +3,8 @@ target
 *.o
 .gradle
 .vscode
+gradle/
 build
 examples/
 bin/
+\.idea/

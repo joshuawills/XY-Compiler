@@ -3,7 +3,6 @@ import java.util.ArrayList;
 
 import compiler.nodes.NodeProgram;
 import compiler.nodes.statement_nodes.NodeStatement;
-import compiler.nodes.statement_nodes.conditionals.NodeIfPredicate;
 
 public class Generator {
 
@@ -35,11 +34,6 @@ public class Generator {
         labelIncrementer++;
         return "label" + labelIncrementer.toString();
     }
-
-    public void generateIfPredicate(NodeIfPredicate predicate) {
-
-    }
-
 
     public void addVariable(String name) {
         variables.add(new Variable(name, this.stackSize));

@@ -8,6 +8,12 @@ public class Lexer {
     private int iterator = 0;
     private ArrayList<Token> tokens = new ArrayList<>();
 
+    private int line = 1; private int col = 1;
+
+    private void resetCol() { this.col = 1; }
+    private void incrementLine() { this.line++; resetCol(); }
+    private void incrementCol() { this.col++; }
+
     public Lexer(String contents) {
         this.contents = contents;
     }
@@ -15,12 +21,13 @@ public class Lexer {
     private static boolean isAlphaNumeric(Character c) { return Character.isDigit(c) || Character.isLetter(c); }
     private void flushBuffer() { this.buffer = ""; }
     private void appendBuffer(Character c) { this.buffer = buffer.concat(c.toString()); }
-    private void appendToken(TokenType t) { this.tokens.add(new Token(t)); consume(); }
+    private void appendToken(TokenType t) { this.tokens.add(new Token(t, line, col)); consume(); }
+    private void appendToken(TokenType t, int real_line, int real_col) { this.tokens.add(new Token(t, real_line, real_col)); consume(); }
     private boolean isNumber() { return (Character.isDigit(peek())) || (peek().toString().equals("-") && peek(1) != null && Character.isDigit(peek(1))); }
-
+    
     public ArrayList<Token> tokenize() {
         while (this.iterator < this.contents.length()) {
-        
+            
             if (Character.isAlphabetic(peek())) {
                 handleStr();
                 continue;
@@ -28,6 +35,13 @@ public class Lexer {
 
             if (isNumber()) {
                 handleDigit();
+                continue;
+            }
+
+            if (peek().equals('\n')) {
+                consume();
+                this.incrementLine();
+                this.col = 1;
                 continue;
             }
 
@@ -68,8 +82,7 @@ public class Lexer {
                 case "}":
                     appendToken(TokenType.CLOSE_CURLY); break;
                 default:
-                    System.err.println("Unknown token: " + peek()); 
-                    System.exit(1);
+                    Error.handleError("LEXER", "Unknown punctuation (" + peek() + ")\n    line: " + this.line + ", col: " + this.col);
             }
 
 
@@ -101,20 +114,20 @@ public class Lexer {
     }
 
     private void handleDigit() {
-        
+        int real_column = this.col;
         appendBuffer(consume());
 
         if (peek().toString().equals("-")) appendBuffer(peek());
 
         while (peek() != null && Character.isDigit(peek()))
             appendBuffer(consume());
-        this.tokens.add(new Token(TokenType.INT_LIT, buffer));
+        this.tokens.add(new Token(TokenType.INT_LIT, buffer, line, real_column));
         flushBuffer();
 
     }
 
     private void handleStr() {
-
+        int real_column = this.col;
         appendBuffer(consume());
         while (peek() != null && isAlphaNumeric(peek()))
             appendBuffer(consume()); 
@@ -129,18 +142,18 @@ public class Lexer {
 
         switch (this.buffer) {
             case "return":
-                appendToken(TokenType.RETURN); break;
+                appendToken(TokenType.RETURN, this.line, real_column); break;
             case "int":
             case "s32":
-                appendToken(TokenType.INIT_INT); break;
+                appendToken(TokenType.INIT_INT, this.line, real_column); break;
             case "if":
-                appendToken(TokenType.IF); break;
+                appendToken(TokenType.IF, this.line, real_column); break;
             case "else if":
-                appendToken(TokenType.ELIF); break;
+                appendToken(TokenType.ELIF, this.line, real_column); break;
             case "else":
-                appendToken(TokenType.ELSE); break;
+                appendToken(TokenType.ELSE, this.line, real_column); break;
             default:
-                this.tokens.add(new Token(TokenType.IDENT, buffer));
+                this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;
         }
         flushBuffer();
@@ -152,6 +165,7 @@ public class Lexer {
         if (this.iterator < contents.length())
             current = this.contents.charAt(this.iterator);
         this.iterator++;
+        this.incrementCol();
         return current;
     }
 
