@@ -23,10 +23,10 @@ public class NodeReturn implements NodeStatement {
 
     @Override
     public String toString() {
-        if (expression == null || expression.getToken() == null)
+        if (expression == null)
             return "{}";
 
-        return String.format("return %s", expression.getToken().getValue());
+        return String.format("return %s", expression.toString());
     }
 
     public void operator(Generator generator) {

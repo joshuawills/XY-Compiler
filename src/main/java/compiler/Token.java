@@ -1,5 +1,7 @@
 package compiler;
 
+import java.lang.invoke.CallSite;
+
 public class Token {
     
     private TokenType type;
@@ -20,12 +22,26 @@ public class Token {
     }
     public static Integer getBinaryPrecedenceLevel(TokenType type) {
         switch (type) {
+            
+            case GREATER_EQ:
+            case GREATER_THAN:
+            case LESS_THAN:
+            case LESS_EQ:
+                return 0;
+            case EQUAL:
+            case NOT_EQUAL:
+                return 1;
+            case AND_LOGIC:
+                return 2;
+            case OR_LOGIC:
+                return 3;
             case PLUS:
             case DASH:
-                return 0;
+                return 4;
             case STAR: 
             case F_SLASH:
-                return 1;
+            case PERCENT:
+                return 5;
             default:
                 return null;
         }

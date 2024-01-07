@@ -15,6 +15,18 @@ public enum TokenType {
     DASH,
     STAR,
     F_SLASH,
+    PERCENT,
+
+    GREATER_THAN,
+    GREATER_EQ,
+    LESS_THAN,
+    LESS_EQ,
+    NOT_EQUAL,
+    EQUAL,
+    AND_LOGIC,
+    OR_LOGIC,
+
+    NEGATE,
 
     OPEN_PAREN,
     CLOSE_PAREN,
@@ -24,7 +36,8 @@ public enum TokenType {
 
     IF,
     ELIF,
-    ELSE
+    ELSE,
+    WHILE
 }
 
 /* 

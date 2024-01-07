@@ -6,6 +6,7 @@ import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.binary_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
+import compiler.nodes.expression_nodes.term_nodes.NegationExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
 import compiler.nodes.statement_nodes.NodeAssign;
@@ -17,6 +18,7 @@ import compiler.nodes.statement_nodes.conditionals.NodeIf;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicate;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElif;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
+import compiler.nodes.statement_nodes.loops.NodeWhile;
 
 public class Parser {
 
@@ -52,6 +54,12 @@ public class Parser {
                 Error.handleError("PARSING", "Expected expression");
             expect(TokenType.CLOSE_PAREN);
             return new ParenExpression(expression);
+        } else if (peek() != null && peek().getType().equals(TokenType.NEGATE)) {
+            consume();
+            NodeExpression expression = parseTerm();
+            if (expression == null)
+                Error.handleError("PARSING", "Expected expression");
+            return new NegationExpression(expression);
         }
         return null;
     }
@@ -76,19 +84,29 @@ public class Parser {
                 
             };
             switch (operator.getType()) {
+                case GREATER_EQ:
+                case GREATER_THAN:
+                case LESS_THAN:
+                case LESS_EQ:
+                case EQUAL:
+                case NOT_EQUAL:
+                case AND_LOGIC:
+                case OR_LOGIC:
                 case PLUS:
                 case STAR:
                 case DASH:
+                case PERCENT:
                 case F_SLASH:
                     myExpression.setOperator(operator.getType());
                     break;
                 default:
                     Error.handleError("PARSING", "Unknown operator");
             }
+            
             myExpression.setLHS(lhs);
             myExpression.setRHS(rhs);
             lhs = myExpression;
-
+            
         }
         return lhs;
     }
@@ -126,6 +144,8 @@ public class Parser {
             return new NodeLet(ident, expression);
         } else if (tryConsume(TokenType.IF) != null) { // if () {}
             return new NodeIf(parseExpression(0), parseScope(), parseIfPred());
+        } else if (tryConsume(TokenType.WHILE) != null) {
+            return new NodeWhile(parseExpression(0), parseScope());
         } else if (isPeek(TokenType.IDENT)) {
             Token ident = expect(TokenType.IDENT);
             expect(TokenType.ASSIGN);

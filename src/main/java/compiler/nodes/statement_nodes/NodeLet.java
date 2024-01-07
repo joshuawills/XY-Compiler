@@ -46,7 +46,7 @@ public class NodeLet implements NodeStatement  {
         if (generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
             Error.handleError("GENERATOR", "Attempted redeclaration of previously declared identifier: " + variableName);
         
-            generator.addVariable(variableName);
+        generator.addVariable(variableName);
         this.expression.operator(generator);
     }   
 

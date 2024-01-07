@@ -22,12 +22,14 @@ public class Lexer {
     private void flushBuffer() { this.buffer = ""; }
     private void appendBuffer(Character c) { this.buffer = buffer.concat(c.toString()); }
     private void appendToken(TokenType t) { this.tokens.add(new Token(t, line, col)); consume(); }
+    private void appendTokenNoConsume(TokenType t, int real_line, int real_col) { this.tokens.add(new Token(t, real_line, real_col)); }
+
     private void appendToken(TokenType t, int real_line, int real_col) { this.tokens.add(new Token(t, real_line, real_col)); consume(); }
     private boolean isNumber() { return (Character.isDigit(peek())) || (peek().toString().equals("-") && peek(1) != null && Character.isDigit(peek(1))); }
     
     public ArrayList<Token> tokenize() {
         while (this.iterator < this.contents.length()) {
-            
+
             if (Character.isAlphabetic(peek())) {
                 handleStr();
                 continue;
@@ -60,6 +62,42 @@ public class Lexer {
                 continue;
             }
 
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals(">=")) {
+                appendTokenNoConsume(TokenType.GREATER_THAN, line, col); 
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("<=")) {
+                appendTokenNoConsume(TokenType.LESS_THAN, line, col); 
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("==")) {
+                appendTokenNoConsume(TokenType.EQUAL, line, col); 
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("!=")) {
+                appendTokenNoConsume(TokenType.NOT_EQUAL, line, col); 
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("&&")) {
+                appendTokenNoConsume(TokenType.AND_LOGIC, line, col); 
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("||")) {
+                appendTokenNoConsume(TokenType.OR_LOGIC, line, col); 
+                consume(); consume();
+                continue;
+            }
+
             switch (peek().toString()) {
                 case ";":
                     appendToken(TokenType.SEMI); break;
@@ -81,6 +119,14 @@ public class Lexer {
                     appendToken(TokenType.OPEN_CURLY); break;
                 case "}":
                     appendToken(TokenType.CLOSE_CURLY); break;
+                case "<":
+                    appendToken(TokenType.LESS_THAN); break;
+                case ">":
+                    appendToken(TokenType.GREATER_THAN); break;
+                case "%":
+                    appendToken(TokenType.PERCENT); break;
+                case "!":
+                    appendToken(TokenType.NEGATE); break;
                 default:
                     Error.handleError("LEXER", "Unknown punctuation (" + peek() + ")\n    line: " + this.line + ", col: " + this.col);
             }
@@ -142,16 +188,18 @@ public class Lexer {
 
         switch (this.buffer) {
             case "return":
-                appendToken(TokenType.RETURN, this.line, real_column); break;
+                appendTokenNoConsume(TokenType.RETURN, this.line, real_column); break;
             case "int":
             case "s32":
-                appendToken(TokenType.INIT_INT, this.line, real_column); break;
+                appendTokenNoConsume(TokenType.INIT_INT, this.line, real_column); break;
             case "if":
-                appendToken(TokenType.IF, this.line, real_column); break;
+                appendTokenNoConsume(TokenType.IF, this.line, real_column); break;
             case "else if":
-                appendToken(TokenType.ELIF, this.line, real_column); break;
+                appendTokenNoConsume(TokenType.ELIF, this.line, real_column); break;
             case "else":
-                appendToken(TokenType.ELSE, this.line, real_column); break;
+                appendTokenNoConsume(TokenType.ELSE, this.line, real_column); break;
+            case "while": 
+                appendTokenNoConsume(TokenType.WHILE, this.line, real_column); break;
             default:
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;
