@@ -9,8 +9,10 @@ import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
 import compiler.nodes.expression_nodes.term_nodes.NegationExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
+import compiler.nodes.expression_nodes.term_nodes.StringExpression;
 import compiler.nodes.statement_nodes.NodeAssign;
 import compiler.nodes.statement_nodes.NodeLet;
+import compiler.nodes.statement_nodes.NodePrint;
 import compiler.nodes.statement_nodes.NodeReturn;
 import compiler.nodes.statement_nodes.NodeScope;
 import compiler.nodes.statement_nodes.NodeStatement;
@@ -154,6 +156,15 @@ public class Parser {
             return new NodeAssign(ident, expression);
         }  else if (isPeek(TokenType.OPEN_CURLY)) { // Entered a scope
             return parseScope();
+        } else if (tryConsume(TokenType.OUT) != null) {
+            if (isPeek(TokenType.STRING)) {
+                NodeTerm stringToken = new StringExpression(consume());
+                expect(TokenType.SEMI);
+                return new NodePrint(stringToken, true);
+            } 
+            NodeTerm term = parseTerm(); // reconsider when different terms are added
+            expect(TokenType.SEMI);
+            return new NodePrint(term);
         }
         return null;
     }

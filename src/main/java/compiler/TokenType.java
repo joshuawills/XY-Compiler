@@ -28,6 +28,9 @@ public enum TokenType {
 
     NEGATE,
 
+    TRUE,
+    FALSE,
+
     OPEN_PAREN,
     CLOSE_PAREN,
 
@@ -37,7 +40,12 @@ public enum TokenType {
     IF,
     ELIF,
     ELSE,
-    WHILE
+    WHILE,
+
+    OUT,
+    PRINT_S,
+
+    STRING
 }
 
 /* 

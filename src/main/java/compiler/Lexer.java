@@ -40,6 +40,11 @@ public class Lexer {
                 continue;
             }
 
+            if (peek().equals('"')) {
+                handleString();
+                continue;
+            }
+
             if (peek().equals('\n')) {
                 consume();
                 this.incrementLine();
@@ -136,27 +141,39 @@ public class Lexer {
         return this.tokens;
     }
 
+    
     private boolean isCommentStandard() {
         return peek().toString().equals("/") && peek(1) != null && peek(1).toString().equals("/");
     }
-
+    
     private boolean isCommentMulti() {
         return peek().toString().equals("/") && peek(1) != null && peek(1).toString().equals("*");
     }
-
+    
     private void handleCommentsMulti() {
         consume();
         consume();
         while (peek() != null && !peek().toString().equals("*") && peek(1) != null && !peek().toString().equals("/"))
-            consume();
+        consume();
         consume();
         consume();
     }
-
+    
     private void handleCommentsStandard() {
         while (peek() != null && !peek().toString().equals("\n"))
-            consume();
         consume();
+        consume();
+    }
+    
+    private void handleString() {
+        int real_column = this.col;
+        appendBuffer(consume());
+
+        while (peek() != null && !peek().equals('"'))
+            appendBuffer(consume());
+        appendBuffer(consume());
+        this.tokens.add(new Token(TokenType.STRING, buffer, line, real_column));
+        flushBuffer();
     }
 
     private void handleDigit() {
@@ -200,6 +217,12 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.ELSE, this.line, real_column); break;
             case "while": 
                 appendTokenNoConsume(TokenType.WHILE, this.line, real_column); break;
+            case "out":
+                appendTokenNoConsume(TokenType.OUT, this.line, real_column); break;
+            case "true":
+                this.tokens.add(new Token(TokenType.INT_LIT, "1", line, real_column)); break;
+            case "false":
+                this.tokens.add(new Token(TokenType.INT_LIT, "0", line, real_column)); break;
             default:
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;

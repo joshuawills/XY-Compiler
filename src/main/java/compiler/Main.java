@@ -52,9 +52,11 @@ public class Main {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("out.asm"));
             writer.write(contents);
+            String macros = Files.readString(Paths.get("src/main/java/compiler/macros.txt"));
+            writer.write(macros);
             writer.close();
             Runtime.getRuntime().exec("nasm -felf64 out.asm");
-            Runtime.getRuntime().exec("ld out.o -o test");
+            Runtime.getRuntime().exec("ld -o test out.o");
         } catch (Exception e) {
             e.printStackTrace();
         }

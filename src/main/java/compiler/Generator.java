@@ -13,6 +13,11 @@ public class Generator {
     private ArrayList<Integer> scopes = new ArrayList<>();   
     private Integer labelIncrementer = -1;
     private String endLabel = null;
+    private Boolean printMacro = false;
+
+    public void setMacro() {
+        this.printMacro = true;
+    }
 
     public ArrayList<Variable> getVariables() {
         return this.variables;
@@ -72,13 +77,35 @@ public class Generator {
 
     }
 
+    public String addString(String stringContents) {
+        String label = this.createLabel(); 
+        assemblyBuffer.add(5, "    " + label + " db " + stringContents + ", 0");
+        return label;
+    }
+
     public String generateProgram() {
 
-        assemblyBuffer.add("global _start\n_start:");
+        assemblyBuffer.add("default rel");
+        assemblyBuffer.add("extern printf, exit");
+        assemblyBuffer.add("section .rodata");
+        assemblyBuffer.add("    formatInt db \"%#d\", 10, 0");
+        assemblyBuffer.add("    formatStr db \"%s\", 10, 0");
+        assemblyBuffer.add("section .text");
+        assemblyBuffer.add("global main\n");
+        assemblyBuffer.add("main:");
+
+
 
         // Generate Statements
         for (NodeStatement statement: this.program.getStatements())
             statement.operator(this);
+
+        if (this.printMacro) {
+            assemblyBuffer.add(0, "    digitSpacePos resb 8 ; enough space to store a register\n");
+            assemblyBuffer.add(0, "    digitSpace resb 100 ; storing the string itself");
+            assemblyBuffer.add(0, "section .bss");
+
+        }
 
         assemblyBuffer.add("\n    ;; default exit\n    mov rax, 60");
         assemblyBuffer.add("    mov rdi, 0");
