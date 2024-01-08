@@ -76,14 +76,14 @@ do
     if [ -f "$testFile" ]
     then 
         # Also need to compare stdout
-        ./out > "tests/current_output"
+        ./test > "tests/current_output.txt"
         if [ "$EXIT_CODE" -ne "$?" ]
         then 
             echo "${SUMMARY}: ${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing exit codes"
             FAIL=$((FAIL + 1))
         else
 
-            if diff "tests/current_output" "$testFile" > /dev/null
+            if diff "tests/current_output.txt" "$testFile" # > /dev/null
             then
                 # They are identical
                 echo "${SUMMARY}: ${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, same exit code and stdout"
@@ -112,10 +112,10 @@ do
 
 done < <(find "tests" -type f)
 
-if [ -f "tests/current_output" ]
-then 
-    rm tests/current_output
-fi
+# if [ -f "tests/current_output.txt" ]
+# then 
+#     rm tests/current_output.txt
+# fi
 
 if [ -f "test" ]
 then 

@@ -15,7 +15,6 @@ public enum TokenType {
     DASH,
     STAR,
     F_SLASH,
-    PERCENT,
 
     GREATER_THAN,
     GREATER_EQ,

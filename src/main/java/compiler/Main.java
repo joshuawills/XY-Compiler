@@ -56,7 +56,8 @@ public class Main {
             writer.write(macros);
             writer.close();
             Runtime.getRuntime().exec("nasm -felf64 out.asm");
-            Runtime.getRuntime().exec("ld -o test out.o");
+            // Runtime.getRuntime().exec("ld -o test out.o");
+            Runtime.getRuntime().exec("gcc -no-pie -o test out.o");
         } catch (Exception e) {
             e.printStackTrace();
         }

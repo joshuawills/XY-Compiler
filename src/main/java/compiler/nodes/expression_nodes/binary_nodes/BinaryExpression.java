@@ -74,8 +74,6 @@ public class BinaryExpression implements NodeExpression {
                 return String.format("%s && %s", getLHS().toString(), getRHS().toString());
             case OR_LOGIC:
                 return String.format("%s || %s", getLHS().toString(), getRHS().toString());
-            case PERCENT:
-                return String.format("%s %% %s", getLHS().toString(), getRHS().toString());
             default:
                 return "{}";
         }
@@ -107,10 +105,6 @@ public class BinaryExpression implements NodeExpression {
             case OR_LOGIC:
                 generator.appendContents("    or rax, rbx ;; " + this.toString()); 
                 break;
-            case PERCENT:
-                generator.appendContents("    div rbx ;; " + this.toString());
-                generator.appendContents("    mov rax, rdx");
-                break;       
             case LESS_THAN:
                 labelOne = generator.createLabel();
                 labelTwo = generator.createLabel();

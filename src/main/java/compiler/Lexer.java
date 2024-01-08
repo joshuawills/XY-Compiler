@@ -68,13 +68,13 @@ public class Lexer {
             }
 
             if (this.peekAhead(2) != null && this.peekAhead(2).equals(">=")) {
-                appendTokenNoConsume(TokenType.GREATER_THAN, line, col); 
+                appendTokenNoConsume(TokenType.GREATER_EQ, line, col); 
                 consume(); consume();
                 continue;
             }
 
             if (this.peekAhead(2) != null && this.peekAhead(2).equals("<=")) {
-                appendTokenNoConsume(TokenType.LESS_THAN, line, col); 
+                appendTokenNoConsume(TokenType.LESS_EQ, line, col); 
                 consume(); consume();
                 continue;
             }
@@ -128,8 +128,6 @@ public class Lexer {
                     appendToken(TokenType.LESS_THAN); break;
                 case ">":
                     appendToken(TokenType.GREATER_THAN); break;
-                case "%":
-                    appendToken(TokenType.PERCENT); break;
                 case "!":
                     appendToken(TokenType.NEGATE); break;
                 default:

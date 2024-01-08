@@ -97,7 +97,6 @@ public class Parser {
                 case PLUS:
                 case STAR:
                 case DASH:
-                case PERCENT:
                 case F_SLASH:
                     myExpression.setOperator(operator.getType());
                     break;
