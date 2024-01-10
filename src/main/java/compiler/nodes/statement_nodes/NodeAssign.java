@@ -1,7 +1,6 @@
 package compiler.nodes.statement_nodes;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import compiler.Error;
 import compiler.Generator;

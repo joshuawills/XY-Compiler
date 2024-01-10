@@ -24,7 +24,6 @@ public class Lexer {
     private void appendToken(TokenType t) { this.tokens.add(new Token(t, line, col)); consume(); }
     private void appendTokenNoConsume(TokenType t, int real_line, int real_col) { this.tokens.add(new Token(t, real_line, real_col)); }
 
-    private void appendToken(TokenType t, int real_line, int real_col) { this.tokens.add(new Token(t, real_line, real_col)); consume(); }
     private boolean isNumber() { return (Character.isDigit(peek())) || (peek().toString().equals("-") && peek(1) != null && Character.isDigit(peek(1))); }
     
     public ArrayList<Token> tokenize() {
