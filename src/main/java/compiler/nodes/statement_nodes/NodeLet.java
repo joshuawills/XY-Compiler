@@ -9,10 +9,12 @@ public class NodeLet implements NodeStatement  {
 
     private Token identifier = null;
     private NodeExpression expression = null;
+    private boolean isConstant;
     
-    public NodeLet(Token identifier, NodeExpression expression) {
+    public NodeLet(Token identifier, NodeExpression expression, boolean isConstant) {
         this.identifier = identifier;
         this.expression = expression;
+        this.isConstant = isConstant;
     }
 
     public NodeLet() {}
@@ -46,7 +48,7 @@ public class NodeLet implements NodeStatement  {
         if (generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
             Error.handleError("GENERATOR", "Attempted redeclaration of previously declared identifier: " + variableName);
         
-        generator.addVariable(variableName);
+        generator.addVariable(variableName, this.isConstant);
         this.expression.operator(generator);
     }   
 

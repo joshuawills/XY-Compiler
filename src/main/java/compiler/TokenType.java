@@ -56,16 +56,3 @@ public enum TokenType {
     
     MUT
 }
-
-/* 
- * Precedence level for operators:
- *  Division
- *  Multiplication
- *  Addition
- *  Subtraction
- */
-
-//  (): Parentheses
-// *, /: Multiplication and Division
-// +, -: Addition and Subtraction
-// <, >, <=, >=: Relational operators

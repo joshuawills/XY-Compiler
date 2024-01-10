@@ -142,8 +142,16 @@ public class Parser {
             expect(TokenType.ASSIGN);
             NodeExpression expression = parseExpression(0);
             expect(TokenType.SEMI);
-            return new NodeLet(ident, expression);
-        } else if (tryConsume(TokenType.IF) != null) { // if () {}
+            return new NodeLet(ident, expression, true);
+        } else if (tryConsume(TokenType.MUT) != null) {
+            expect(TokenType.INIT_INT);
+            Token ident = expect(TokenType.IDENT);
+            expect(TokenType.ASSIGN);
+            NodeExpression expression = parseExpression(0);
+            expect(TokenType.SEMI);
+            return new NodeLet(ident, expression, false);
+        }
+        else if (tryConsume(TokenType.IF) != null) { // if () {}
             return new NodeIf(parseExpression(0), parseScope(), parseIfPred());
         } else if (tryConsume(TokenType.WHILE) != null) {
             return new NodeWhile(parseExpression(0), parseScope());

@@ -1,6 +1,7 @@
 package compiler.nodes.statement_nodes;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import compiler.Error;
 import compiler.Generator;
@@ -51,7 +52,10 @@ public class NodeAssign implements NodeStatement {
         String variableName = identifier.getValue();
         if (!generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
             Error.handleError("GENERATOR", "Attempted reassignment to undeclared identifier: " + variableName);
-            
+
+        if (generator.constant(variableName))
+            Error.handleError("GENERATOR", "Attempted reassignment to constant identifier: " + variableName);
+
         expression.operator(generator);
         generator.pop("rax");
         Optional<Integer> stackLocation = generator.getVariables()

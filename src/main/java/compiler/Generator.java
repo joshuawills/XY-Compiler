@@ -1,5 +1,6 @@
 package compiler;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import compiler.nodes.NodeProgram;
 import compiler.nodes.statement_nodes.NodeStatement;
@@ -40,8 +41,14 @@ public class Generator {
         return "label" + labelIncrementer.toString();
     }
 
-    public void addVariable(String name) {
-        variables.add(new Variable(name, this.stackSize));
+    public boolean constant(String var) {
+        
+        Variable variable =variables.stream().filter(v -> v.getName().equals(var)).collect(Collectors.toList()).get(0);
+        return variable.isConstant();
+    }
+
+    public void addVariable(String name, boolean isConstant) {
+        variables.add(new Variable(name, this.stackSize, isConstant));
     }
 
     public Generator(NodeProgram program) {

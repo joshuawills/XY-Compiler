@@ -33,13 +33,13 @@ public class Main {
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
         // for (Token x: tokens) 
-        //     System.out.println(x.toString());
+            // System.out.println(x.toString());
             
         Parser myParser = new Parser(tokens);
         NodeProgram myNode = myParser.parseProgram();
 
-        // for (NodeStatement statement: myNode.getStatements())
-        //     System.out.println(statement.toString());
+        for (NodeStatement statement: myNode.getStatements())
+            System.out.println(statement.toString());
 
         Generator myGenerator = new Generator(myNode);
         String contents = myGenerator.generateProgram();
