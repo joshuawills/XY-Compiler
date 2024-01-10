@@ -103,6 +103,42 @@ public class Lexer {
                 continue;
             }
 
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("++")) {
+                appendTokenNoConsume(TokenType.INCREMENT, line, col);
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("--")) {
+                appendTokenNoConsume(TokenType.DECREMENT, line, col);
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("+=")) {
+                appendTokenNoConsume(TokenType.PLUS_EQUAL, line, col);
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("-=")) {
+                appendTokenNoConsume(TokenType.DASH_EQUAL, line, col);
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("*=")) {
+                appendTokenNoConsume(TokenType.STAR_EQUAL, line, col);
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("/=")) {
+                appendTokenNoConsume(TokenType.F_SLASH_EQUAL, line, col);
+                consume(); consume();
+                continue;
+            }
+
             switch (peek().toString()) {
                 case ";":
                     appendToken(TokenType.SEMI); break;
@@ -161,6 +197,8 @@ public class Lexer {
         while (peek() != null && !peek().toString().equals("\n"))
         consume();
         consume();
+        incrementLine();
+        resetCol();
     }
     
     private void handleString() {
@@ -215,6 +253,8 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.ELSE, this.line, real_column); break;
             case "while": 
                 appendTokenNoConsume(TokenType.WHILE, this.line, real_column); break;
+            case "mut": 
+                appendTokenNoConsume(TokenType.MUT, this.line, real_column); break;
             case "out":
                 appendTokenNoConsume(TokenType.OUT, this.line, real_column); break;
             case "true":

@@ -28,13 +28,7 @@ public class Main {
 
     public static void main(String[] args) {
         
-        String filename;
-        if (args.length == 0)
-            filename = "test.xy";
-        else
-            filename = args[0];
-
-
+        String filename = (args.length == 0) ? "test.xy": args[0];
         Main myCompiler = new Main(filename);
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
@@ -44,8 +38,8 @@ public class Main {
         Parser myParser = new Parser(tokens);
         NodeProgram myNode = myParser.parseProgram();
 
-        for (NodeStatement statement: myNode.getStatements())
-            System.out.println(statement.toString());
+        // for (NodeStatement statement: myNode.getStatements())
+        //     System.out.println(statement.toString());
 
         Generator myGenerator = new Generator(myNode);
         String contents = myGenerator.generateProgram();
@@ -56,8 +50,7 @@ public class Main {
             writer.write(macros);
             writer.close();
             Runtime.getRuntime().exec("nasm -felf64 out.asm");
-            // Runtime.getRuntime().exec("ld -o test out.o");
-            Runtime.getRuntime().exec("gcc -no-pie -o test out.o");
+            Runtime.getRuntime().exec("ld -o test out.o");
         } catch (Exception e) {
             e.printStackTrace();
         }

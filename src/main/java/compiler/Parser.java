@@ -149,8 +149,34 @@ public class Parser {
             return new NodeWhile(parseExpression(0), parseScope());
         } else if (isPeek(TokenType.IDENT)) {
             Token ident = expect(TokenType.IDENT);
-            expect(TokenType.ASSIGN);
-            NodeExpression expression = parseExpression(0);
+
+            NodeExpression expression = null;
+            NodeExpression lhs = new IdentExpression(ident);
+            if (tryConsume(TokenType.INCREMENT) != null) { // i++;
+                NodeExpression rhs = new IntLitExpression(new Token(TokenType.INT_LIT, "1", ident.getLine(), ident.getCol()));
+                expression = new BinaryExpression(lhs, rhs, TokenType.PLUS);
+            } else if (tryConsume(TokenType.DECREMENT) != null) { // i--;
+                NodeExpression rhs = new IntLitExpression(new Token(TokenType.INT_LIT, "1", ident.getLine(), ident.getCol()));
+                expression = new BinaryExpression(lhs, rhs, TokenType.DASH);
+            } else if (tryConsume(TokenType.PLUS_EQUAL) != null) {
+                NodeExpression rhs = parseExpression(0);
+                expression = new BinaryExpression(lhs, rhs, TokenType.PLUS);
+            } else if (tryConsume(TokenType.DASH_EQUAL) != null) {
+                NodeExpression rhs = parseExpression(0);
+                expression = new BinaryExpression(lhs, rhs, TokenType.DASH);
+            } else if (tryConsume(TokenType.STAR_EQUAL) != null) {
+                NodeExpression rhs = parseExpression(0);
+                expression = new BinaryExpression(lhs, rhs, TokenType.STAR);
+            } else if (tryConsume(TokenType.F_SLASH_EQUAL) != null) {
+                NodeExpression rhs = parseExpression(0);
+                expression = new BinaryExpression(lhs, rhs, TokenType.F_SLASH);
+            } 
+            
+            
+            else {
+                expect(TokenType.ASSIGN);
+                expression = parseExpression(0);
+            }
             expect(TokenType.SEMI);
             return new NodeAssign(ident, expression);
         }  else if (isPeek(TokenType.OPEN_CURLY)) { // Entered a scope

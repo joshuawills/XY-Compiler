@@ -88,8 +88,8 @@ public class Generator {
 
         assemblyBuffer.add("section .data");
         assemblyBuffer.add("section .text");
-        assemblyBuffer.add("global main\n");
-        assemblyBuffer.add("main:");
+        assemblyBuffer.add("global _start\n");
+        assemblyBuffer.add("_start:");
 
         // Generate Statements
         for (NodeStatement statement: this.program.getStatements())

@@ -1,7 +1,3 @@
-out "hello world";
-int i = 0;
-while i <= 100 {
-    out i;
-    i = i + 1;
-}
-return 3;
+int x = 3;
+out (x * x);
+return 0;

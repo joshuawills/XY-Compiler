@@ -23,6 +23,12 @@ public class BinaryExpression implements NodeExpression {
         this.rhs = two;
     }
 
+    public BinaryExpression(NodeExpression one, NodeExpression two, TokenType operator) {
+        this.lhs = one;
+        this.rhs = two;
+        this.operator = operator;
+    }
+
     public void setOperator(TokenType operator) {
         this.operator = operator;
     }

@@ -44,7 +44,17 @@ public enum TokenType {
     OUT,
     PRINT_S,
 
-    STRING
+    STRING,
+
+    INCREMENT,
+    DECREMENT,
+
+    PLUS_EQUAL,
+    DASH_EQUAL,
+    STAR_EQUAL,
+    F_SLASH_EQUAL,
+    
+    MUT
 }
 
 /* 
