@@ -20,6 +20,8 @@ import compiler.nodes.statement_nodes.conditionals.NodeIf;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicate;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElif;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
+import compiler.nodes.statement_nodes.loops.NodeBreak;
+import compiler.nodes.statement_nodes.loops.NodeContinue;
 import compiler.nodes.statement_nodes.loops.NodeDo;
 import compiler.nodes.statement_nodes.loops.NodeWhile;
 
@@ -207,6 +209,12 @@ public class Parser {
             NodeTerm term = parseTerm(); // reconsider when different terms are added
             expect(TokenType.SEMI);
             return new NodePrint(term);
+        } else if (tryConsume(TokenType.CONTINUE) != null) {
+            expect(TokenType.SEMI);
+            return new NodeContinue();
+        } else if (tryConsume(TokenType.BREAK) != null) {
+            expect(TokenType.SEMI);
+            return new NodeBreak();
         }
         return null;
     }

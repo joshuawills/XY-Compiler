@@ -56,5 +56,8 @@ public enum TokenType {
     
     MUT,
 
-    DO
+    DO,
+
+    CONTINUE,
+    BREAK,
 }

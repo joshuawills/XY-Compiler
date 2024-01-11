@@ -16,6 +16,33 @@ public class Generator {
     private String endLabel = null;
     private Boolean printMacro = false;
 
+    private ArrayList<String> topLabels = new ArrayList<>();
+    private ArrayList<String> bottomLabels = new ArrayList<>();
+
+    public void addTopLabel(String topLabel) {
+        this.topLabels.add(topLabel);
+    }
+
+    public void addBottomLabel(String bottomLabel) {
+        this.bottomLabels.add(bottomLabel);
+    } 
+
+    public String getTopLabel() {
+        if (this.topLabels.size() == 0)
+            return null;
+        return this.topLabels.get(topLabels.size() - 1);
+    }
+
+    public String getBottomLabel() {
+        if (this.bottomLabels.size() == 0)
+            return null;
+        return this.bottomLabels.get(bottomLabels.size() - 1);
+    }
+
+    public void exitLoop() {
+        this.topLabels.remove(topLabels.size() - 1);
+        this.bottomLabels.remove(bottomLabels.size() - 1);
+    }
     public void setMacro() {
         this.printMacro = true;
     }

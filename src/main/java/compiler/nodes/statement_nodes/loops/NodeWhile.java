@@ -35,6 +35,9 @@ public class NodeWhile implements NodeStatement{
         String labelTop = generator.createLabel();
         String labelBottom = generator.createLabel();
 
+        generator.addTopLabel(labelTop);
+        generator.addBottomLabel(labelBottom);
+
         generator.appendContents(labelTop + ": ;; return to while " + expression.toString());
         expression.operator(generator);
         generator.pop("rax");
@@ -43,6 +46,9 @@ public class NodeWhile implements NodeStatement{
         scope.operator(generator);
         generator.appendContents("    jmp " + labelTop);
         generator.appendContents(labelBottom + ": ");
+
+
+    generator.exitLoop();
     }
 
 }
