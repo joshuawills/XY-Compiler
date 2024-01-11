@@ -32,8 +32,8 @@ public class Main {
         Main myCompiler = new Main(filename);
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
-        // for (Token x: tokens) 
-            // System.out.println(x.toString());
+        for (Token x: tokens) 
+            System.out.println(x.toString());
             
         Parser myParser = new Parser(tokens);
         NodeProgram myNode = myParser.parseProgram();

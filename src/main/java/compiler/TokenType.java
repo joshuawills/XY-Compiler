@@ -54,5 +54,7 @@ public enum TokenType {
     STAR_EQUAL,
     F_SLASH_EQUAL,
     
-    MUT
+    MUT,
+
+    DO
 }

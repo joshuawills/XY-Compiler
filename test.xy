@@ -1,3 +1,8 @@
-mut int x = 0;
-x++;
+mut int x = 1;
+
+do {
+    out x;
+	   x++;
+} while x != 10;
+
 return x;
