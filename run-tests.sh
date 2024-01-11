@@ -76,7 +76,7 @@ do
     if [ -f "$testFile" ]
     then 
         # Also need to compare stdout
-        ./test > "tests/current_output.txt"
+        ./a.out > "tests/current_output.txt"
         if [ "$EXIT_CODE" -ne "$?" ]
         then 
             echo "${SUMMARY}: ${RED}Fail${RESET} for ${YELLOW}${file}${RESET}, differing exit codes"
@@ -98,7 +98,7 @@ do
 
     else
         # Don't bother comparing stdout
-        ./test
+        ./a.out
         if [ "$EXIT_CODE" -eq "$?" ]
         then
             echo "${SUMMARY}: ${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, same exit code"

@@ -1,9 +1,13 @@
 package compiler;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import compiler.nodes.NodeProgram;
 import compiler.nodes.statement_nodes.NodeStatement;
@@ -11,35 +15,129 @@ import compiler.nodes.statement_nodes.NodeStatement;
 public class Main {
 
     private String source;
-
-    public String getFileSource() {
-        return this.source;
-    }
-
-    public Main(String file_path) {
+    private HashMap<String, String> commandArgs = new HashMap<>();
+    
+    public Main() {}
+   
+    private void setSource(String file_path) {
         try {
             this.source = Files.readString(Paths.get(file_path));
         } catch (Exception e) {
-            this.source = "";
-            System.exit(1);
+            Error.handleError("KEY", "Unable to open specified file, check it exists");
         }
     }
 
+    private String getFileSource() {
+        return this.source;
+    }
+
+    private void help() {
+        System.out.println("XY Compiler Options:");
+        System.out.println("\t-h | --help => Provides summary of CL arguments and use of program");
+        System.out.println("\t-r | --run => Will run the program after compilation");
+        System.out.println("\t-o | --out => Specify the name of the executable (default to a.out)");
+        System.out.println("\t-t | --tokens => Logs to stdout a summary of all the tokens");
+        System.out.println("\t-p | --parser => Logs to stdout a summary of the parse tree");
+        System.out.println("\t-a | --assembly => Generates a .asm file instead of an executable");
+        System.out.println("\t-q | --quiet  => Silence any non-crucial warnings");
+        System.out.println("\t-l | --load  => Load in compiler settings");
+        System.out.println("\nDeveloped by Joshua Wills 2024");
+        System.out.println("See https://github.com/joshuawills/XY-Compiler for documentation and source code");
+        System.exit(0);
+    }
+
+    private void handleCLArgs(ArrayList<String> args) {
+
+        for (int i = 0; i < args.size(); i++) {
+            String arg = args.get(i);
+            switch (arg) {
+                case "-h":
+                case "--help":
+                    this.commandArgs.put("help", "true");
+                case "-r":
+                case "--run":
+                    this.commandArgs.put("run", "true");
+                    break;
+                case "-o":
+                case "--out":
+                    String fileName = args.get(i + 1);
+                    if (fileName == null) break;
+                    this.commandArgs.put("executableName", fileName);
+                    i++;
+                    break;
+                case "-t":
+                case "--tokens":
+                    this.commandArgs.put("tokensLog", "true");
+                    break;
+                case "-p":
+                case "--parser":
+                    this.commandArgs.put("parserLog", "true");
+                    break;
+                case "-a":
+                case "--assembly":
+                    this.commandArgs.put("assembly", "true");
+                    break;
+                case "-q":
+                case "--quiet":
+                    this.commandArgs.put("quiet", "true");
+                    break;
+                case "-l":
+                case "--load":
+                    String loadName = args.get(i + 1);
+                    if (loadName == null) break;
+                    this.commandArgs.put("load", loadName);
+                    i++;
+                    break;
+                default:
+                    // Assume you've provided the filename then
+                    this.commandArgs.put("sourceName", arg);
+            }
+        }
+
+    }
+
+    private void handleShellCommand(String command) {
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            int exitCode = process.waitFor();
+            if (exitCode != 0)
+                Error.handleError("KEY", "Failed to execute shell command: " + command);
+
+        } catch (Exception e) {
+            Error.handleError("KEY", "Failed to execute shell command: " + command);
+        }
+    }
 
     public static void main(String[] args) {
         
-        String filename = (args.length == 0) ? "test.xy": args[0];
-        Main myCompiler = new Main(filename);
+        Main myCompiler = new Main();
+        myCompiler.handleCLArgs(new ArrayList<>(Arrays.asList(args)));
+
+        if (myCompiler.commandArgs.containsKey("help"))
+            myCompiler.help();
+
+        if (!myCompiler.commandArgs.containsKey("sourceName"))
+            Error.handleError("KEY", "No source filename provided");
+
+        String filePath = myCompiler.commandArgs.get("sourceName");
+        myCompiler.setSource(filePath);
+
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
         ArrayList<Token> tokens = myLexer.tokenize();
-        for (Token x: tokens) 
-            System.out.println(x.toString());
+        if (myCompiler.commandArgs.containsKey("tokensLog")) {
+            System.out.println("TOKENS: ");
+            for (Token x: tokens) 
+                System.out.println("\t" + x.toString());
+        }
             
         Parser myParser = new Parser(tokens);
         NodeProgram myNode = myParser.parseProgram();
 
-        for (NodeStatement statement: myNode.getStatements())
-            System.out.println(statement.toString());
+        if (myCompiler.commandArgs.containsKey("parserLog")) {
+            System.out.println("PARSER: ");
+            for (NodeStatement statement: myNode.getStatements())
+                System.out.println("\t" + statement.toString());
+        }
 
         Generator myGenerator = new Generator(myNode);
         String contents = myGenerator.generateProgram();
@@ -49,8 +147,31 @@ public class Main {
             String macros = Files.readString(Paths.get("src/main/java/compiler/macros.txt"));
             writer.write(macros);
             writer.close();
-            Runtime.getRuntime().exec("nasm -felf64 out.asm");
-            Runtime.getRuntime().exec("ld -o test out.o");
+
+            if (myCompiler.commandArgs.containsKey("assembly"))
+                System.exit(0);
+
+            myCompiler.handleShellCommand("nasm -felf64 out.asm");
+            myCompiler.handleShellCommand("rm out.asm");
+            String executableName = "a.out";
+            if (myCompiler.commandArgs.containsKey("executableName"))
+                executableName = myCompiler.commandArgs.get("executableName");
+
+            myCompiler.handleShellCommand(String.format("ld -o %s out.o", executableName));
+            myCompiler.handleShellCommand("rm out.o");
+            if (myCompiler.commandArgs.containsKey("run"))  {
+                ProcessBuilder runProcessBuilder = new ProcessBuilder("./" + executableName);
+                runProcessBuilder.redirectErrorStream(true);
+                Process runProcess = runProcessBuilder.start();
+                BufferedReader runReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
+                String runOutput;
+                while ((runOutput = runReader.readLine()) != null)
+                    System.out.println(runOutput);
+                int runExitCode = runProcess.waitFor();
+                if (runExitCode != 0)
+                    Error.handleError("KEY", "error with running executable");
+
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

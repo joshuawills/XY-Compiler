@@ -1,7 +1,1 @@
-mut int i = 0;
-loop {
-    out i;
-    if i == 5 { break;  }
-    i++;
-}
-return 0;
+out (2 * 3 / 1);
