@@ -57,7 +57,20 @@ do {
 } while x != 0;
 ```
 
-4. break and continue
+4. Loop
+
+*an infinite loop*
+
+```xy
+mut int x = 0;
+loop {
+    out x;
+    if x == 5 { break; }
+    x++;
+}
+```
+
+5. break and continue
 
 *Only apply to the innermost-loop*
 
