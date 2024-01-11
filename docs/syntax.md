@@ -119,5 +119,12 @@ The following statements are also possible, and mimic C.
 
 ++, --, +=, -=, *=, /=. They can only be applied to pre-declared variables.
 
+## Comments
+
+Comments follow standard C-style. 
+
+Use // for single line comments<br />
+Use /* ... */ for multi-line comments
+
 
 
