@@ -60,4 +60,6 @@ public enum TokenType {
 
     CONTINUE,
     BREAK,
+
+    LOOP
 }

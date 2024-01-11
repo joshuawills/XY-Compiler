@@ -23,6 +23,7 @@ import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
 import compiler.nodes.statement_nodes.loops.NodeBreak;
 import compiler.nodes.statement_nodes.loops.NodeContinue;
 import compiler.nodes.statement_nodes.loops.NodeDo;
+import compiler.nodes.statement_nodes.loops.NodeLoop;
 import compiler.nodes.statement_nodes.loops.NodeWhile;
 
 public class Parser {
@@ -158,8 +159,10 @@ public class Parser {
             return new NodeIf(parseExpression(0), parseScope(), parseIfPred());
         } else if (tryConsume(TokenType.WHILE) != null) {
             return new NodeWhile(parseExpression(0), parseScope());
+        } else if (tryConsume(TokenType.LOOP) != null) {
+            NodeScope scope = parseScope();
+            return new NodeLoop(scope);
         } else if (tryConsume(TokenType.DO) != null) {
-
             NodeScope scope = parseScope();
             expect(TokenType.WHILE);
             NodeExpression expression = parseExpression(0);

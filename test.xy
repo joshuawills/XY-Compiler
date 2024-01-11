@@ -1,17 +1,7 @@
 mut int i = 0;
-mut int y = 0;
-while i < 10 {
-
-    while y < 10 {
-
-        if (i == 5) { break; }
-								out i;
-        y++;
-
-				}
-				y = 0;
-				i++;
-
+loop {
+    out i;
+    if i == 5 { break;  }
+    i++;
 }
-
-return i;
+return 0;
