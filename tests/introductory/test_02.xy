@@ -1,5 +1,6 @@
 // 8
 // Return variable
-
-int x = 8;
-return x;
+define main() -> int {  
+    int x = 8;
+    return x;
+}

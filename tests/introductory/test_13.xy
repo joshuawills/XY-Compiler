@@ -1,5 +1,7 @@
 // 12
 // Handle negative numbers
 
-s32 x = (-1 * 13) * 2;
-return x + 26 + 12;
+define main() -> int {  
+    s32 x = (-1 * 13) * 2;
+    return x + 26 + 12;
+}

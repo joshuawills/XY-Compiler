@@ -1,5 +1,7 @@
 // 12
 // Basic binary hierarchy
-int x = 1 + 2 * 3;
-int y = x + 5;
-return y;
+define main() -> int {  
+    int x = 1 + 2 * 3;
+    int y = x + 5;
+    return y;
+}

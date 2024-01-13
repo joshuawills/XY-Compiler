@@ -1,6 +1,7 @@
 // 2
 // Brackets BODMAS
-
-int x = (10 - 2 * 3) / 2;
-int y = x + 5;
-return x; 
+define main() -> int {  
+    int x = (10 - 2 * 3) / 2;
+    int y = x + 5;
+    return x;
+}

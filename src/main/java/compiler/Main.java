@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeProgram;
-import compiler.nodes.statement_nodes.NodeStatement;
 
 public class Main {
 
@@ -134,12 +134,16 @@ public class Main {
         NodeProgram myNode = myParser.parseProgram();
 
         if (myCompiler.commandArgs.containsKey("parserLog")) {
-            System.out.println("PARSER: ");
-            for (NodeStatement statement: myNode.getStatements())
-                System.out.println("\t" + statement.toString());
+            System.out.println("PARSER: \n");
+            for (NodeFunction function: myNode.getNodeFunctions())
+                System.out.println(function.toString());
         }
 
         Generator myGenerator = new Generator(myNode);
+
+        Verifier myVerifier = new Verifier(myNode);
+        myVerifier.verify();
+
         String contents = myGenerator.generateProgram();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("out.asm"));

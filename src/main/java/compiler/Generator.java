@@ -1,7 +1,9 @@
 package compiler;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeProgram;
 import compiler.nodes.statement_nodes.NodeStatement;
 
@@ -69,7 +71,6 @@ public class Generator {
     }
 
     public boolean constant(String var) {
-        
         Variable variable =variables.stream().filter(v -> v.getName().equals(var)).collect(Collectors.toList()).get(0);
         return variable.isConstant();
     }
@@ -120,22 +121,36 @@ public class Generator {
 
     public String generateProgram() {
 
+        NodeProgram program = this.program;
+
+        NodeFunction mainFunction = program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals("main")).collect(Collectors.toList()).get(0);
+        assemblyBuffer.add("section .bss");
+        assemblyBuffer.add("    digitSpace resb 100 ; storing the string itself");
+        assemblyBuffer.add("    digitSpacePos resb 8 ; enough space to store a register\n");
+
         assemblyBuffer.add("section .data");
         assemblyBuffer.add("section .text");
         assemblyBuffer.add("global _start\n");
         assemblyBuffer.add("_start:");
 
         // Generate Statements
-        for (NodeStatement statement: this.program.getStatements())
+        for (NodeStatement statement: mainFunction.getStatements().getStatements())
             statement.operator(this);
-
-        assemblyBuffer.add(0, "    digitSpacePos resb 8 ; enough space to store a register\n");
-        assemblyBuffer.add(0, "    digitSpace resb 100 ; storing the string itself");
-        assemblyBuffer.add(0, "section .bss");
 
         assemblyBuffer.add("\n    ;; default exit\n    mov rax, 60");
         assemblyBuffer.add("    mov rdi, 0");
         assemblyBuffer.add("    syscall");
+
+        // Now handle all the other functions lol
+        List<NodeFunction> nonMain = program.getNodeFunctions().stream().filter(f -> !f.getFunctionName().equals("main")).collect(Collectors.toList());
+        for (NodeFunction func: nonMain) {
+            appendContents(func.getFunctionName() + ":");
+            for (NodeStatement statement: func.getStatements().getStatements())
+                statement.operator(this);
+            appendContents("    ret");
+        }
+
+
         return String.join("\n", assemblyBuffer);
     }
 

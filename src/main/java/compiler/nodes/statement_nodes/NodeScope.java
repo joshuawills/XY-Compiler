@@ -15,7 +15,7 @@ public class NodeScope implements NodeStatement {
 
         String buffer = new String("{\n");
         for (NodeStatement x: statements) {
-            buffer = buffer.concat("    " + x.toString());
+            buffer = buffer.concat("\n    " + x.toString());
         }
         buffer = buffer.concat("\n}");
         return buffer;

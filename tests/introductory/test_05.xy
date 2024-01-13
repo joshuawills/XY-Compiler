@@ -1,5 +1,7 @@
 // 3
 // Simple addition 2
-int y = 1;
-int x = 2 + y;
-return x;
+define main() -> int {  
+    int y = 1;
+    int x = 2 + y;
+    return x;
+}

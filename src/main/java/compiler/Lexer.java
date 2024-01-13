@@ -132,6 +132,12 @@ public class Lexer {
                 continue;
             }
 
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("->")) {
+                appendTokenNoConsume(TokenType.RETURN_SPEC, line, col);
+                consume(); consume();
+                continue;
+            }
+
             if (this.peekAhead(2) != null && this.peekAhead(2).equals("/=")) {
                 appendTokenNoConsume(TokenType.F_SLASH_EQUAL, line, col);
                 consume(); consume();
@@ -165,6 +171,8 @@ public class Lexer {
                     appendToken(TokenType.GREATER_THAN); break;
                 case "!":
                     appendToken(TokenType.NEGATE); break;
+                case ",":
+                    appendToken(TokenType.COMMA); break;
                 default:
                     Error.handleError("LEXER", "Unknown punctuation (" + peek() + ")\n    line: " + this.line + ", col: " + this.col);
             }
@@ -241,9 +249,11 @@ public class Lexer {
         switch (this.buffer) {
             case "return":
                 appendTokenNoConsume(TokenType.RETURN, this.line, real_column); break;
+            case "define":
+                appendTokenNoConsume(TokenType.DEFINE, this.line, real_column); break;
             case "int":
             case "s32":
-                appendTokenNoConsume(TokenType.INIT_INT, this.line, real_column); break;
+                appendTokenNoConsume(TokenType.INT, this.line, real_column); break;
             case "if":
                 appendTokenNoConsume(TokenType.IF, this.line, real_column); break;
             case "else if":

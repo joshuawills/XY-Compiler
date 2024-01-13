@@ -2,23 +2,22 @@ package compiler.nodes;
 
 import java.util.ArrayList;
 
-import compiler.nodes.statement_nodes.NodeStatement;
 
 public class NodeProgram {
     
-    private ArrayList<NodeStatement> statements = new ArrayList<>();
+    private ArrayList<NodeFunction> functions = new ArrayList<>();
 
-    public NodeProgram(ArrayList<NodeStatement> statements) {
-        this.statements = statements;
+    public NodeProgram(ArrayList<NodeFunction> functions) {
+        this.functions = functions;
     }
 
     public NodeProgram() {}
 
-    public void appendStatement(NodeStatement s) {
-        this.statements.add(s);
+    public void appendFunction(NodeFunction f) {
+        this.functions.add(f);
     }
 
-    public ArrayList<NodeStatement> getStatements() {
-        return this.statements;
+    public ArrayList<NodeFunction> getNodeFunctions() {
+        return this.functions;
     }
 }

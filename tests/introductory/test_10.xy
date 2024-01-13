@@ -1,11 +1,14 @@
 // 7
 // Constructing scope
+define main() -> int {  
 
-int x = (10 - 2 * 3) / 2;
+    int x = (10 - 2 * 3) / 2;
 
-{
-    int y = 2;
+    {
+        int y = 2;
+    }
+    int y = x + 5;
+
+    return y;
+
 }
-int y = x + 5;
-
-return y;

@@ -1,3 +1,5 @@
 // 3
 // Return digit
-return 3;
+define main() -> int {  
+    return 3;
+}
