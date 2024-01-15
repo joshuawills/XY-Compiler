@@ -14,14 +14,7 @@ public class NodeContinue implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        
-        String label = generator.getTopLabel();
-        if (label == null) {
-            Error.handleError("GENERATOR", "Attempted use of continue outside of loop");
-        }
-        generator.appendContents("    jmp " + label);
-
-
+        generator.appendContents("    continue;\n");
     }
 
 

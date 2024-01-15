@@ -1,14 +1,14 @@
+// 1
+// Basic if 2
 
-define getSum(int x, int y, int z) -> int {
-    out 3;
-    return x + y + z;
+define getInt(int x) -> int {
+    out "current x is: ";
+    out x;
+    return 5 + x;
 }
 
-define main() -> int {
-    
-    int x = 3;
-    int y = 4;
-    int z = 5;
-    int what = getSum(3, 4, 5);
-    out what;
+define main() -> int {  
+
+    mut int x = getInt(getInt(5));
+    out x;
 }

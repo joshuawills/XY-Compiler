@@ -9,6 +9,17 @@ The xy programming language follows a standard C-like language syntax, with a fe
 - round braces are not required for conditionals
 - program will exit code 0 by default if not provided
 
+##  Functions
+
+All code must be abstracted into functions. Program flow begins at the main function.
+Function syntax is as follows
+
+```
+define <funcName>(<parameters>) -> <returnType> {
+    <scope>
+}
+```
+
 ## Variable declaration
 
 In XY, all variable declarations are constant by default. Variables can only be reassigned if they are specifically denoted as being mutable, which is done with the **mut** keyword.

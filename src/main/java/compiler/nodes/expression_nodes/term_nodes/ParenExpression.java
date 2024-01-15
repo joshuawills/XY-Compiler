@@ -22,7 +22,9 @@ public class ParenExpression extends NodeTerm {
     }
 
     public void operator(Generator generator) {
+        generator.appendContents("(");
         getExpression().operator(generator);
+        generator.appendContents(")");
     }
 
 }

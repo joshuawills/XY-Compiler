@@ -20,16 +20,18 @@ public class FuncCallNode extends NodeTerm {
         for (NodeTerm term: this.parameters) {
             buffer = buffer.concat(term.toString() + ", ");
         }
+        if (buffer.length() > 2) {
+            buffer = buffer.substring(0, buffer.length() - 2);
+        }
 
-        return String.format("%s(%s)", functionName, buffer.substring(0, buffer.length() - 2));
+        return String.format("%s(%s)", functionName, buffer);
     }
 
     public void operator(Generator generator) {
-        for (NodeTerm term: parameters) {
+        generator.appendContents(functionName + "(");
+        for (NodeTerm term: parameters)
             term.operator(generator);
-            generator.push("rax");
-        }
-        generator.appendContents("    call " + functionName);
+        generator.appendContents(")");
 
     }
 

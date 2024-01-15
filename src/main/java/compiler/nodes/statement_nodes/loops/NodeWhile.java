@@ -32,23 +32,10 @@ public class NodeWhile implements NodeStatement{
     }
 
     public void operator(Generator generator) {
-        String labelTop = generator.createLabel();
-        String labelBottom = generator.createLabel();
-
-        generator.addTopLabel(labelTop);
-        generator.addBottomLabel(labelBottom);
-
-        generator.appendContents(labelTop + ": ;; return to while " + expression.toString());
+        generator.appendContents("    while (");
         expression.operator(generator);
-        generator.pop("rax");
-        generator.appendContents("    test rax, rax");
-        generator.appendContents("    jz " + labelBottom);
+        generator.appendContents(")\n");
         scope.operator(generator);
-        generator.appendContents("    jmp " + labelTop);
-        generator.appendContents(labelBottom + ": ");
-
-
-    generator.exitLoop();
     }
 
 }

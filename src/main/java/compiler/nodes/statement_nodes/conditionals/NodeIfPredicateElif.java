@@ -59,21 +59,12 @@ public class NodeIfPredicateElif extends NodeIfPredicate {
     }
 
     public void operator(Generator generator) {
+        generator.appendContents("    else if (");
         expression.operator(generator);
-        generator.pop("rax");
-        String label = generator.createLabel();
-        generator.appendContents("    test rax, rax");
-        if (predicate == null) {
-            generator.appendContents("    jz " + generator.getEndLabel() + " ;; elif" + expression.toString());
-        } else {
-            generator.appendContents("    jz " + label + " ;; elif" + expression.toString());
-        }
+        generator.appendContents(") \n");
         scope.operator(generator);
-        generator.appendContents("    jmp " + generator.getEndLabel());
-        if (this.predicate != null) {
-            generator.appendContents(label + ":");
-            predicate.operator(generator);            
-        }
+        if (predicate != null)
+            predicate.operator(generator);
     }
 
 }

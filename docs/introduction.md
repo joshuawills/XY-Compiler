@@ -4,13 +4,13 @@
 
 The XY programming language is a hobby programming language I am developing to better understand the inner workings of compilers and also just for fun :) . 
 
-It is a compiled programming language that generates x86_64 assembly code, which is then made into an executable using *nasm* and *ld*.
+It is a compiled programming language that generates C code, which is then made into an executable using *gcc* and.
 
 Currently this compiler is only developed for Linux operating systems, so will not work on Windows. I hope to add Windows support later however.
 
 ## Getting Started With The XY Language
 
-To use the XY compiler yourself, make sure you have *nasm* and *ld* installed onto your desktop.
+To use the XY compiler yourself, make sure you have *gcc* installed onto your desktop.
 You will also require the *gradle* build kit and the JDK as well.
 
 Regarding compatability, these are the versions I'm using to develop this compiler.
@@ -65,7 +65,7 @@ return 0;
 | -o <filename> | --out <filename> | Specify the name of the executable (defaults to *a.out*) | 
 | -t | --tokens | logs to stdout a summary of all the tokens |
 | -p | --parser | logs to stdout a summary of the parse tree |
-| -a | --assembly | generates a .asm file instead of an executable |
+| -a | --assembly | generates a .c file instead of an executable |
 | -q | --quiet | silence any non-crucial warnings |
 | -l <filename> | --load | load in compiler settings (read compiler settings header for more info)| |
 

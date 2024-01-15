@@ -25,20 +25,8 @@ public class NodeLoop implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-
-        String labelTop = generator.createLabel();
-        String labelBottom = generator.createLabel();
-
-        generator.addTopLabel(labelTop);
-        generator.addBottomLabel(labelBottom);
-
-        generator.appendContents(labelTop + ": ;; return to loop ");
+        generator.appendContents("    while (1)\n");
         scope.operator(generator);
-        generator.appendContents("    jmp " + labelTop);
-        generator.appendContents(labelBottom + ": ");
-        generator.exitLoop();
-
-        
     }
 
 }
