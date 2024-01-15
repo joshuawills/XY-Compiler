@@ -39,6 +39,7 @@ public class Token {
                 return 4;
             case STAR: 
             case F_SLASH:
+            case PERCENT:
                 return 5;
             default:
                 return null;

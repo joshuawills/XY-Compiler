@@ -1,14 +1,9 @@
-// 1
-// Basic if 2
-
-define getInt(int x) -> int {
-    out "current x is: ";
-    out x;
-    return 5 + x;
+define main() -> int {
+    if isEven(5) out "This number is even\n";
+    else out "This number is odd!\n";
+    return 0;
 }
 
-define main() -> int {  
-
-    mut int x = getInt(getInt(5));
-    out x;
+define isEven(int x) -> int {
+    return (x % 2) == 0;
 }
