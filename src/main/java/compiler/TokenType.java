@@ -32,7 +32,7 @@ public enum TokenType {
     ELSE,
     WHILE,
     OUT,
-    PRINT_S,
+    IN,
     STRING,
     INCREMENT,
     DECREMENT,

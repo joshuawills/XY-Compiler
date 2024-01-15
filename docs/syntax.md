@@ -89,6 +89,18 @@ loop {
 
 Currently the only "print" method supported is **out**, that can log static strings or any kind of integer
 
+## Reading from stdin
+
+Currently the only possible thing to read in is integers, using scanf under the hood. Use as follows
+
+```
+define main() -> int {
+    mut int x = in "What's your favourite number? ";
+    out "Your favourite number is... "; out x;
+    return 0;
+}
+```
+
 ## Exit code
 
 Using return <arithmetic operation\> will specify the exit code for your program.
@@ -119,10 +131,14 @@ These are all lower priority than the arithmetic operators and allow for advance
 1. Brackets
 2. Division, multiplication and modulo
 3. Addition and subtraction
-4. ||
-5. &&
-6. ==, !=
-7. <=, <, >=, >
+4. Bitwise left shift and bitwise right shift
+5. greater than, less than, greater eq, less eq
+6. equal and not equal
+7. bitwise and
+8. bitwise xor
+9. bitwiseor
+10. and
+11. or
 
 They keywords **true** and **false** can be used in these contexts as well, evaluating to 0 and 1 respectively.
 

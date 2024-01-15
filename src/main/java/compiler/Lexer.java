@@ -286,6 +286,8 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.MUT, this.line, real_column); break;
             case "out":
                 appendTokenNoConsume(TokenType.OUT, this.line, real_column); break;
+            case "in":
+                appendTokenNoConsume(TokenType.IN, this.line, real_column); break;
             case "do":
                 appendTokenNoConsume(TokenType.DO, this.line, real_column); break;
             case "continue":

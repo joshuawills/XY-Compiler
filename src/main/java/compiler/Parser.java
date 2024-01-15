@@ -17,6 +17,7 @@ import compiler.nodes.statement_nodes.NodeAssign;
 import compiler.nodes.statement_nodes.NodeLet;
 import compiler.nodes.statement_nodes.NodePrint;
 import compiler.nodes.statement_nodes.NodeReturn;
+import compiler.nodes.statement_nodes.NodeScan;
 import compiler.nodes.statement_nodes.NodeScope;
 import compiler.nodes.statement_nodes.NodeStatement;
 import compiler.nodes.statement_nodes.conditionals.NodeIf;
@@ -224,6 +225,12 @@ public class Parser {
 
             Token ident = expect(TokenType.IDENT);
             expect(TokenType.ASSIGN);
+
+            if (tryConsume(TokenType.IN) != null) {
+                String value = expect(TokenType.STRING).getValue();
+                expect(TokenType.SEMI);
+                return new NodeScan(value, ident, true);
+            }
             NodeExpression expression = parseExpression(0);
             expect(TokenType.SEMI);
             return new NodeLet(ident, expression, true);
@@ -233,6 +240,13 @@ public class Parser {
             expect(TokenType.INT);
             Token ident = expect(TokenType.IDENT);
             expect(TokenType.ASSIGN);
+
+            if (tryConsume(TokenType.IN) != null) {
+                String value = expect(TokenType.STRING).getValue();
+                expect(TokenType.SEMI);
+                return new NodeScan(value, ident, true);
+            }
+
             NodeExpression expression = parseExpression(0);
             expect(TokenType.SEMI);
             return new NodeLet(ident, expression, false);

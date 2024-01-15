@@ -1,7 +1,5 @@
 define main() -> int {
-
     out factorial(5);
-
     return 0;
 }
 
