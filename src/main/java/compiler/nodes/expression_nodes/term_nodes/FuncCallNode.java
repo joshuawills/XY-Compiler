@@ -29,8 +29,12 @@ public class FuncCallNode extends NodeTerm {
 
     public void operator(Generator generator) {
         generator.appendContents(functionName + "(");
-        for (NodeTerm term: parameters)
+        int i = 0;
+        for (NodeTerm term: parameters) {
             term.operator(generator);
+            if (i != parameters.size() - 1) generator.appendContents(", ");
+            i++;
+        }
         generator.appendContents(")");
 
     }

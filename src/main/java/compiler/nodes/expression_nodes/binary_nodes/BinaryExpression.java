@@ -82,6 +82,16 @@ public class BinaryExpression implements NodeExpression {
                 return String.format("%s || %s", getLHS().toString(), getRHS().toString());
             case PERCENT:
                 return String.format("%s %% %s", getLHS().toString(), getRHS().toString());
+            case BITWISE_AND:
+                return String.format("%s & %s", getLHS().toString(), getRHS().toString());
+            case BITWISE_OR:
+                return String.format("%s | %s", getLHS().toString(), getRHS().toString());
+            case BITWISE_XOR:
+                return String.format("%s ^ %s", getLHS().toString(), getRHS().toString());
+            case BITWISE_LEFT_SHIFT:
+                return String.format("%s << %s", getLHS().toString(), getRHS().toString());
+            case BITWISE_RIGHT_SHIFT:
+                return String.format("%s >> %s", getLHS().toString(), getRHS().toString());
             default:
                 return "{}";
         }
@@ -128,6 +138,21 @@ public class BinaryExpression implements NodeExpression {
                 break;
             case PERCENT:
                 generator.appendContents(" % ");
+                break;
+            case BITWISE_AND:
+                generator.appendContents(" & ");
+                break;
+            case BITWISE_OR:
+                generator.appendContents(" | ");
+                break;
+            case BITWISE_XOR:
+                generator.appendContents(" ^ ");
+                break;
+            case BITWISE_LEFT_SHIFT:
+                generator.appendContents(" << ");
+                break;
+            case BITWISE_RIGHT_SHIFT:
+                generator.appendContents(" >> ");
                 break;
             default:   
                 Error.handleError("GENERATOR", "Unknown operator: " + this.toString());

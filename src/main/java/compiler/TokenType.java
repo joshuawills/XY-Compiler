@@ -48,5 +48,10 @@ public enum TokenType {
     DEFINE,
     RETURN_SPEC,
     COMMA,
-    PERCENT
+    PERCENT,
+    BITWISE_OR,
+    BITWISE_AND,
+    BITWISE_XOR,
+    BITWISE_LEFT_SHIFT,
+    BITWISE_RIGHT_SHIFT,
 }

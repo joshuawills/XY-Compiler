@@ -174,6 +174,11 @@ public class Parser {
                 case DASH:
                 case F_SLASH:
                 case PERCENT:
+                case BITWISE_AND:
+                case BITWISE_LEFT_SHIFT:
+                case BITWISE_OR:
+                case BITWISE_RIGHT_SHIFT:
+                case BITWISE_XOR:
                     myExpression.setOperator(operator.getType());
                     break;
                 default:

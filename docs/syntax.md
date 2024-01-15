@@ -117,7 +117,7 @@ These are all lower priority than the arithmetic operators and allow for advance
 **Revised precedence**
 
 1. Brackets
-2. Division and multiplication
+2. Division, multiplication and modulo
 3. Addition and subtraction
 4. ||
 5. &&

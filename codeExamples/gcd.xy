@@ -13,7 +13,7 @@ define gcd(int a, int b) -> int {
 }
 
 define main() -> int {
-    int a = 72; int b = 68;
+    int a = 98; int b = 56;
     out gcd(a, b);
     return 0;
 }

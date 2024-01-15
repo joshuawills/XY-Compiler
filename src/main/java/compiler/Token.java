@@ -20,29 +20,38 @@ public class Token {
         this.col = col;
     }
     public static Integer getBinaryPrecedenceLevel(TokenType type) {
+        // https://www.tutorialspoint.com/cprogramming/c_operators_precedence.htm
         switch (type) {
-            
-            case GREATER_EQ:
-            case GREATER_THAN:
-            case LESS_THAN:
-            case LESS_EQ:
+            case OR_LOGIC:
                 return 0;
+            case AND_LOGIC:
+                return 1;
+            case BITWISE_OR:
+                return 2;
+            case BITWISE_XOR:
+                return 3;
+            case BITWISE_AND:
+                return 4;
             case EQUAL:
             case NOT_EQUAL:
-                return 1;
-            case AND_LOGIC:
-                return 2;
-            case OR_LOGIC:
-                return 3;
+                return 5;
+            case LESS_THAN:
+            case LESS_EQ:
+            case GREATER_EQ:
+            case GREATER_THAN:
+                return 6;
+            case BITWISE_LEFT_SHIFT:
+            case BITWISE_RIGHT_SHIFT:
+                return 7;
             case PLUS:
             case DASH:
-                return 4;
-            case STAR: 
+                return 8;
+            case STAR:
             case F_SLASH:
             case PERCENT:
-                return 5;
+                return 9;
             default:
-                return null;
+                return -1;
         }
     }
 

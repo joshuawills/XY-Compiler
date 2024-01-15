@@ -144,6 +144,18 @@ public class Lexer {
                 continue;
             }
 
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals("<<")) {
+                appendTokenNoConsume(TokenType.BITWISE_LEFT_SHIFT, line, col);
+                consume(); consume();
+                continue;
+            }
+
+            if (this.peekAhead(2) != null && this.peekAhead(2).equals(">>")) {
+                appendTokenNoConsume(TokenType.BITWISE_RIGHT_SHIFT, line, col);
+                consume(); consume();
+                continue;
+            }
+
             switch (peek().toString()) {
                 case ";":
                     appendToken(TokenType.SEMI); break;
@@ -175,6 +187,12 @@ public class Lexer {
                     appendToken(TokenType.COMMA); break;
                 case "%":
                     appendToken(TokenType.PERCENT); break;
+                case "&":
+                    appendToken(TokenType.BITWISE_AND); break;
+                case "|":
+                    appendToken(TokenType.BITWISE_OR); break;
+                case "^":
+                    appendToken(TokenType.BITWISE_XOR); break;
                 default:
                     Error.handleError("LEXER", "Unknown punctuation (" + peek() + ")\n    line: " + this.line + ", col: " + this.col);
             }
