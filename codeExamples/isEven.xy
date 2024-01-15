@@ -1,0 +1,12 @@
+define main() -> int {
+    if isEven(5) {
+        out "This number is even!\n";
+    } else {
+        out "This number is odd!\n";
+    }
+    return 0;
+}
+
+define isEven(int x) -> int {
+    return (x % 2) == 0;
+}

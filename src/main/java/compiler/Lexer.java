@@ -173,6 +173,8 @@ public class Lexer {
                     appendToken(TokenType.NEGATE); break;
                 case ",":
                     appendToken(TokenType.COMMA); break;
+                case "%":
+                    appendToken(TokenType.PERCENT); break;
                 default:
                     Error.handleError("LEXER", "Unknown punctuation (" + peek() + ")\n    line: " + this.line + ", col: " + this.col);
             }

@@ -173,6 +173,7 @@ public class Parser {
                 case STAR:
                 case DASH:
                 case F_SLASH:
+                case PERCENT:
                     myExpression.setOperator(operator.getType());
                     break;
                 default:
@@ -313,14 +314,18 @@ public class Parser {
     }
 
     private NodeScope parseScope() {
-        expect(TokenType.OPEN_CURLY);
         NodeScope scope = new NodeScope();
-        NodeStatement statement = parseStatement();
-        while (statement != null) {
+        if (tryConsume(TokenType.OPEN_CURLY) != null) {
+            NodeStatement statement = parseStatement();
+            while (statement != null) {
+                scope.addStatement(statement);
+                statement = parseStatement();
+            }
+            expect(TokenType.CLOSE_CURLY);
+        } else {
+            NodeStatement statement = parseStatement();
             scope.addStatement(statement);
-            statement = parseStatement();
         }
-        expect(TokenType.CLOSE_CURLY);
         return scope;
     }
 

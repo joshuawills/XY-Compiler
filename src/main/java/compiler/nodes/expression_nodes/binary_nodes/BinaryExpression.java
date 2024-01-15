@@ -80,6 +80,8 @@ public class BinaryExpression implements NodeExpression {
                 return String.format("%s && %s", getLHS().toString(), getRHS().toString());
             case OR_LOGIC:
                 return String.format("%s || %s", getLHS().toString(), getRHS().toString());
+            case PERCENT:
+                return String.format("%s %% %s", getLHS().toString(), getRHS().toString());
             default:
                 return "{}";
         }
@@ -123,6 +125,9 @@ public class BinaryExpression implements NodeExpression {
                 break;
             case NOT_EQUAL:
                 generator.appendContents(" != ");
+                break;
+            case PERCENT:
+                generator.appendContents(" % ");
                 break;
             default:   
                 Error.handleError("GENERATOR", "Unknown operator: " + this.toString());

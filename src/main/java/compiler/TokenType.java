@@ -47,5 +47,6 @@ public enum TokenType {
     LOOP,
     DEFINE,
     RETURN_SPEC,
-    COMMA
+    COMMA,
+    PERCENT
 }
