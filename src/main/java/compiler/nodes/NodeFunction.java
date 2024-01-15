@@ -50,7 +50,20 @@ public class NodeFunction {
         String returnValue = (returnType.getType() == null) ? "void" : returnType.getType().toString().toLowerCase();
         String funcDefinition = String.format("%s %s(%s)\n", returnValue, functionName, parameters.toString());
         generator.appendContents(funcDefinition);
-        statements.operator(generator);
+
+        generator.beginScope();
+        
+        for (String parameter: this.parameters.getVariables().keySet()) {
+            generator.addVariable(parameter, false);
+        }
+
+        generator.appendContents("    {\n");
+        for (NodeStatement statement: statements.getStatements()) {
+            statement.operator(generator);
+        }
+        generator.appendContents("    }\n");
+        generator.endScope();
+
     }
 
 
