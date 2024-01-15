@@ -15,4 +15,5 @@ public class Variable {
     public String getName() { return this.name; }
     public int getStackLocation() { return this.stackLocation; }
     public boolean isConstant() { return this.isConstant; }
+
 }

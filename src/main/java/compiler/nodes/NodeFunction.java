@@ -1,5 +1,6 @@
 package compiler.nodes;
 
+import compiler.Generator;
 import compiler.Token;
 import compiler.nodes.statement_nodes.NodeScope;
 import compiler.nodes.statement_nodes.NodeStatement;
@@ -43,6 +44,13 @@ public class NodeFunction {
     @Override
     public String toString() {
         return String.format("define %s (%s) -> %s %s", functionName, parameters.toString(), returnType.getType().toString().toLowerCase(), String.join("\n", statements.toString()));
+    }
+
+    public void operator(Generator generator) {
+        String returnValue = (returnType.getType() == null) ? "void" : returnType.getType().toString().toLowerCase();
+        String funcDefinition = String.format("%s %s(%s)\n", returnValue, functionName, parameters.toString());
+        generator.appendContents(funcDefinition);
+        statements.operator(generator);
     }
 
 

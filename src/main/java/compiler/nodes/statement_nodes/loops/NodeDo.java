@@ -31,21 +31,11 @@ public class NodeDo implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        String labelTop = generator.createLabel();
-        String labelBottom = generator.createLabel();
-
-        generator.addTopLabel(labelTop);
-        generator.addBottomLabel(labelBottom);
-
-        generator.appendContents(labelTop + ": ;; return to do while " + expression.toString());
+        generator.appendContents("    do\n");
         scope.operator(generator);
+        generator.appendContents("    while (");
         expression.operator(generator);
-        generator.pop("rax");
-        generator.appendContents("    test rax, rax");
-        generator.appendContents("    jnz " + labelTop);
-        generator.appendContents(labelBottom + ":");
-
-        generator.exitLoop();
+        generator.appendContents(");\n");
     }
 
 }

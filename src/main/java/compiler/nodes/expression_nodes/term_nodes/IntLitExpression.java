@@ -21,8 +21,7 @@ public class IntLitExpression extends NodeTerm {
     }
 
     public void operator(Generator generator) {
-        generator.appendContents("    mov rax, " + getToken().getValue());
-        generator.push("rax");
+        generator.appendContents(getToken().getValue().toString());
     }
 
 }

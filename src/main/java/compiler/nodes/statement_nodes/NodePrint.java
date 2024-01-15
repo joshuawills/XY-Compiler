@@ -30,18 +30,12 @@ public class NodePrint implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        generator.setMacro();
         if (isString) {
-            String label = generator.addString(getTerm().getToken().getValue());
-            generator.appendContents("    mov rax, 1 ; write syscall");
-            generator.appendContents("    mov rdi, 1");
-            generator.appendContents("    mov rsi, " + label);
-            generator.appendContents("    mov rdx, " + label + "_len");
-            generator.appendContents("    syscall");
+            generator.appendContents("    printf(" + term.toString() + ");\n");
         } else {
+            generator.appendContents("    printf(\"%d\\n\", ");
             term.operator(generator);
-            generator.pop("rax");
-            generator.appendContents("    call _printRAX");
+            generator.appendContents(");\n");
         }
     }
 

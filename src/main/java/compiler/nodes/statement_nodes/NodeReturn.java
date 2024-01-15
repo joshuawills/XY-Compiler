@@ -37,17 +37,9 @@ public class NodeReturn implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-
-        if (this.isMain) {
-            this.expression.operator(generator);
-            generator.appendContents("    mov rax, 60");
-            generator.pop("rdi");
-            generator.appendContents("    syscall ;; " + this.toString());
-            return;
-        }
-
+        generator.appendContents("    return ");
         expression.operator(generator);
-        generator.push("rax");
+        generator.appendContents(";\n");
     }
 
 }

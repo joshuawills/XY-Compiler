@@ -14,13 +14,7 @@ public class NodeBreak implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        
-        String label = generator.getBottomLabel();
-        if (label == null) {
-            Error.handleError("GENERATOR", "Attempted use of break outside of loop");
-        }
-        generator.appendContents("    jmp " + label);
-
+        generator.appendContents("    break;\n");
     }
 
 

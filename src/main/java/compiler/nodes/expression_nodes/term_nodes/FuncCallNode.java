@@ -27,7 +27,6 @@ public class FuncCallNode extends NodeTerm {
     public void operator(Generator generator) {
         for (NodeTerm term: parameters) {
             term.operator(generator);
-            generator.push("rax");
         }
         generator.appendContents("    call " + functionName);
 

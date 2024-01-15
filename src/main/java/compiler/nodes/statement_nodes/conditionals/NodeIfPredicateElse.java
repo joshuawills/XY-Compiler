@@ -30,6 +30,7 @@ public class NodeIfPredicateElse extends NodeIfPredicate {
     }
 
     public void operator(Generator generator) {
+        generator.appendContents("    else\n");
         scope.operator(generator);
     }
 

@@ -27,19 +27,8 @@ public class NegationExpression extends NodeTerm {
 
     public void operator(Generator generator) {
 
-        String labelOne = generator.createLabel();
-        String labelTwo = generator.createLabel();
-
+        generator.appendContents("!");
         expression.operator(generator);
-        generator.pop("rax");
-        generator.appendContents("    test rax, rax");
-        generator.appendContents("    jz " + labelOne);
-        generator.appendContents("    mov rax, 0");
-        generator.appendContents("    jmp " + labelTwo);
-        generator.appendContents(labelOne + ": ");
-        generator.appendContents("    mov rax, 1");
-        generator.appendContents(labelTwo + ": ");
-        generator.push("rax");
     }
 
 }

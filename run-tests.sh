@@ -112,11 +112,6 @@ do
 
 done < <(find "tests" -type f)
 
-# if [ -f "tests/current_output.txt" ]
-# then 
-#     rm tests/current_output.txt
-# fi
-
 if [ -f "test" ]
 then 
     rm test

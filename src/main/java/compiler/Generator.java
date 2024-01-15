@@ -1,11 +1,9 @@
 package compiler;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeProgram;
-import compiler.nodes.statement_nodes.NodeStatement;
 
 public class Generator {
 
@@ -14,69 +12,36 @@ public class Generator {
     private int stackSize = 0; // 64 bit int = 1
     private ArrayList<Variable> variables = new ArrayList<>(); 
     private ArrayList<Integer> scopes = new ArrayList<>();   
-    private Integer labelIncrementer = -1;
-    private String endLabel = null;
-    private Boolean printMacro = false;
-
-    private ArrayList<String> topLabels = new ArrayList<>();
-    private ArrayList<String> bottomLabels = new ArrayList<>();
-
-    public void addTopLabel(String topLabel) {
-        this.topLabels.add(topLabel);
-    }
-
-    public void addBottomLabel(String bottomLabel) {
-        this.bottomLabels.add(bottomLabel);
-    } 
-
-    public String getTopLabel() {
-        if (this.topLabels.size() == 0)
-            return null;
-        return this.topLabels.get(topLabels.size() - 1);
-    }
-
-    public String getBottomLabel() {
-        if (this.bottomLabels.size() == 0)
-            return null;
-        return this.bottomLabels.get(bottomLabels.size() - 1);
-    }
-
-    public void exitLoop() {
-        this.topLabels.remove(topLabels.size() - 1);
-        this.bottomLabels.remove(bottomLabels.size() - 1);
-    }
-    public void setMacro() {
-        this.printMacro = true;
-    }
 
     public ArrayList<Variable> getVariables() {
         return this.variables;
-    }
-
-    public void setEndLabel(String endLabel) {
-        this.endLabel = endLabel;
-    } 
-
-    public String getEndLabel() {
-        return this.endLabel;
     }
 
     public int getStackSize() {
         return this.stackSize;
     }
 
-    public String createLabel() {
-        labelIncrementer++;
-        return "label" + labelIncrementer.toString();
-    }
-
     public boolean constant(String var) {
-        Variable variable =variables.stream().filter(v -> v.getName().equals(var)).collect(Collectors.toList()).get(0);
+        Variable variable = variables.stream().filter(v -> v.getName().equals(var)).collect(Collectors.toList()).get(0);
         return variable.isConstant();
     }
 
     public void addVariable(String name, boolean isConstant) {
         variables.add(new Variable(name, this.stackSize, isConstant));
+        Integer currentSize = this.scopes.get(scopes.size() - 1);
+        scopes.remove(scopes.size() - 1);
+        scopes.add(currentSize + 1);
+    }
+
+    public void beginScope() {
+        this.scopes.add(0);
+    }
+
+    public void endScope() {
+        Integer finalSize = scopes.get(scopes.size() - 1);
+        scopes.remove(scopes.size() - 1);
+        for (int i = 0; i < finalSize; i++)
+            variables.remove(variables.size() - 1);
     }
 
     public Generator(NodeProgram program) {
@@ -87,71 +52,16 @@ public class Generator {
         assemblyBuffer.add(contents);
     }
 
-    public void push(String register) {
-        appendContents("    push " + register);
-        this.stackSize++;
-    }
-
-    public void pop(String register) {
-        appendContents("    pop " + register);
-        this.stackSize--;
-    }
-
-    public void beginScope() {
-        this.scopes.add(this.stackSize);
-    }
-
-    public void endScope() {
-        // Need to move stack pointer in assembly that many back
-        Integer popCount = this.stackSize - this.scopes.get(scopes.size() - 1);
-        appendContents("    add rsp, " + popCount * 8);
-        this.stackSize -= popCount;
-        for (Integer i = 0; i < popCount; i++)
-            this.variables.remove(variables.size() - 1);
-        this.scopes.remove(scopes.size() - 1);
-
-    }
-
-    public String addString(String stringContents) {
-        String label = this.createLabel(); 
-        assemblyBuffer.add(1, "    " + label + "_len equ $ - " + label);
-        assemblyBuffer.add(1, "    " + label + " db " + stringContents + ", 10");
-        return label;
-    }
-
     public String generateProgram() {
 
         NodeProgram program = this.program;
 
+        this.appendContents("#include <stdio.h>\n\n");
+
         NodeFunction mainFunction = program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals("main")).collect(Collectors.toList()).get(0);
-        assemblyBuffer.add("section .bss");
-        assemblyBuffer.add("    digitSpace resb 100 ; storing the string itself");
-        assemblyBuffer.add("    digitSpacePos resb 8 ; enough space to store a register\n");
+        mainFunction.operator(this);
 
-        assemblyBuffer.add("section .data");
-        assemblyBuffer.add("section .text");
-        assemblyBuffer.add("global _start\n");
-        assemblyBuffer.add("_start:");
-
-        // Generate Statements
-        for (NodeStatement statement: mainFunction.getStatements().getStatements())
-            statement.operator(this);
-
-        assemblyBuffer.add("\n    ;; default exit\n    mov rax, 60");
-        assemblyBuffer.add("    mov rdi, 0");
-        assemblyBuffer.add("    syscall");
-
-        // Now handle all the other functions lol
-        List<NodeFunction> nonMain = program.getNodeFunctions().stream().filter(f -> !f.getFunctionName().equals("main")).collect(Collectors.toList());
-        for (NodeFunction func: nonMain) {
-            appendContents(func.getFunctionName() + ":");
-            for (NodeStatement statement: func.getStatements().getStatements())
-                statement.operator(this);
-            appendContents("    ret");
-        }
-
-
-        return String.join("\n", assemblyBuffer);
+        return String.join("", assemblyBuffer);
     }
 
 

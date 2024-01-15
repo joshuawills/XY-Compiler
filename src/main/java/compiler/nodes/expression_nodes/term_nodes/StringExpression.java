@@ -21,7 +21,7 @@ public class StringExpression extends NodeTerm {
     }
 
     public void operator(Generator generator) {
-        generator.appendContents("    mov rax, " + getToken().getValue());
-        generator.push("rax");
+        System.out.println("TO-DO");
+        // TODO
     }
 }

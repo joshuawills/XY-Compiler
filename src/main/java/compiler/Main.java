@@ -116,6 +116,7 @@ public class Main {
         if (myCompiler.commandArgs.containsKey("help"))
             myCompiler.help();
 
+        
         if (!myCompiler.commandArgs.containsKey("sourceName"))
             Error.handleError("KEY", "No source filename provided");
 
@@ -146,23 +147,19 @@ public class Main {
 
         String contents = myGenerator.generateProgram();
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("out.asm"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("out.c"));
             writer.write(contents);
-            String macros = Files.readString(Paths.get("src/main/java/compiler/macros.txt"));
-            writer.write(macros);
             writer.close();
 
             if (myCompiler.commandArgs.containsKey("assembly"))
                 System.exit(0);
 
-            myCompiler.handleShellCommand("nasm -felf64 out.asm");
-            myCompiler.handleShellCommand("rm out.asm");
             String executableName = "a.out";
             if (myCompiler.commandArgs.containsKey("executableName"))
                 executableName = myCompiler.commandArgs.get("executableName");
 
-            myCompiler.handleShellCommand(String.format("ld -o %s out.o", executableName));
-            myCompiler.handleShellCommand("rm out.o");
+            myCompiler.handleShellCommand(String.format("gcc out.c -o %s", executableName));
+            myCompiler.handleShellCommand("rm out.c");
             if (myCompiler.commandArgs.containsKey("run"))  {
                 ProcessBuilder runProcessBuilder = new ProcessBuilder("./" + executableName);
                 runProcessBuilder.redirectErrorStream(true);

@@ -55,17 +55,10 @@ public class NodeAssign implements NodeStatement {
         if (generator.constant(variableName))
             Error.handleError("GENERATOR", "Attempted reassignment to constant identifier: " + variableName);
 
+        generator.appendContents("    " + variableName + " = ");
         expression.operator(generator);
-        generator.pop("rax");
-        Optional<Integer> stackLocation = generator.getVariables()
-                .stream()
-                .filter(e -> e.getName().equals(variableName))
-                .map(Variable::getStackLocation)
-                .findFirst();
-        if (stackLocation.isPresent()) {
-            Integer offset = 8 * (generator.getStackSize() - stackLocation.get() - 1);
-            generator.appendContents("    mov [rsp + " + offset.toString() + "], rax ;; " + this.toString());
-        }
+        generator.appendContents(";\n");
+
     } 
 
 }
