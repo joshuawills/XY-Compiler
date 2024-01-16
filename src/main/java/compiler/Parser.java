@@ -35,7 +35,6 @@ public class Parser {
 
     private ArrayList<Token> tokens;
     private int iterator = 0;
-    private String currentFuncName = null;
     private HashMap<String, String> configSettings = new HashMap<>();
 
     public Parser(ArrayList<Token> tokens, HashMap<String, String> configSettings) {
@@ -43,9 +42,6 @@ public class Parser {
         this.configSettings = configSettings;
     }
 
-    private void setCurrentFuncName(String name) { this.currentFuncName = name; }
-    private String getCurrentFuncName() { return this.currentFuncName; } 
-    
     public NodeProgram parseProgram() {
 
         NodeProgram program = new NodeProgram();
@@ -81,7 +77,6 @@ public class Parser {
     private NodeFunction parseFunction() {
         expect(TokenType.DEFINE);
         String functionName = expect(TokenType.IDENT).getValue();
-        setCurrentFuncName(functionName);
         NodeParameters parameters = parseParameters();
 
         expect(TokenType.RETURN_SPEC);
@@ -220,7 +215,7 @@ public class Parser {
                     Error.handleError("Parsing", "Invalid expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
             }
             expect(TokenType.SEMI);
-            return new NodeReturn(expression, this.getCurrentFuncName().equals("main"));
+            return new NodeReturn(expression);
 
         } else if (tryConsume(TokenType.INT) != null) { // int x = 32;
 

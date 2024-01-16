@@ -6,8 +6,6 @@ import compiler.nodes.NodeProgram;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import compiler.Error;
-
 public class Verifier {
     
     private NodeProgram program;

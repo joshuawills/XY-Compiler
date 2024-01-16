@@ -1,11 +1,9 @@
 package compiler.nodes.statement_nodes;
 
-import java.util.Optional;
 
 import compiler.Error;
 import compiler.Generator;
 import compiler.Token;
-import compiler.Variable;
 import compiler.nodes.expression_nodes.NodeExpression;
 
 public class NodeAssign implements NodeStatement {
