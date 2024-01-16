@@ -1,0 +1,72 @@
+rawName is 'tests/introductory/test_01.xy'
+A
+B
+RETURN DIGIT: [0;31mFail[0m for [1;33mtest_01.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_10.xy'
+A
+B
+CONSTRUCTING SCOPE: [0;31mFail[0m for [1;33mtest_10.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_12.xy'
+A
+B
+BASIC IF 2: [0;31mFail[0m for [1;33mtest_12.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_02.xy'
+A
+B
+RETURN VARIABLE: [0;31mFail[0m for [1;33mtest_02.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_05.xy'
+A
+B
+SIMPLE ADDITION 2: [0;31mFail[0m for [1;33mtest_05.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_11.xy'
+A
+B
+BASIC IF: [0;31mFail[0m for [1;33mtest_11.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_04.xy'
+A
+B
+SIMPLE ADDITION: [0;31mFail[0m for [1;33mtest_04.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_03.xy'
+A
+B
+ACCEPT EMPTY PROGRAM: [0;32mPass[0m for [1;33mtest_03.xy[0m, same exit code
+rawName is 'tests/introductory/test_09.xy'
+A
+B
+BRACKETS BODMAS: [0;31mFail[0m for [1;33mtest_09.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_13.xy'
+A
+B
+HANDLE NEGATIVE NUMBERS: [0;31mFail[0m for [1;33mtest_13.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_07.xy'
+A
+B
+BASIC BINARY HIERARCHY: [0;31mFail[0m for [1;33mtest_07.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_06.xy'
+A
+B
+MULTIPLE EXPRESSION OPERATORS: [0;31mFail[0m for [1;33mtest_06.xy[0m, differing exit codes
+rawName is 'tests/introductory/test_08.xy'
+A
+B
+COMPLEX BINARY HIERARCHY: [0;32mPass[0m for [1;33mtest_08.xy[0m, same exit code
+Skipping over [1;33mcurrent_output.txt[0m: invalid filename
+rawName is 'tests/control_flow/test_17.xy'
+BASIC WHILE ITERATOR: [0;31mBuild error[0m for [1;33mtest_17.xy[0m, counting as fail
+rawName is 'tests/control_flow/test_16.xy'
+A
+B
+NESTING IF'S 3: [0;31mFail[0m for [1;33mtest_16.xy[0m, differing exit codes
+rawName is 'tests/control_flow/test_14.xy'
+A
+B
+NESTING IF'S 1: [0;31mFail[0m for [1;33mtest_14.xy[0m, differing exit codes
+rawName is 'tests/control_flow/test_15.xy'
+A
+B
+NESTING IF'S 2: [0;31mFail[0m for [1;33mtest_15.xy[0m, differing exit codes
+
+Test suite completed: 
+	[0;32m2 passed[0m
+	[0;31m15 failed[0m
+	17 total

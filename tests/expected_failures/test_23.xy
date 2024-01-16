@@ -1,0 +1,10 @@
+// FAIL
+// Reassigning constant variable
+
+define main() -> int {
+
+    int x = 4;
+    x++;
+    return 0;
+
+}

@@ -25,6 +25,11 @@ public class Generator {
     private ArrayList<String> temporarilyUnused = new ArrayList<>();
     private ArrayList<String> unusedVariables = new ArrayList<>();
     private ArrayList<String> functionCalled = new ArrayList<>();
+    private ArrayList<String> allFunctionNames = new ArrayList<>();
+
+    public ArrayList<String> getFunctionNames() {
+        return this.allFunctionNames;
+    }
 
     public void addFunctionCall(String functionName) {
         if (!functionCalled.contains(functionName))
@@ -101,10 +106,15 @@ public class Generator {
         ArrayList<String> allFuncNames = new ArrayList<>();
 
         List<NodeFunction> nonMain = program.getNodeFunctions().stream().filter(f -> !f.getFunctionName().equals("main")).collect(Collectors.toList());
+        
+        for (NodeFunction function: nonMain)
+            allFunctionNames.add(function.getFunctionName());
+        
         for (NodeFunction function: nonMain) {
             allFuncNames.add(function.getFunctionName());
             function.operator(this);
         }
+
 
         NodeFunction mainFunction = program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals("main")).collect(Collectors.toList()).get(0);
         mainFunction.operator(this);

@@ -53,8 +53,12 @@ do
     EXIT_CODE=$(head -n1 "$rawName" | grep -Eo "[0-9]+$")
     if  [ "$EXIT_CODE" = "" ]
     then 
-        echo "Skipping over ${YELLOW}${file}${RESET}: please provide exit code in first line"
-        continue
+        EXIT_CODE=$(head -n1 "$rawName" | grep -Eo "FAIL$")
+        if  [ "$EXIT_CODE" = "" ]
+        then 
+            echo "Skipping over ${YELLOW}${file}${RESET}: please provide exit code or 'FAIL' in first line"
+            continue
+        fi
     fi
 
     SUMMARY=$(head -n2 "$rawName" | tail -n1 | sed -e "s/\/\/ //g" | tr a-z A-Z)
@@ -65,10 +69,19 @@ do
     # Build failed
     if [ "$?" -ne "0" ]
     then
-        echo "${SUMMARY}: ${RED}Build error${RESET} for ${YELLOW}${file}${RESET}, counting as fail"
-        FAIL=$((FAIL + 1))
-        TOTAL=$((TOTAL + 1)) 
-        continue
+        if [ "$EXIT_CODE" = "FAIL" ]
+        then 
+            echo "${SUMMARY}: ${GREEN}Pass${RESET} for ${YELLOW}${file}${RESET}, expected to build fail"
+            PASS=$((PASS + 1))
+            TOTAL=$((TOTAL + 1))
+            continue
+        else 
+            echo "${SUMMARY}: ${RED}Build error${RESET} for ${YELLOW}${file}${RESET}, counting as fail"
+            FAIL=$((FAIL + 1))
+            TOTAL=$((TOTAL + 1)) 
+            continue
+        fi
+
     fi 
 
     # Now execute commands and compare to the test_one.txt file

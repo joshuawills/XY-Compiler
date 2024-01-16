@@ -1,0 +1,7 @@
+// FAIL
+// Calling undefined function
+
+define main() -> int {
+    int x = get5();
+    return 0;
+}

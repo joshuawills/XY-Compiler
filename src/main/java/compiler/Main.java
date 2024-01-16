@@ -112,11 +112,10 @@ public class Main {
             myCompiler.help();
 
         
-        // if (!myCompiler.commandArgs.containsKey("sourceName"))
-            // Error.handleError("KEY", "No source filename provided");
+        if (!myCompiler.commandArgs.containsKey("sourceName"))
+            Error.handleError("KEY", "No source filename provided");
 
-        // String filePath = myCompiler.commandArgs.get("sourceName");
-        String filePath = "test.xy";
+        String filePath = myCompiler.commandArgs.get("sourceName");
         myCompiler.setSource(filePath);
 
         Lexer myLexer = new Lexer(myCompiler.getFileSource());

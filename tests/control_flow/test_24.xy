@@ -1,0 +1,12 @@
+// 0
+// Do while test 1
+
+define main() -> int {
+
+    mut int x = 1;
+    do {
+        out x;
+        out "";
+    } while (x != 1);
+    return 0;
+}

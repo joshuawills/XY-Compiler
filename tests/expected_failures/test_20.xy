@@ -1,0 +1,14 @@
+// FAIL
+// Duplicate other function
+
+define random() -> int {
+
+}
+
+define random() -> int {
+
+}
+
+define main() -> int {
+    
+}

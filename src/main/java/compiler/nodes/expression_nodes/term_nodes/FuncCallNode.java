@@ -3,7 +3,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 import java.util.ArrayList;
 
 import compiler.Generator;
-
+import compiler.Error;
 public class FuncCallNode extends NodeTerm {
 
     private String functionName;
@@ -28,6 +28,10 @@ public class FuncCallNode extends NodeTerm {
     }
 
     public void operator(Generator generator) {
+
+        if (!generator.getFunctionNames().contains(functionName))      
+            Error.handleError("GENERATOR", "Function '" + functionName + "' doesn't exist.");
+
         generator.appendContents(functionName + "(");
         int i = 0;
         for (NodeTerm term: parameters) {

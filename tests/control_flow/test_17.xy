@@ -3,6 +3,7 @@
 define main() -> int {  
     mut int i = 0;
     while i < 100 {
+        out "hello, world\n";
         i = i + 1;
     }
     return i;

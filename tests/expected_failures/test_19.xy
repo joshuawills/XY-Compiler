@@ -1,0 +1,10 @@
+// FAIL
+// Duplicate main
+
+define main() -> int {
+
+}
+
+define main() -> int { 
+    
+}
