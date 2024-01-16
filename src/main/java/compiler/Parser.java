@@ -1,5 +1,6 @@
 package compiler;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeParameters;
@@ -35,9 +36,11 @@ public class Parser {
     private ArrayList<Token> tokens;
     private int iterator = 0;
     private String currentFuncName = null;
+    private HashMap<String, String> configSettings = new HashMap<>();
 
-    public Parser(ArrayList<Token> tokens) {
+    public Parser(ArrayList<Token> tokens, HashMap<String, String> configSettings) {
         this.tokens = tokens;
+        this.configSettings = configSettings;
     }
 
     private void setCurrentFuncName(String name) { this.currentFuncName = name; }
@@ -158,9 +161,7 @@ public class Parser {
             if (rhs == null)
                 Error.handleError("PARSING", "Unable to parse expression");
 
-            BinaryExpression myExpression = new BinaryExpression() {
-                
-            };
+            BinaryExpression myExpression = new BinaryExpression();
             switch (operator.getType()) {
                 case GREATER_EQ:
                 case GREATER_THAN:
@@ -244,7 +245,7 @@ public class Parser {
             if (tryConsume(TokenType.IN) != null) {
                 String value = expect(TokenType.STRING).getValue();
                 expect(TokenType.SEMI);
-                return new NodeScan(value, ident, true);
+                return new NodeScan(value, ident, false);
             }
 
             NodeExpression expression = parseExpression(0);
@@ -254,11 +255,28 @@ public class Parser {
         }
         else if (tryConsume(TokenType.IF) != null) { // if () {}
 
-            return new NodeIf(parseExpression(0), parseScope(), parseIfPred());
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
+                Error.minorError("CONFIG-SPECIFIC", "Missing () around if statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
+            NodeExpression expression = parseExpression(0);
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
+                Error.minorError("CONFIG-SPECIFIC", "Missing {} around if statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
+            return new NodeIf(expression, parseScope(), parseIfPred());
 
         } else if (tryConsume(TokenType.WHILE) != null) {
-
-            return new NodeWhile(parseExpression(0), parseScope());
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
+                Error.minorError("CONFIG-SPECIFIC", "Missing () around while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
+            NodeExpression expression = parseExpression(0);
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
+                Error.minorError("CONFIG-SPECIFIC", "Missing {} around while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
+            return new NodeWhile(expression, parseScope());
 
         } else if (tryConsume(TokenType.LOOP) != null) {
 
@@ -267,8 +285,16 @@ public class Parser {
 
         } else if (tryConsume(TokenType.DO) != null) {
 
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
+                    Error.minorError("CONFIG-SPECIFIC", "Missing {} around do-while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
             NodeScope scope = parseScope();
             expect(TokenType.WHILE);
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
+                    Error.minorError("CONFIG-SPECIFIC", "Missing () around do-while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
             NodeExpression expression = parseExpression(0);
             expect(TokenType.SEMI);
             return new NodeDo(expression, scope);
@@ -352,17 +378,29 @@ public class Parser {
         Token currentToken = peek();
         if (currentToken != null && currentToken.getType().equals(TokenType.ELIF)) {
             consume();
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
+                Error.minorError("CONFIG-SPECIFIC", "Missing () around elif statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
             NodeExpression expression = parseExpression(0);
             if (expression == null) {
                 if (peek() == null) {
                     Error.handleError("Parsing", "Unable to parse expression");
                 } else {
-                    Error.handleError("Parsing", "Unable to parse expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
+                    Error.handleError("Parsing", "Unable to parse expression\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
                 }
+            }
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
+                Error.minorError("CONFIG-SPECIFIC", "Missing {} around elif statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
             }
             return new NodeIfPredicateElif(expression, parseScope(), parseIfPred());
         } else if (currentToken != null && currentToken.getType().equals(TokenType.ELSE)) {
             consume();
+            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
+                Error.minorError("CONFIG-SPECIFIC", "Missing {} around else statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+            }
             return new NodeIfPredicateElse(parseScope());
         }
 

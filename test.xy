@@ -1,5 +1,0 @@
-define main() -> int {
-    mut int x = in "What's your favourite number? ";
-    out "Your favourite number is... "; out x;
-    return 0;
-}

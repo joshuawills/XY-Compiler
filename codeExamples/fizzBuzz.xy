@@ -1,0 +1,24 @@
+// Takes in number, calculates fizzbuzz 
+// from 0 to that number
+define fizzbuzz(int n) -> int {
+    mut int i = 0;
+    while i < n {
+        if (i % 3 == 0 && i % 5 == 0) {
+            out "FizzBuzz\n";
+        } else if (i % 3 == 0) {
+            out "Fizz\n";
+        } else if (i % 5 == 0) {
+            out "Buzz\n";
+        } else {
+            out i;
+        }
+        i++;
+    }
+
+    return 0;
+}
+
+define main() -> int {
+  int x = fizzbuzz(100);
+  return 0;
+}

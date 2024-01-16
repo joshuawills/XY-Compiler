@@ -1,6 +1,8 @@
 package compiler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -16,6 +18,7 @@ public class Main {
 
     private String source;
     private HashMap<String, String> commandArgs = new HashMap<>();
+    private HashMap<String, String> configSettings = new HashMap<>();
     
     public Main() {}
    
@@ -38,9 +41,8 @@ public class Main {
         System.out.println("\t-o | --out => Specify the name of the executable (default to a.out)");
         System.out.println("\t-t | --tokens => Logs to stdout a summary of all the tokens");
         System.out.println("\t-p | --parser => Logs to stdout a summary of the parse tree");
-        System.out.println("\t-a | --assembly => Generates a .asm file instead of an executable");
+        System.out.println("\t-a | --assembly => Generates a .c file instead of an executable");
         System.out.println("\t-q | --quiet  => Silence any non-crucial warnings");
-        System.out.println("\t-l | --load  => Load in compiler settings");
         System.out.println("\nDeveloped by Joshua Wills 2024");
         System.out.println("See https://github.com/joshuawills/XY-Compiler for documentation and source code");
         System.exit(0);
@@ -81,13 +83,6 @@ public class Main {
                 case "--quiet":
                     this.commandArgs.put("quiet", "true");
                     break;
-                case "-l":
-                case "--load":
-                    String loadName = args.get(i + 1);
-                    if (loadName == null) break;
-                    this.commandArgs.put("load", loadName);
-                    i++;
-                    break;
                 default:
                     // Assume you've provided the filename then
                     this.commandArgs.put("sourceName", arg);
@@ -117,13 +112,40 @@ public class Main {
             myCompiler.help();
 
         
-        if (!myCompiler.commandArgs.containsKey("sourceName"))
-            Error.handleError("KEY", "No source filename provided");
+        // if (!myCompiler.commandArgs.containsKey("sourceName"))
+            // Error.handleError("KEY", "No source filename provided");
 
-        String filePath = myCompiler.commandArgs.get("sourceName");
+        // String filePath = myCompiler.commandArgs.get("sourceName");
+        String filePath = "test.xy";
         myCompiler.setSource(filePath);
 
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
+
+        // Read in config settings
+        File possibleConfig = new File("xy.config");
+        if (possibleConfig.exists() && !possibleConfig.isDirectory()) {
+            ArrayList<String> lines = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new FileReader("xy.config"))) {
+                String line;
+                while ((line = reader.readLine()) != null)
+                    lines.add(line);
+            } catch (Exception e) {
+                Error.handleError("CONFIG HANDLER", "Unexpected error in reading config file 'xy.config'");
+            }
+
+            for (String line: lines) {
+                String command = line.split("=")[0];
+                String directive = line.split("=")[1].toLowerCase().strip();
+                if (command.strip().startsWith("#"))
+                    continue;
+                if (!directive.equals("true") && !directive.equals("false")) {
+                    Error.minorError("CONFIG", "Directive '" + directive + "' not recognised");
+                    continue;
+                }
+                myCompiler.configSettings.put(command, directive);
+            }
+        }
+
         ArrayList<Token> tokens = myLexer.tokenize();
         if (myCompiler.commandArgs.containsKey("tokensLog")) {
             System.out.println("TOKENS: ");
@@ -131,7 +153,7 @@ public class Main {
                 System.out.println("\t" + x.toString());
         }
             
-        Parser myParser = new Parser(tokens);
+        Parser myParser = new Parser(tokens, myCompiler.configSettings);
         NodeProgram myNode = myParser.parseProgram();
 
         if (myCompiler.commandArgs.containsKey("parserLog")) {
@@ -140,7 +162,7 @@ public class Main {
                 System.out.println(function.toString());
         }
 
-        Generator myGenerator = new Generator(myNode);
+        Generator myGenerator = new Generator(myNode, myCompiler.configSettings);
 
         Verifier myVerifier = new Verifier(myNode);
         myVerifier.verify();

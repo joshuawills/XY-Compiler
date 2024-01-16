@@ -26,6 +26,7 @@ public class IdentExpression extends NodeTerm {
 
     public void operator(Generator generator) {
         String variableName = getToken().getValue();
+        generator.setUsed(variableName);
         if (!generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
             Error.handleError("GENERATOR", "Identifier doesn't exist: " + variableName);
 

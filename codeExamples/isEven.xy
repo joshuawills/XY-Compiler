@@ -1,5 +1,6 @@
 define main() -> int {
-    if isEven(5) {
+    int x = in "Enter your favourite number here :) ";
+    if isEven(x) {
         out "This number is even!\n";
     } else {
         out "This number is odd!\n";

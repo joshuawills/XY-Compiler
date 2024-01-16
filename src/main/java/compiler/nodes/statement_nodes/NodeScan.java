@@ -17,7 +17,7 @@ public class NodeScan implements NodeStatement {
 
     @Override
     public String toString() {
-        return String.format("int %s = in %s", output, identifier.getValue());
+        return String.format("int %s = in %s", identifier.getValue(), output);
     }
 
     public void operator(Generator generator) {

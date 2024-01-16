@@ -4,7 +4,7 @@
 
 The XY programming language is a hobby programming language I am developing to better understand the inner workings of compilers and also just for fun :) . 
 
-It is a compiled programming language that generates C code, which is then made into an executable using *gcc* and.
+It is a compiled programming language that generates C code, which is then made into an executable using *gcc*.
 
 Currently this compiler is only developed for Linux operating systems, so will not work on Windows. I hope to add Windows support later however.
 
@@ -52,8 +52,10 @@ All the command line arguments are summarised below under the "Command Line Argu
 A good initial program to test out would be your hello world program, which is shown below!
 
 ```
-out "hello, world!";
-return 0;
+define main() -> int {
+    out "hello, world!";
+    return 0;
+}
 ```
 
 ## Command Line Arguments
@@ -67,19 +69,16 @@ return 0;
 | -p | --parser | logs to stdout a summary of the parse tree |
 | -a | --assembly | generates a .c file instead of an executable |
 | -q | --quiet | silence any non-crucial warnings |
-| -l <filename> | --load | load in compiler settings (read compiler settings header for more info)| |
 
 ## Compiler Settings
 
-*TO-DO*
+[docs/config.md](config.md)
 
 ## What's Left?
 
 - handle quiet and load in config CL args
 - handle functions
 - develop standard libraries
-- fix bugs with division
-- add modulo operator
 - a bunch more lol
 
 ## Credits

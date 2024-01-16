@@ -47,6 +47,9 @@ public class NodeFunction {
     }
 
     public void operator(Generator generator) {
+
+        generator.checkVariable(functionName);
+
         String returnValue = (returnType.getType() == null) ? "void" : returnType.getType().toString().toLowerCase();
         String funcDefinition = String.format("%s %s(%s)\n", returnValue, functionName, parameters.toString());
         generator.appendContents(funcDefinition);

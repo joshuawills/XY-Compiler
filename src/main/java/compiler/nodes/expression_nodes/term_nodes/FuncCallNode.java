@@ -36,6 +36,7 @@ public class FuncCallNode extends NodeTerm {
             i++;
         }
         generator.appendContents(")");
+        generator.addFunctionCall(functionName);
 
     }
 

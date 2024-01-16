@@ -18,7 +18,7 @@ public class Lexer {
         this.contents = contents;
     }
     
-    private static boolean isAlphaNumeric(Character c) { return Character.isDigit(c) || Character.isLetter(c); }
+    private static boolean isAlphaNumeric(Character c) { return Character.isDigit(c) || Character.isLetter(c) || c.equals('_'); }
     private void flushBuffer() { this.buffer = ""; }
     private void appendBuffer(Character c) { this.buffer = buffer.concat(c.toString()); }
     private void appendToken(TokenType t) { this.tokens.add(new Token(t, line, col)); consume(); }
@@ -29,7 +29,7 @@ public class Lexer {
     public ArrayList<Token> tokenize() {
         while (this.iterator < this.contents.length()) {
 
-            if (Character.isAlphabetic(peek())) {
+            if (Character.isAlphabetic(peek()) || peek().equals('_')) {
                 handleStr();
                 continue;
             }

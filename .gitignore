@@ -8,3 +8,4 @@ build
 bin/
 \.idea/
 a.out
+xy.config
