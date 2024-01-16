@@ -7,7 +7,9 @@ help() {
     echo "\tIf there's any stdout you want to test, create a file with the same name but with .txt instead of .xy"
     echo "\tThe script will then do a diff compare to make sure it's the same"
     echo "\tNo need to provide the .txt file if there's no output to test"
+    echo "\tIf you expect the program to have a build fail place 'FAIL' on the first line rather than a number"
     echo
+    exit 0
 }
 
 
