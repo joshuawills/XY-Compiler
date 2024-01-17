@@ -17,8 +17,8 @@ import compiler.nodes.NodeProgram;
 public class Main {
 
     private String source;
-    private HashMap<String, String> commandArgs = new HashMap<>();
-    private HashMap<String, String> configSettings = new HashMap<>();
+    private final HashMap<String, String> commandArgs = new HashMap<>();
+    private final HashMap<String, String> configSettings = new HashMap<>();
     
     public Main() {}
    
@@ -154,7 +154,6 @@ public class Main {
             
         Parser myParser = new Parser(tokens, myCompiler.configSettings);
         NodeProgram myNode = myParser.parseProgram();
-
         if (myCompiler.commandArgs.containsKey("parserLog")) {
             System.out.println("PARSER: \n");
             for (NodeFunction function: myNode.getNodeFunctions())

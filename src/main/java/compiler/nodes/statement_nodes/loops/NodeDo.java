@@ -27,7 +27,7 @@ public class NodeDo implements NodeStatement {
     public String toString() {
         if (expression == null || scope == null)
             return "{}";
-        return String.format("do %s while %s" , scope.toString(), expression.toString());
+        return String.format("do %s while %s" , scope.toString().replace("\n", "\n   "), expression.toString());
     }
 
     public void operator(Generator generator) {

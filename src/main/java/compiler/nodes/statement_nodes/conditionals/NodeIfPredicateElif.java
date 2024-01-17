@@ -53,9 +53,9 @@ public class NodeIfPredicateElif extends NodeIfPredicate {
         return "{}";
 
     if (this.predicate == null)
-        return String.format("else if %s %s" , expression.toString(), scope.toString());
+        return String.format("else if %s %s" , expression.toString(), scope.toString().replace("\n","\n   "));
     else
-        return String.format("else if %s %s %s" , expression.toString(), scope.toString(), predicate.toString());
+        return String.format("else if %s %s %s" , expression.toString(), scope.toString().replace("\n","\n   "), predicate.toString());
     }
 
     public void operator(Generator generator) {

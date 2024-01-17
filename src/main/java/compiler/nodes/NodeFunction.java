@@ -21,6 +21,11 @@ public class NodeFunction {
 
     public NodeFunction() {}
 
+    @Override
+    public String toString() {
+        return String.format("define %s (%s) -> %s\n%senddefine\n", functionName, parameters.toString(), returnType.getType().toString().toLowerCase(), statements.toString());
+    }
+
     public void appendStatement(NodeStatement s) {
         this.statements.addStatement(s);
     }
@@ -39,11 +44,6 @@ public class NodeFunction {
 
     public Token getReturnType() {
         return this.returnType;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("define %s (%s) -> %s %s", functionName, parameters.toString(), returnType.getType().toString().toLowerCase(), String.join("\n", statements.toString()));
     }
 
     public void operator(Generator generator) {

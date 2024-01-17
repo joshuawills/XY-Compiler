@@ -20,7 +20,7 @@ public class NodeLoop implements NodeStatement {
     public String toString() {
         if (scope == null)
             return "{}";
-        return String.format("loop %s", scope.toString());
+        return String.format("loop%s", scope.toString().replace("\n","\n    "));
 
     }
 

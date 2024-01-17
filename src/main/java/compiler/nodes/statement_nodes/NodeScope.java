@@ -13,11 +13,11 @@ public class NodeScope implements NodeStatement {
     @Override
     public String toString() {
 
-        String buffer = new String("{\n");
+        String buffer = new String("");
         for (NodeStatement x: statements) {
             buffer = buffer.concat("\n    " + x.toString());
         }
-        buffer = buffer.concat("\n}");
+        buffer = buffer.concat("\n");
         return buffer;
     }
 

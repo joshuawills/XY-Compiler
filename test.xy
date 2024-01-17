@@ -1,8 +1,32 @@
-define main() -> int {
+define test() -> int {
     loop {
         loop {
 
+            int y = 0;
+            while y != 0 {
+                out "haha";
+            }
+
+            loop {
+                int x = 4;
+                do {
+                    out "test";
+                } while x != 3;
+            }
         }
     }
+}
+
+define main() -> int {
+    mut int x = 0;
+    if x == 0 {
+        out "hello, world\n";
+    } else if x == 1 {
+        out "what!\n";
+    } else {
+        if x == 2 { out "a"; }
+        int z = 21;
+    }
+
     return 0;
 }

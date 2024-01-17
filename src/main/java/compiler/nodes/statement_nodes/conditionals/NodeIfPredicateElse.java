@@ -26,7 +26,7 @@ public class NodeIfPredicateElse extends NodeIfPredicate {
         if (scope == null)
             return "{}";
 
-        return String.format("else %s", scope.toString());
+        return String.format("else %s", scope.toString().replace("\n","\n    "));
     }
 
     public void operator(Generator generator) {

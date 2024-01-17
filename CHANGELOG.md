@@ -11,8 +11,11 @@
 ## 17.01.24
 
 - Fix break/continue bug
+- Improve toString() approach for logging out parse tree
 
 ## TO-DO
 
-- Refactor variable declarations to accommodate strings
 - Fix ++, --, *=, etc to actually use C approach
+- Refactor variable declarations to accommodate strings
+- Add ability to declare uninitialized variables
+- Add in void return type

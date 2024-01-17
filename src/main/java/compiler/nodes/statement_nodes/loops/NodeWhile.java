@@ -27,7 +27,7 @@ public class NodeWhile implements NodeStatement{
     public String toString() {
         if (expression == null || scope == null)
             return "{}";
-        return String.format("while %s %s" , expression.toString(), scope.toString());
+        return String.format("while %s %s" , expression.toString(), scope.toString().replace("\n", "\n    "));
 
     }
 

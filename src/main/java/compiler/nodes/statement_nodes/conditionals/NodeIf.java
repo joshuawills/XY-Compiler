@@ -51,9 +51,9 @@ public class NodeIf implements NodeStatement {
             return "{}";
 
         if (this.predicate == null)
-            return String.format("if %s %s" , expression.toString(), scope.toString());
+            return String.format("if %s %s" , expression.toString(), scope.toString().replace("\n","\n    "));
         else
-            return String.format("if %s %s %s" , expression.toString(), scope.toString(), predicate.toString());
+            return String.format("if %s %s %s" , expression.toString(), scope.toString().replace("\n","\n   "), predicate.toString());
 
     }
 

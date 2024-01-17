@@ -33,7 +33,7 @@ import compiler.nodes.statement_nodes.loops.NodeWhile;
 
 public class Parser {
 
-    private ArrayList<Token> tokens;
+    private final ArrayList<Token> tokens;
     private int iterator = 0;
     private HashMap<String, String> configSettings = new HashMap<>();
 
@@ -45,12 +45,8 @@ public class Parser {
     public NodeProgram parseProgram() {
 
         NodeProgram program = new NodeProgram();
-        while (peek() != null) {
-            NodeFunction function = parseFunction();
-            if (function == null)
-                Error.handleError("PARSING", "Invalid function");
-            program.appendFunction(function);
-        }
+        while (peek() != null)
+            program.appendFunction(parseFunction());
         return program;
     }
     

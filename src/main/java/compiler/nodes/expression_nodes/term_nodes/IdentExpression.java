@@ -20,7 +20,6 @@ public class IdentExpression extends NodeTerm {
     public String toString() {
         if (getToken() == null || getToken().getValue() == null)
             return "{}";
-
         return String.format("%s", getToken().getValue().toString());
     }
 
