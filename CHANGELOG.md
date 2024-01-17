@@ -12,6 +12,7 @@
 
 - Fix break/continue bug
 - Improve toString() approach for logging out parse tree
+- Introduced UnaryExpression type - need to add tests for
 
 ## TO-DO
 

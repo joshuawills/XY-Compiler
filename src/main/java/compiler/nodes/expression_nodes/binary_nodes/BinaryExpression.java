@@ -1,7 +1,6 @@
 package compiler.nodes.expression_nodes.binary_nodes;
 
 import compiler.Generator;
-import compiler.Token;
 import compiler.TokenType;
 import compiler.Error;
 import compiler.nodes.expression_nodes.NodeExpression;
@@ -47,10 +46,6 @@ public class BinaryExpression implements NodeExpression {
 
     public NodeExpression getRHS() {
         return this.rhs;
-    }
-
-    public Token getToken() {
-        return lhs.getToken();
     }
 
     @Override 

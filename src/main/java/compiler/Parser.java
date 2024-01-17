@@ -7,6 +7,7 @@ import compiler.nodes.NodeParameters;
 import compiler.nodes.NodeProgram;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.binary_nodes.BinaryExpression;
+import compiler.nodes.expression_nodes.binary_nodes.UnaryExpression;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
@@ -292,30 +293,24 @@ public class Parser {
 
         } else if (isPeek(TokenType.IDENT)) {
             Token ident = expect(TokenType.IDENT);
-
             NodeExpression expression = null;
-            NodeExpression lhs = new IdentExpression(ident);
             if (tryConsume(TokenType.INCREMENT) != null) { // i++;
-                NodeExpression rhs = new IntLitExpression(new Token(TokenType.INT_LIT, "1", ident.getLine(), ident.getCol()));
-                expression = new BinaryExpression(lhs, rhs, TokenType.PLUS);
+                expression = new UnaryExpression(TokenType.INCREMENT);
             } else if (tryConsume(TokenType.DECREMENT) != null) { // i--;
-                NodeExpression rhs = new IntLitExpression(new Token(TokenType.INT_LIT, "1", ident.getLine(), ident.getCol()));
-                expression = new BinaryExpression(lhs, rhs, TokenType.DASH);
+                expression = new UnaryExpression(TokenType.DECREMENT);
             } else if (tryConsume(TokenType.PLUS_EQUAL) != null) {
                 NodeExpression rhs = parseExpression(0);
-                expression = new BinaryExpression(lhs, rhs, TokenType.PLUS);
+                expression = new UnaryExpression(TokenType.PLUS_EQUAL, rhs);
             } else if (tryConsume(TokenType.DASH_EQUAL) != null) {
                 NodeExpression rhs = parseExpression(0);
-                expression = new BinaryExpression(lhs, rhs, TokenType.DASH);
+                expression = new UnaryExpression(TokenType.DASH_EQUAL, rhs);
             } else if (tryConsume(TokenType.STAR_EQUAL) != null) {
                 NodeExpression rhs = parseExpression(0);
-                expression = new BinaryExpression(lhs, rhs, TokenType.STAR);
+                expression = new UnaryExpression(TokenType.STAR_EQUAL, rhs);
             } else if (tryConsume(TokenType.F_SLASH_EQUAL) != null) {
                 NodeExpression rhs = parseExpression(0);
-                expression = new BinaryExpression(lhs, rhs, TokenType.F_SLASH);
-            } 
-            
-            else {
+                expression = new UnaryExpression(TokenType.F_SLASH_EQUAL, rhs);
+            } else {
                 expect(TokenType.ASSIGN);
                 expression = parseExpression(0);
             }

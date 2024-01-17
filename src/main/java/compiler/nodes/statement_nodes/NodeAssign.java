@@ -5,6 +5,8 @@ import compiler.Error;
 import compiler.Generator;
 import compiler.Token;
 import compiler.nodes.expression_nodes.NodeExpression;
+import compiler.nodes.expression_nodes.binary_nodes.BinaryExpression;
+import compiler.nodes.expression_nodes.binary_nodes.UnaryExpression;
 
 public class NodeAssign implements NodeStatement {
     
@@ -42,7 +44,11 @@ public class NodeAssign implements NodeStatement {
     public String toString() {
         if (identifier == null || expression == null)
             return "{}";
-        return String.format("%s = %s", identifier.getValue(), expression.toString());
+
+        if (expression instanceof BinaryExpression) {
+            return String.format("%s = %s", identifier.getValue(), expression.toString());
+        }
+        return String.format("%s%s", identifier.getValue(), expression.toString());
     }
 
     public void operator(Generator generator) {
@@ -53,7 +59,11 @@ public class NodeAssign implements NodeStatement {
         if (generator.constant(variableName))
             Error.handleError("GENERATOR", "Attempted reassignment to constant identifier: " + variableName);
 
-        generator.appendContents("    " + variableName + " = ");
+        if (expression instanceof BinaryExpression) {
+            generator.appendContents("    " + variableName + " = ");
+        } else {
+            generator.appendContents("    " + variableName);
+        }
         expression.operator(generator);
         generator.appendContents(";\n");
 
