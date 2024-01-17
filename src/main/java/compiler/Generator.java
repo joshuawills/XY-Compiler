@@ -16,7 +16,8 @@ public class Generator {
     private ArrayList<Variable> variables = new ArrayList<>(); 
     private ArrayList<Integer> scopes = new ArrayList<>();   
     private HashMap<String, String> configSettings = new HashMap<>();
-    
+    private int loopDepth = 0;
+
     /* 
     * Two considerations
     * 1: Variable Scope
@@ -26,6 +27,10 @@ public class Generator {
     private ArrayList<String> unusedVariables = new ArrayList<>();
     private ArrayList<String> functionCalled = new ArrayList<>();
     private ArrayList<String> allFunctionNames = new ArrayList<>();
+
+    public void addLoop() { this.loopDepth++; }
+    public void removeLoop() { this.loopDepth--; }
+    public boolean inLoop() {   return this.loopDepth > 0; }
 
     public ArrayList<String> getFunctionNames() {
         return this.allFunctionNames;
@@ -75,10 +80,7 @@ public class Generator {
         scopes.add(currentSize + 1);
     }
 
-    public void beginScope() {
-        this.scopes.add(0);
-    }
-
+    public void beginScope() { this.scopes.add(0); }
     public void endScope() {
         for (String unused: temporarilyUnused)
             unusedVariables.add(unused);
@@ -94,31 +96,29 @@ public class Generator {
         this.configSettings = configSettings;    
     } 
 
-    public void appendContents(String contents) {
-        assemblyBuffer.add(contents);
-    }
+    public void appendContents(String contents) { assemblyBuffer.add(contents); }
 
     public String generateProgram() {
-
         NodeProgram program = this.program;
-
         this.appendContents("#include <stdio.h>\n\n");
         ArrayList<String> allFuncNames = new ArrayList<>();
-
         List<NodeFunction> nonMain = program.getNodeFunctions().stream().filter(f -> !f.getFunctionName().equals("main")).collect(Collectors.toList());
         
+        // Noting down function names to identify inappropriate function calls
         for (NodeFunction function: nonMain)
             allFunctionNames.add(function.getFunctionName());
         
+        // Generating non-main functions
         for (NodeFunction function: nonMain) {
             allFuncNames.add(function.getFunctionName());
             function.operator(this);
         }
 
-
+        // Generating the main function
         NodeFunction mainFunction = program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals("main")).collect(Collectors.toList()).get(0);
         mainFunction.operator(this);
 
+        // Unused variable checking
         if (!configSettings.containsKey("FLAG-UNUSED") ||configSettings.containsKey("FLAG-UNUSED") && configSettings.get("FLAG-UNUSED").equals("true")) {
             for (String funcName: allFuncNames) {
                 if (!functionCalled.contains(funcName) && !funcName.startsWith("_"))

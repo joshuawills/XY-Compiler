@@ -9,3 +9,4 @@ bin/
 \.idea/
 a.out
 xy.config
+*.o
