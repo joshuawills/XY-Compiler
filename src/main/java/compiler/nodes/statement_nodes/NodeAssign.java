@@ -4,9 +4,8 @@ package compiler.nodes.statement_nodes;
 import compiler.Error;
 import compiler.Generator;
 import compiler.Token;
+import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
-import compiler.nodes.expression_nodes.binary_nodes.BinaryExpression;
-import compiler.nodes.expression_nodes.binary_nodes.UnaryExpression;
 
 public class NodeAssign implements NodeStatement {
     

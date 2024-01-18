@@ -1,7 +1,11 @@
+define magicNumber() -> int { 
+    return 2;
+}
+
 define main() -> int {
-    mut int x = 1;
-    while x < 100 {
-        out x;
-        x *= 2;
-    }
+    // let's get it started in here
+    // out (magicNumber() + 3);
+    int x = magicNumber();
+    out x;
+    return 0;
 }

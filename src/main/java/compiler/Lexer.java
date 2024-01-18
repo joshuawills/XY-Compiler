@@ -300,6 +300,8 @@ public class Lexer {
                 this.tokens.add(new Token(TokenType.INT_LIT, "0", line, real_column)); break;
             case "loop":
                 this.tokens.add(new Token(TokenType.LOOP, this.line, real_column)); break;
+            case "void":
+                this.tokens.add(new Token(TokenType.VOID, this.line, real_column)); break;
             default:
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;

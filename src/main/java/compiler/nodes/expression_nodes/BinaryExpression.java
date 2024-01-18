@@ -1,9 +1,8 @@
-package compiler.nodes.expression_nodes.binary_nodes;
+package compiler.nodes.expression_nodes;
 
 import compiler.Generator;
 import compiler.TokenType;
 import compiler.Error;
-import compiler.nodes.expression_nodes.NodeExpression;
 
 public class BinaryExpression implements NodeExpression {
     

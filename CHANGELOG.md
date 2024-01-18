@@ -16,7 +16,11 @@
 
 ## TO-DO
 
-- Fix ++, --, *=, etc to actually use C approach
+- Add in void return type
+    - Force returns
+    - Don't assign variable to void function etc.
+
 - Refactor variable declarations to accommodate strings
 - Add ability to declare uninitialized variables
-- Add in void return type
+- Add in tests for UnaryExpression type
+- String support for 'in' method

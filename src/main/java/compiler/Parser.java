@@ -5,9 +5,9 @@ import java.util.HashMap;
 import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeParameters;
 import compiler.nodes.NodeProgram;
+import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
-import compiler.nodes.expression_nodes.binary_nodes.BinaryExpression;
-import compiler.nodes.expression_nodes.binary_nodes.UnaryExpression;
+import compiler.nodes.expression_nodes.UnaryExpression;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
@@ -77,7 +77,10 @@ public class Parser {
         NodeParameters parameters = parseParameters();
 
         expect(TokenType.RETURN_SPEC);
-        Token returnType = expect(TokenType.INT);
+
+        TokenType returnType = consume().getType();
+        if (!Token.isReturnType(returnType))
+            Error.handleError("PARSER", "Unrecognized return type: only 'void' and 'int' are available");
         NodeScope scope = parseScope();
         return new NodeFunction(scope, functionName, returnType, parameters);
     }
@@ -204,6 +207,9 @@ public class Parser {
     private NodeStatement parseStatement() {
         if (tryConsume(TokenType.RETURN) != null) {
 
+            if (tryConsume(TokenType.SEMI) != null)
+                return new NodeReturn();
+
             NodeExpression expression = parseExpression(0);
             if (expression == null) {
                 if (peek() == null)
@@ -292,7 +298,34 @@ public class Parser {
             return new NodeDo(expression, scope);
 
         } else if (isPeek(TokenType.IDENT)) {
+
             Token ident = expect(TokenType.IDENT);
+
+            // Function call
+            if (tryConsume(TokenType.OPEN_PAREN) != null) {
+                String funcName = ident.getValue();
+                if (tryConsume(TokenType.CLOSE_PAREN) != null) {
+                    expect(TokenType.SEMI);
+                    return new FuncCallNode(funcName, new ArrayList<NodeTerm>(), true);
+                }
+
+                ArrayList<NodeTerm> parameters = new ArrayList<>();
+                while (true) {
+                    NodeTerm term = parseTerm();
+                    parameters.add(term);
+                    if (term == null)
+                        Error.handleError("PARSING", "Unable to parse term");
+                    if (tryConsume(TokenType.COMMA) != null) {
+                        continue;
+                    } else if (tryConsume(TokenType.CLOSE_PAREN) != null) {
+                        expect(TokenType.SEMI);
+                        return new FuncCallNode(funcName, parameters, true);
+                    } else {
+                        Error.handleError("PARSING", "Unexpected token" + consume().toString());
+                    }
+                }
+            }
+
             NodeExpression expression = null;
             if (tryConsume(TokenType.INCREMENT) != null) { // i++;
                 expression = new UnaryExpression(TokenType.INCREMENT);
@@ -339,7 +372,6 @@ public class Parser {
 
             expect(TokenType.SEMI);
             return new NodeBreak();
-        
         }
         return null;
     }

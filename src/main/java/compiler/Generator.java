@@ -17,6 +17,9 @@ public class Generator {
     private ArrayList<Integer> scopes = new ArrayList<>();   
     private HashMap<String, String> configSettings = new HashMap<>();
     private int loopDepth = 0;
+    private NodeFunction currentFunction = null;
+    public void setCurrentFunction(NodeFunction function) { this.currentFunction = function; }
+    public NodeFunction getCurrentFunction() { return this.currentFunction; }
 
     /* 
     * Two considerations
@@ -27,6 +30,10 @@ public class Generator {
     private ArrayList<String> unusedVariables = new ArrayList<>();
     private ArrayList<String> functionCalled = new ArrayList<>();
     private ArrayList<String> allFunctionNames = new ArrayList<>();
+
+    public NodeFunction getFunction(String name) {
+        return program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals(name)).collect(Collectors.toList()).get(0);
+    }
 
     public void addLoop() { this.loopDepth++; }
     public void removeLoop() { this.loopDepth--; }

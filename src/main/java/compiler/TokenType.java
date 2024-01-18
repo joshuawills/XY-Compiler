@@ -54,4 +54,5 @@ public enum TokenType {
     BITWISE_XOR,
     BITWISE_LEFT_SHIFT,
     BITWISE_RIGHT_SHIFT,
+    VOID
 }
