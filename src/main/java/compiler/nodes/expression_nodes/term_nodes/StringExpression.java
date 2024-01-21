@@ -2,6 +2,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Generator;
 import compiler.Token;
+import compiler.Verifier;
 
 public class StringExpression extends NodeTerm {
     
@@ -13,6 +14,10 @@ public class StringExpression extends NodeTerm {
         super();
     }
 
+    public String getType(Verifier v) {
+        return "string";
+    }
+
     @Override
     public String toString() {
         if (getToken() == null || getToken().getValue() == null)
@@ -21,7 +26,6 @@ public class StringExpression extends NodeTerm {
     }
 
     public void operator(Generator generator) {
-        System.out.println("TO-DO");
-        // TODO
+        generator.appendContents(getToken().getValue());
     }
 }

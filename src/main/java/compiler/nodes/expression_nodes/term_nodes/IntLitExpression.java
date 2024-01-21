@@ -1,6 +1,7 @@
 package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Token;
+import compiler.Verifier;
 import compiler.Generator;
 
 public class IntLitExpression extends NodeTerm {
@@ -11,6 +12,11 @@ public class IntLitExpression extends NodeTerm {
 
     public IntLitExpression() {
         super();
+    }
+
+    // should be handled specifically in Verifier class
+    public String getType(Verifier v) {
+        return "numeric";
     }
 
     @Override

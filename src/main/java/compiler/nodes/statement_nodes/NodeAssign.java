@@ -1,7 +1,6 @@
 package compiler.nodes.statement_nodes;
 
 
-import compiler.Error;
 import compiler.Generator;
 import compiler.Token;
 import compiler.nodes.expression_nodes.BinaryExpression;
@@ -52,12 +51,6 @@ public class NodeAssign implements NodeStatement {
 
     public void operator(Generator generator) {
         String variableName = identifier.getValue();
-        if (!generator.getVariables().stream().anyMatch(e -> e.getName().equals(variableName)))
-            Error.handleError("GENERATOR", "Attempted reassignment to undeclared identifier: " + variableName);
-
-        if (generator.constant(variableName))
-            Error.handleError("GENERATOR", "Attempted reassignment to constant identifier: " + variableName);
-
         if (expression instanceof BinaryExpression) {
             generator.appendContents("    " + variableName + " = ");
         } else {

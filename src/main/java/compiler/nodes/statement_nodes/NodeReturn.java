@@ -1,7 +1,7 @@
 package compiler.nodes.statement_nodes;
 
 import compiler.Generator;
-import compiler.TokenType;
+import compiler.Token;
 import compiler.Error;
 import compiler.nodes.expression_nodes.NodeExpression;
 
@@ -33,21 +33,26 @@ public class NodeReturn implements NodeStatement {
 
     public void operator(Generator generator) {
 
-        TokenType returnType = generator.getCurrentFunction().getReturnType();
+        Token returnToken = generator.getCurrentFunction().getReturnType();
         generator.appendContents("    return");
-        switch (returnType) {
-            case INT:
-                if (expression == null)
-                    Error.handleError("GENERATOR", "Can't return void in int function: " + generator.getCurrentFunction().getFunctionName());
-                generator.appendContents(" ");
-                expression.operator(generator);
+        switch (returnToken.getType()) {
+            case DECLARE:
+
+                switch (returnToken.getValue()) {
+                    case "int":
+                    case "s32":
+                        generator.appendContents(" ");
+                        expression.operator(generator);
+                        break;
+                    case "string":
+                        generator.appendContents(" ");
+                        expression.operator(generator);
+                }
                 break;
             case VOID:
-                if (expression != null)
-                    Error.handleError("GENERATOR", "Can't return expression in void function: " + generator.getCurrentFunction().getFunctionName());
                 break;
             default:
-                Error.handleError("GENERATOR", "Unrecognized return type" + returnType.toString());
+                Error.handleError("GENERATOR", "Unrecognized return type" + returnToken.getType().toString());
         }
         generator.appendContents(";\n");
     }

@@ -3,9 +3,8 @@ package compiler.nodes.expression_nodes.term_nodes;
 import java.util.ArrayList;
 
 import compiler.Generator;
-import compiler.TokenType;
+import compiler.Verifier;
 import compiler.nodes.statement_nodes.NodeStatement;
-import compiler.Error;
 public class FuncCallNode extends NodeTerm implements NodeStatement {
 
     private String functionName;
@@ -17,12 +16,13 @@ public class FuncCallNode extends NodeTerm implements NodeStatement {
         this.parameters = parameters;
     }
 
+    
     public FuncCallNode(String functionName, ArrayList<NodeTerm> parameters, boolean isIsolatedCall) {
         this.functionName = functionName;
         this.parameters = parameters;
         this.isIsolatedCall = isIsolatedCall;
     }
-
+    
     @Override 
     public String toString() {
         String buffer = "";
@@ -32,22 +32,24 @@ public class FuncCallNode extends NodeTerm implements NodeStatement {
         if (buffer.length() > 2) {
             buffer = buffer.substring(0, buffer.length() - 2);
         }
-
+        
         return String.format("%s(%s)", functionName, buffer);
+    }
+    
+    public String getType(Verifier v) {
+        return v.mapReturnTypes(v.getFunctionReturnType(functionName));
+    }
+
+    public String getFunctionName() {
+        return this.functionName;
+    }
+
+    public ArrayList<NodeTerm> getParameters() {
+        return this.parameters;
     }
 
     public void operator(Generator generator) {
-
-        // Check you're not assigning a void value to an int or whatever
-        if (!this.isIsolatedCall) {
-            if (!generator.getFunction(functionName).getReturnType().equals(TokenType.INT))
-                Error.handleError("GENERATOR", "Function '" + functionName + "' can't be assigned to an int.");
-
-        }
-
-        if (!generator.getFunctionNames().contains(functionName))      
-            Error.handleError("GENERATOR", "Function '" + functionName + "' doesn't exist.");
-
+        
         generator.appendContents(functionName + "(");
         int i = 0;
         for (NodeTerm term: parameters) {
@@ -59,9 +61,6 @@ public class FuncCallNode extends NodeTerm implements NodeStatement {
 
         if (this.isIsolatedCall)
             generator.appendContents(";\n");
-
-        generator.addFunctionCall(functionName);
-
     }
 
 

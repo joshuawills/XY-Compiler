@@ -5,7 +5,7 @@ public class Lexer {
     
     private String contents;
     private String buffer = "";
-    private int iterator = 0;
+    private int position = 0;
     private ArrayList<Token> tokens = new ArrayList<>();
 
     private int line = 1; private int col = 1;
@@ -27,7 +27,8 @@ public class Lexer {
     private boolean isNumber() { return (Character.isDigit(peek())) || (peek().toString().equals("-") && peek(1) != null && Character.isDigit(peek(1))); }
     
     public ArrayList<Token> tokenize() {
-        while (this.iterator < this.contents.length()) {
+        
+        while (this.position < this.contents.length()) {
 
             if (Character.isAlphabetic(peek()) || peek().equals('_')) {
                 handleStr();
@@ -66,94 +67,55 @@ public class Lexer {
                 continue;
             }
 
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals(">=")) {
-                appendTokenNoConsume(TokenType.GREATER_EQ, line, col); 
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("<=")) {
-                appendTokenNoConsume(TokenType.LESS_EQ, line, col); 
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("==")) {
-                appendTokenNoConsume(TokenType.EQUAL, line, col); 
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("!=")) {
-                appendTokenNoConsume(TokenType.NOT_EQUAL, line, col); 
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("&&")) {
-                appendTokenNoConsume(TokenType.AND_LOGIC, line, col); 
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("||")) {
-                appendTokenNoConsume(TokenType.OR_LOGIC, line, col); 
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("++")) {
-                appendTokenNoConsume(TokenType.INCREMENT, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("--")) {
-                appendTokenNoConsume(TokenType.DECREMENT, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("+=")) {
-                appendTokenNoConsume(TokenType.PLUS_EQUAL, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("-=")) {
-                appendTokenNoConsume(TokenType.DASH_EQUAL, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("*=")) {
-                appendTokenNoConsume(TokenType.STAR_EQUAL, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("->")) {
-                appendTokenNoConsume(TokenType.RETURN_SPEC, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("/=")) {
-                appendTokenNoConsume(TokenType.F_SLASH_EQUAL, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals("<<")) {
-                appendTokenNoConsume(TokenType.BITWISE_LEFT_SHIFT, line, col);
-                consume(); consume();
-                continue;
-            }
-
-            if (this.peekAhead(2) != null && this.peekAhead(2).equals(">>")) {
-                appendTokenNoConsume(TokenType.BITWISE_RIGHT_SHIFT, line, col);
-                consume(); consume();
-                continue;
+            String value = this.peekAhead(2);
+            if (value != null) {
+                switch (value) {
+                    case ">=":
+                        appendTokenNoConsume(TokenType.GREATER_EQ, line, col); 
+                        consume(); consume(); continue;
+                    case "<=":
+                        appendTokenNoConsume(TokenType.LESS_EQ, line, col); 
+                        consume(); consume(); continue;
+                    case "==":
+                        appendTokenNoConsume(TokenType.EQUAL, line, col); 
+                        consume(); consume(); continue;
+                    case "!=":
+                        appendTokenNoConsume(TokenType.NOT_EQUAL, line, col); 
+                        consume(); consume(); continue;
+                    case "&&":
+                        appendTokenNoConsume(TokenType.AND_LOGIC, line, col); 
+                        consume(); consume(); continue;
+                    case "||":
+                        appendTokenNoConsume(TokenType.OR_LOGIC, line, col); 
+                        consume(); consume(); continue;
+                    case "++":
+                        appendTokenNoConsume(TokenType.INCREMENT, line, col); 
+                        consume(); consume(); continue;
+                    case "--":
+                        appendTokenNoConsume(TokenType.DECREMENT, line, col); 
+                        consume(); consume(); continue;
+                    case "+=":
+                        appendTokenNoConsume(TokenType.PLUS_EQUAL, line, col); 
+                        consume(); consume(); continue;
+                    case "-=":
+                        appendTokenNoConsume(TokenType.DASH_EQUAL, line, col); 
+                        consume(); consume(); continue;
+                    case "*=":
+                        appendTokenNoConsume(TokenType.STAR_EQUAL, line, col); 
+                        consume(); consume(); continue;
+                    case "/=":
+                        appendTokenNoConsume(TokenType.F_SLASH_EQUAL, line, col);
+                        consume(); consume(); continue;
+                    case "->":
+                        appendTokenNoConsume(TokenType.ARROW, line, col);
+                        consume(); consume(); continue;
+                    case "<<":
+                        appendTokenNoConsume(TokenType.BITWISE_LEFT_SHIFT, line, col);
+                        consume(); consume(); continue;
+                    case ">>":
+                        appendTokenNoConsume(TokenType.BITWISE_RIGHT_SHIFT, line, col);
+                        consume(); consume(); continue;
+                }
             }
 
             switch (peek().toString()) {
@@ -235,7 +197,7 @@ public class Lexer {
         while (peek() != null && !peek().equals('"'))
             appendBuffer(consume());
         appendBuffer(consume());
-        this.tokens.add(new Token(TokenType.STRING, buffer, line, real_column));
+        this.tokens.add(new Token(TokenType.STRING_LIT, buffer, line, real_column));
         flushBuffer();
     }
 
@@ -273,7 +235,8 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.DEFINE, this.line, real_column); break;
             case "int":
             case "s32":
-                appendTokenNoConsume(TokenType.INT, this.line, real_column); break;
+            case "string":
+                this.tokens.add(new Token(TokenType.DECLARE, this.buffer, line, real_column)); break;
             case "if":
                 appendTokenNoConsume(TokenType.IF, this.line, real_column); break;
             case "else if":
@@ -294,14 +257,14 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.CONTINUE, this.line, real_column); break;
             case "break":
                 appendTokenNoConsume(TokenType.BREAK, this.line, real_column); break;
+            case "loop":
+                appendTokenNoConsume(TokenType.LOOP, this.line, real_column); break;
+            case "void":
+                appendTokenNoConsume(TokenType.VOID, this.line, real_column); break;
             case "true":
                 this.tokens.add(new Token(TokenType.INT_LIT, "1", line, real_column)); break;
             case "false":
                 this.tokens.add(new Token(TokenType.INT_LIT, "0", line, real_column)); break;
-            case "loop":
-                this.tokens.add(new Token(TokenType.LOOP, this.line, real_column)); break;
-            case "void":
-                this.tokens.add(new Token(TokenType.VOID, this.line, real_column)); break;
             default:
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;
@@ -312,29 +275,29 @@ public class Lexer {
 
     private Character consume() {
         Character current = null;
-        if (this.iterator < contents.length())
-            current = this.contents.charAt(this.iterator);
-        this.iterator++;
+        if (this.position < contents.length())
+            current = this.contents.charAt(this.position);
+        this.position++;
         this.incrementCol();
         return current;
     }
 
     private String peekAhead(int over) {
-        if (this.iterator + over >= contents.length())
+        if (this.position + over >= contents.length())
             return null;
-        return this.contents.substring(this.iterator, this.iterator + over);
+        return this.contents.substring(this.position, this.position + over);
     }
 
     private Character peek(int over) {
-         if (this.iterator + over >= contents.length())
+         if (this.position + over >= contents.length())
             return null;
-        return this.contents.charAt(this.iterator + over);
+        return this.contents.charAt(this.position + over);
     }
 
     private Character peek() {
-        if (this.iterator >= contents.length())
+        if (this.position >= contents.length())
             return null;
-        return this.contents.charAt(this.iterator);
+        return this.contents.charAt(this.position);
     }
 
 }

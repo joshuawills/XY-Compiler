@@ -1,22 +1,22 @@
 package compiler.nodes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-import compiler.TokenType;
+import compiler.Token;
 
 public class NodeParameters {
     
     // String is the var name, TokenType the type naturally
-    private HashMap<String, TokenType> variables = new HashMap<>(); 
+    private LinkedHashMap<String, Token> variables = new LinkedHashMap<>(); 
 
     public NodeParameters() {}
     
-    public void addVariable(String name, TokenType type) {
+    public void addVariable(String name, Token type) {
         this.variables.put(name, type);
     }
 
-    public HashMap<String, TokenType> getVariables() {
+    public LinkedHashMap<String, Token> getVariables() {
         return this.variables;
     }
 
@@ -24,7 +24,7 @@ public class NodeParameters {
     public String toString() {
         ArrayList<String> vars = new ArrayList<>();
         for (String x: variables.keySet())
-            vars.add(String.format("%s %s", variables.get(x).toString().toLowerCase(), x));
+            vars.add(String.format("%s %s", variables.get(x).getValue().toString().toLowerCase(), x));
         return String.join(", ", vars);
     }
 

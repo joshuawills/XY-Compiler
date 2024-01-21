@@ -49,113 +49,104 @@ public class Parser {
         while (peek() != null)
             program.appendFunction(parseFunction());
         return program;
+
     }
     
     private NodeParameters parseParameters() {
-        NodeParameters parameters = new NodeParameters();
+
+        NodeParameters p = new NodeParameters();
         expect(TokenType.OPEN_PAREN);
 
         if (tryConsume(TokenType.CLOSE_PAREN) != null)
-            return parameters;
+            return p;
     
         while (true) {
-            TokenType type = expect(TokenType.INT).getType();
+            Token token = expect(TokenType.INT);
             String name = expect(TokenType.IDENT).getValue();
             if (tryConsume(TokenType.CLOSE_PAREN) != null) {
-                parameters.addVariable(name, type);
+                p.addVariable(name, token);
                 break;
             }
             expect(TokenType.COMMA);
-            parameters.addVariable(name, type);
+            p.addVariable(name, token);
         }
-        return parameters;
+        return p;
     }
 
     private NodeFunction parseFunction() {
         expect(TokenType.DEFINE);
         String functionName = expect(TokenType.IDENT).getValue();
-        NodeParameters parameters = parseParameters();
+        NodeParameters p = parseParameters();
 
-        expect(TokenType.RETURN_SPEC);
+        expect(TokenType.ARROW);
 
-        TokenType returnType = consume().getType();
-        if (!Token.isReturnType(returnType))
-            Error.handleError("PARSER", "Unrecognized return type: only 'void' and 'int' are available");
+        Token returnToken = consume();
+        if (!Token.isReturnType(returnToken.getType()))
+            Error.handleError("PARSER", "Unrecognized return type: only 'void', 'string' and 'int' are available");
         NodeScope scope = parseScope();
-        return new NodeFunction(scope, functionName, returnType, parameters);
+        return new NodeFunction(scope, functionName, returnToken, p);
     }
 
 
     private NodeTerm parseTerm() {
         
-        if (peek() != null && peek().getType().equals(TokenType.INT_LIT)) {
-            return new IntLitExpression(consume());
+        Token t = peek();
+        NodeExpression e = null;
+        if (t == null) return null;
 
-        } else if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
+        switch (t.getType()) {
+            case INT_LIT:
+                return new IntLitExpression(consume());
 
-            consume();
-            NodeExpression expression = parseExpression(0);
-            if (expression == null)
-                Error.handleError("PARSING", "Expected expression");
-            expect(TokenType.CLOSE_PAREN);
-            return new ParenExpression(expression);
+            case STRING_LIT:
+                return new StringExpression(consume());
 
-        } else if (peek() != null && peek().getType().equals(TokenType.NEGATE)) {
+            case OPEN_PAREN:
+                consume();
+                e = parseExpression(0);
+                if (e == null)
+                    Error.handleError("PARSING", "Expected expression");
+                expect(TokenType.CLOSE_PAREN);
+                return new ParenExpression(e);
 
-            consume();
-            NodeExpression expression = parseTerm();
-            if (expression == null)
-                Error.handleError("PARSING", "Expected expression");
-            return new NegationExpression(expression);
-        
-        } else if (peek() != null && peek().getType().equals(TokenType.IDENT) && peek(1) != null && peek(1).getType().equals(TokenType.OPEN_PAREN)) {
-            
-            String funcName = consume().getValue();
-            expect(TokenType.OPEN_PAREN);
-            if (tryConsume(TokenType.CLOSE_PAREN) != null) {
-                return new FuncCallNode(funcName, new ArrayList<NodeTerm>());
-            }
+            case NEGATE:
+                consume();
+                e = parseTerm();
+                if (e == null)
+                    Error.handleError("PARSING", "Expected expression");
+                return new NegationExpression(e);
 
-            ArrayList<NodeTerm> parameters = new ArrayList<>();
-            while (true) {
-                NodeTerm term = parseTerm();
-                parameters.add(term);
-                if (term == null)
-                    Error.handleError("PARSING", "Unable to parse term");
-                if (tryConsume(TokenType.COMMA) != null) {
-                    continue;
-                } else if (tryConsume(TokenType.CLOSE_PAREN) != null) {
-                    return new FuncCallNode(funcName, parameters);
-                } else {
-                    Error.handleError("PARSING", "Unexpected token" + consume().toString());
-                }
-            }
+            case IDENT:
 
+                // Not a func call
+                Token nextToken = peek(1);
+                if (nextToken == null || !nextToken.getType().equals(TokenType.OPEN_PAREN))
+                    return new IdentExpression(consume());
 
-        } else if (peek() != null && peek().getType().equals(TokenType.IDENT)) { // int x = 5;
+                // Is a func call
+                return handleFuncCall();
 
-            return new IdentExpression(consume());
-        
+            default:
+                return null;
         }
-        return null;
     }
 
+    
     private NodeExpression parseExpression(int minimumPrecedence) { // set to 0 as default
         NodeExpression lhs = parseTerm();
         if (lhs == null) return null;
-        Integer precedenceLevel;
+        Integer level;
         while (true) {
             Token currentToken = peek();
             if (currentToken == null) break;
-            precedenceLevel = Token.getBinaryPrecedenceLevel(currentToken.getType());
-            if (precedenceLevel == null || precedenceLevel < minimumPrecedence) break;
-
+            level = Token.getBinaryPrecedenceLevel(currentToken.getType());
+            if (level == null || level < minimumPrecedence) break;
+            
             Token operator = consume();
-            int nextMinPrec = precedenceLevel + 1;
-            NodeExpression rhs = parseExpression(nextMinPrec);
+            NodeExpression rhs = parseExpression(level + 1);
             if (rhs == null)
                 Error.handleError("PARSING", "Unable to parse expression");
-
+            
             BinaryExpression myExpression = new BinaryExpression();
             switch (operator.getType()) {
                 case GREATER_EQ:
@@ -185,195 +176,150 @@ public class Parser {
             myExpression.setLHS(lhs);
             myExpression.setRHS(rhs);
             lhs = myExpression;
-            
         }
         return lhs;
     }
-
-    private Token tryConsume(TokenType type) {
-        if (peek() != null && peek().getType().equals(type)) {
-            Token currentToken = peek();
-            consume();
-            return currentToken;
-        }
-        return null;
-    }
-
-    private boolean isPeek(TokenType type) {
-        return peek() != null && peek().getType().equals(type);
-    }
-
-
+    
     private NodeStatement parseStatement() {
-        if (tryConsume(TokenType.RETURN) != null) {
-
-            if (tryConsume(TokenType.SEMI) != null)
+        
+        Token t = consume();
+        if (t == null) return null;
+        NodeExpression expression = null;
+        Token ident = null;
+        NodeScope scope;
+        
+        switch (t.getType()) {
+            case RETURN:
+                if (tryConsume(TokenType.SEMI) != null)
                 return new NodeReturn();
-
-            NodeExpression expression = parseExpression(0);
-            if (expression == null) {
-                if (peek() == null)
-                    Error.handleError("Parsing", "Invalid expression near EOF");
-                else
-                    Error.handleError("Parsing", "Invalid expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
-            }
-            expect(TokenType.SEMI);
-            return new NodeReturn(expression);
-
-        } else if (tryConsume(TokenType.INT) != null) { // int x = 32;
-
-            Token ident = expect(TokenType.IDENT);
-            expect(TokenType.ASSIGN);
-
-            if (tryConsume(TokenType.IN) != null) {
-                String value = expect(TokenType.STRING).getValue();
-                expect(TokenType.SEMI);
-                return new NodeScan(value, ident, true);
-            }
-            NodeExpression expression = parseExpression(0);
-            expect(TokenType.SEMI);
-            return new NodeLet(ident, expression, true);
-
-        } else if (tryConsume(TokenType.MUT) != null) {
-
-            expect(TokenType.INT);
-            Token ident = expect(TokenType.IDENT);
-            expect(TokenType.ASSIGN);
-
-            if (tryConsume(TokenType.IN) != null) {
-                String value = expect(TokenType.STRING).getValue();
-                expect(TokenType.SEMI);
-                return new NodeScan(value, ident, false);
-            }
-
-            NodeExpression expression = parseExpression(0);
-            expect(TokenType.SEMI);
-            return new NodeLet(ident, expression, false);
-
-        }
-        else if (tryConsume(TokenType.IF) != null) { // if () {}
-
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
-                Error.minorError("CONFIG-SPECIFIC", "Missing () around if statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
-            NodeExpression expression = parseExpression(0);
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
-                Error.minorError("CONFIG-SPECIFIC", "Missing {} around if statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
-            return new NodeIf(expression, parseScope(), parseIfPred());
-
-        } else if (tryConsume(TokenType.WHILE) != null) {
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
-                Error.minorError("CONFIG-SPECIFIC", "Missing () around while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
-            NodeExpression expression = parseExpression(0);
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
-                Error.minorError("CONFIG-SPECIFIC", "Missing {} around while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
-            return new NodeWhile(expression, parseScope());
-
-        } else if (tryConsume(TokenType.LOOP) != null) {
-
-            NodeScope scope = parseScope();
-            return new NodeLoop(scope);
-
-        } else if (tryConsume(TokenType.DO) != null) {
-
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
-                    Error.minorError("CONFIG-SPECIFIC", "Missing {} around do-while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
-            NodeScope scope = parseScope();
-            expect(TokenType.WHILE);
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
-                    Error.minorError("CONFIG-SPECIFIC", "Missing () around do-while statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
-            NodeExpression expression = parseExpression(0);
-            expect(TokenType.SEMI);
-            return new NodeDo(expression, scope);
-
-        } else if (isPeek(TokenType.IDENT)) {
-
-            Token ident = expect(TokenType.IDENT);
-
-            // Function call
-            if (tryConsume(TokenType.OPEN_PAREN) != null) {
-                String funcName = ident.getValue();
-                if (tryConsume(TokenType.CLOSE_PAREN) != null) {
-                    expect(TokenType.SEMI);
-                    return new FuncCallNode(funcName, new ArrayList<NodeTerm>(), true);
-                }
-
-                ArrayList<NodeTerm> parameters = new ArrayList<>();
-                while (true) {
-                    NodeTerm term = parseTerm();
-                    parameters.add(term);
-                    if (term == null)
-                        Error.handleError("PARSING", "Unable to parse term");
-                    if (tryConsume(TokenType.COMMA) != null) {
-                        continue;
-                    } else if (tryConsume(TokenType.CLOSE_PAREN) != null) {
-                        expect(TokenType.SEMI);
-                        return new FuncCallNode(funcName, parameters, true);
-                    } else {
-                        Error.handleError("PARSING", "Unexpected token" + consume().toString());
-                    }
-                }
-            }
-
-            NodeExpression expression = null;
-            if (tryConsume(TokenType.INCREMENT) != null) { // i++;
-                expression = new UnaryExpression(TokenType.INCREMENT);
-            } else if (tryConsume(TokenType.DECREMENT) != null) { // i--;
-                expression = new UnaryExpression(TokenType.DECREMENT);
-            } else if (tryConsume(TokenType.PLUS_EQUAL) != null) {
-                NodeExpression rhs = parseExpression(0);
-                expression = new UnaryExpression(TokenType.PLUS_EQUAL, rhs);
-            } else if (tryConsume(TokenType.DASH_EQUAL) != null) {
-                NodeExpression rhs = parseExpression(0);
-                expression = new UnaryExpression(TokenType.DASH_EQUAL, rhs);
-            } else if (tryConsume(TokenType.STAR_EQUAL) != null) {
-                NodeExpression rhs = parseExpression(0);
-                expression = new UnaryExpression(TokenType.STAR_EQUAL, rhs);
-            } else if (tryConsume(TokenType.F_SLASH_EQUAL) != null) {
-                NodeExpression rhs = parseExpression(0);
-                expression = new UnaryExpression(TokenType.F_SLASH_EQUAL, rhs);
-            } else {
-                expect(TokenType.ASSIGN);
+                
                 expression = parseExpression(0);
-            }
-            expect(TokenType.SEMI);
-            return new NodeAssign(ident, expression);
-
-        }  else if (isPeek(TokenType.OPEN_CURLY)) { // Entered a scope
-
-            return parseScope();
-
-        } else if (tryConsume(TokenType.OUT) != null) {
-
-            if (isPeek(TokenType.STRING)) {
-                NodeTerm stringToken = new StringExpression(consume());
+                if (expression == null) {
+                    if (peek() == null)
+                    Error.handleError("Parsing", "Invalid expression near EOF");
+                    else
+                    Error.handleError("Parsing", "Invalid expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
+                }
                 expect(TokenType.SEMI);
-                return new NodePrint(stringToken, true);
-            } 
-            NodeTerm term = parseTerm(); // reconsider when different terms are added
-            expect(TokenType.SEMI);
-            return new NodePrint(term);
-
-        } else if (tryConsume(TokenType.CONTINUE) != null) {
-            expect(TokenType.SEMI);
-            return new NodeContinue();
-        } else if (tryConsume(TokenType.BREAK) != null) {
-
-            expect(TokenType.SEMI);
-            return new NodeBreak();
+                return new NodeReturn(expression);
+            
+            case MUT:
+            case DECLARE:
+                // Declare
+                boolean isConstant = true;
+                if (t.getType().equals(TokenType.MUT)) {
+                    isConstant = false;
+                    t = expect(TokenType.DECLARE);
+                }
+                ident = expect(TokenType.IDENT);
+                expect(TokenType.ASSIGN);
+                if (tryConsume(TokenType.IN) != null) {
+                    String value = expect(TokenType.STRING_LIT).getValue();
+                    expect(TokenType.SEMI);
+                    return new NodeScan(value, ident, true, t);
+                }
+                expression = parseExpression(0);
+                expect(TokenType.SEMI);
+                return new NodeLet(ident, expression, isConstant, t);
+            
+            case IF:
+                checkParens("if");
+                expression = parseExpression(0);
+                checkCurly("if");
+                return new NodeIf(expression, parseScope(), parseIfPred());
+            
+            case WHILE:
+                checkParens("while");
+                expression = parseExpression(0);
+                checkCurly("while");
+                return new NodeWhile(expression, parseScope());
+            
+            case LOOP:
+                return new NodeLoop(parseScope());
+            
+            case DO:
+                checkCurly("do-while");
+                scope = parseScope();
+                expect(TokenType.WHILE);
+                checkParens("do-while");
+                expression = parseExpression(0);
+                expect(TokenType.SEMI);
+                return new NodeDo(expression, scope);
+            
+            case CONTINUE:
+                expect(TokenType.SEMI);
+                return new NodeContinue();
+            
+            case BREAK:
+                expect(TokenType.SEMI);
+                return new NodeBreak();
+            
+            case OUT:
+                NodeTerm token = parseTerm();
+                expect(TokenType.SEMI);
+                return new NodePrint(token);
+            
+            case OPEN_CURLY:
+                scope = parseScope();
+                expect(TokenType.CLOSE_CURLY);
+                return scope;
+            
+            case IDENT:
+                ident = t;
+                if (tryConsume(TokenType.OPEN_PAREN) != null) {
+                    iterator--;
+                    return handleFuncCall();
+                }
+                
+                t = peek();
+                switch (t.getType()) {
+                    case INCREMENT:
+                    case DECREMENT:
+                    consume();
+                    expression = new UnaryExpression(t.getType());
+                    break;
+                    case PLUS_EQUAL:
+                    case DASH_EQUAL:
+                    case STAR_EQUAL:
+                    case F_SLASH_EQUAL:
+                    consume();
+                    NodeExpression rhs = parseExpression(0);
+                    expression = new UnaryExpression(t.getType(), rhs);
+                    break;
+                    default:
+                    expect(TokenType.ASSIGN);
+                    expression = parseExpression(0);
+                }
+                expect(TokenType.SEMI);
+                return new NodeAssign(ident, expression);
+            
+            default:
+                this.iterator--; // decrement from original consumption at start of method
+                return null;
         }
-        return null;
+    }
+    
+    private FuncCallNode handleFuncCall() {
+        String funcName = consume().getValue();
+        expect(TokenType.OPEN_PAREN);
+        if (tryConsume(TokenType.CLOSE_PAREN) != null) {
+            return new FuncCallNode(funcName, new ArrayList<NodeTerm>());
+        }
+
+        ArrayList<NodeTerm> parameters = new ArrayList<>();
+        while (true) {
+            NodeTerm term = parseTerm();
+            parameters.add(term);
+            if (term == null)
+                Error.handleError("PARSING", "Unable to parse term");
+            if (tryConsume(TokenType.COMMA) != null) {
+                continue;
+            } else if (tryConsume(TokenType.CLOSE_PAREN) != null) {
+                return new FuncCallNode(funcName, parameters);
+            } else {
+                Error.handleError("PARSING", "Unexpected token" + consume().toString());
+            }
+        }
     }
 
     private NodeScope parseScope() {
@@ -396,10 +342,7 @@ public class Parser {
         Token currentToken = peek();
         if (currentToken != null && currentToken.getType().equals(TokenType.ELIF)) {
             consume();
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
-                Error.minorError("CONFIG-SPECIFIC", "Missing () around elif statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
+            checkParens("else if");
             NodeExpression expression = parseExpression(0);
             if (expression == null) {
                 if (peek() == null) {
@@ -408,20 +351,13 @@ public class Parser {
                     Error.handleError("Parsing", "Unable to parse expression\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
                 }
             }
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
-                Error.minorError("CONFIG-SPECIFIC", "Missing {} around elif statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
+            checkCurly("else if");
             return new NodeIfPredicateElif(expression, parseScope(), parseIfPred());
         } else if (currentToken != null && currentToken.getType().equals(TokenType.ELSE)) {
             consume();
-            if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
-                if (peek() != null && !peek().getType().equals(TokenType.OPEN_CURLY))
-                Error.minorError("CONFIG-SPECIFIC", "Missing {} around else statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
-            }
+            checkCurly("else");
             return new NodeIfPredicateElse(parseScope());
         }
-
         return null;
     }
 
@@ -439,9 +375,9 @@ public class Parser {
     private Token consume() {
         if (this.iterator >= tokens.size())
             return null;
-        Token current = this.tokens.get(this.iterator);
+        Token c = this.tokens.get(this.iterator);
         this.iterator++;
-        return current;
+        return c;
     }
 
     private Token peek() {
@@ -454,6 +390,26 @@ public class Parser {
         if (this.iterator + var < 0 || this.iterator + var >= tokens.size())
             return null;
         return this.tokens.get(this.iterator + var);
+    }
+
+    private Token tryConsume(TokenType type) {
+        if (peek() != null && peek().getType().equals(type))
+            return consume();
+        return null;
+    }
+
+    private void checkParens(String area) {
+        if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+            if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
+            Error.minorError("CONFIG-SPECIFIC", "Missing () around " + area + " statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+        }
+    }
+
+    private void checkCurly(String area) {
+        if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
+            if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
+            Error.minorError("CONFIG-SPECIFIC", "Missing {} around " + area + " statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+        }
     }
 
 

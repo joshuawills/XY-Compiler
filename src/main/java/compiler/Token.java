@@ -78,7 +78,6 @@ public class Token {
         this.value = v;
     }
 
-
     public TokenType getType() {
         return this.type;
     }
@@ -88,7 +87,7 @@ public class Token {
     }
 
     public static boolean isReturnType(TokenType type) {
-        return type.equals(TokenType.INT) || type.equals(TokenType.VOID);
+        return type.equals(TokenType.DECLARE) || type.equals(TokenType.VOID);
     }
 
 

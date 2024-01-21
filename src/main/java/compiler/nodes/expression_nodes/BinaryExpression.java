@@ -2,6 +2,7 @@ package compiler.nodes.expression_nodes;
 
 import compiler.Generator;
 import compiler.TokenType;
+import compiler.Verifier;
 import compiler.Error;
 
 public class BinaryExpression implements NodeExpression {
@@ -15,6 +16,16 @@ public class BinaryExpression implements NodeExpression {
     }
 
     public BinaryExpression() {}
+
+    public String getType(Verifier v) {
+        if (!lhs.getType(v).equals("numeric"))
+            Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
+
+        if (!rhs.getType(v).equals("numeric"))
+            Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
+
+        return "numeric";
+    }
 
     public BinaryExpression(NodeExpression one, NodeExpression two) {
         this.lhs = one;

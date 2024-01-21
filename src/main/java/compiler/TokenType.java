@@ -4,8 +4,8 @@ public enum TokenType {
     DEFAULT,
     SEMI,
     INT_LIT,
+    STRING_LIT,
     RETURN,
-    INT,
     ASSIGN,
     IDENT,
     PLUS,
@@ -33,7 +33,6 @@ public enum TokenType {
     WHILE,
     OUT,
     IN,
-    STRING,
     INCREMENT,
     DECREMENT,
     PLUS_EQUAL,
@@ -46,7 +45,7 @@ public enum TokenType {
     BREAK,
     LOOP,
     DEFINE,
-    RETURN_SPEC,
+    ARROW, 
     COMMA,
     PERCENT,
     BITWISE_OR,
@@ -54,5 +53,9 @@ public enum TokenType {
     BITWISE_XOR,
     BITWISE_LEFT_SHIFT,
     BITWISE_RIGHT_SHIFT,
-    VOID
+    VOID,
+    
+    INT,
+    STRING,
+    DECLARE
 }

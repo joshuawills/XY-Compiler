@@ -110,7 +110,6 @@ public class Main {
 
         if (myCompiler.commandArgs.containsKey("help"))
             myCompiler.help();
-
         
         if (!myCompiler.commandArgs.containsKey("sourceName"))
             Error.handleError("KEY", "No source filename provided");
@@ -138,7 +137,7 @@ public class Main {
                 if (command.strip().startsWith("#"))
                     continue;
                 if (!directive.equals("true") && !directive.equals("false")) {
-                    Error.minorError("CONFIG", "Directive '" + directive + "' not recognised");
+                    Error.minorError("CONFIG", "Directive '" + directive + "' not recognized");
                     continue;
                 }
                 myCompiler.configSettings.put(command, directive);
@@ -160,9 +159,9 @@ public class Main {
                 System.out.println(function.toString());
         }
 
-        Generator myGenerator = new Generator(myNode, myCompiler.configSettings);
+        Generator myGenerator = new Generator(myNode);
 
-        Verifier myVerifier = new Verifier(myNode);
+        Verifier myVerifier = new Verifier(myNode, myCompiler.configSettings);
         myVerifier.verify();
 
         String contents = myGenerator.generateProgram();

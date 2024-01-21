@@ -11,16 +11,28 @@
 ## 17.01.24
 
 - Fix break/continue bug
-- Improve toString() approach for logging out parse tree
+- Improve *toString()* approach for logging out parse tree
 - Introduced UnaryExpression type - need to add tests for
+
+## 18.01.24
+
+- Add in void return type, basic error checking
+
+## 19.01.24
+
+- Refactor variable declarations to accommodate strings
+- String support for 'in' method
+
+## 21.01.24
+
+- General porting of stuff in the generator to the verifier (also a type-checker at this point)
+    - Whole new type-checking system
+    - Checks for unused variables etc.
+    - Required quite a significant refactoring
+        - Will need to clean it up next
+- Add strings in function returns
 
 ## TO-DO
 
-- Add in void return type
-    - Force returns
-    - Don't assign variable to void function etc.
-
-- Refactor variable declarations to accommodate strings
-- Add ability to declare uninitialized variables
+- Make sure something is actually returned for strings and integers (i.e. non void return methods)
 - Add in tests for UnaryExpression type
-- String support for 'in' method

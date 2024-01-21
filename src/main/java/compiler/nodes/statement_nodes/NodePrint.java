@@ -1,20 +1,22 @@
 package compiler.nodes.statement_nodes;
 
+
 import compiler.Generator;
+import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
+import compiler.nodes.expression_nodes.term_nodes.StringExpression;
 
 public class NodePrint implements NodeStatement {
     
     private NodeTerm term;
-    private boolean isString = false;
+    String returnType = null;
 
     public NodePrint(NodeTerm term) {
         this.term = term;
     }
 
-    public NodePrint(NodeTerm term, boolean isString) {
-        this.term = term;
-        this.isString = isString;
+    public void setReturnType(String t) {
+        this.returnType = t;
     }
 
     public NodeTerm getTerm() {
@@ -30,13 +32,26 @@ public class NodePrint implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        if (isString) {
+        if (term instanceof StringExpression) {
             generator.appendContents("    printf(" + term.toString() + ");\n");
+            return;
+        }
+        
+        if (term instanceof IdentExpression) {
+            switch (returnType) {
+                case "numeric":
+                    generator.appendContents("    printf(\"%d\\n\", ");
+                    break;
+                case "string":
+                    generator.appendContents("    printf(\"%s\\n\", ");
+                    break;
+                default:
+            }
         } else {
             generator.appendContents("    printf(\"%d\\n\", ");
-            term.operator(generator);
-            generator.appendContents(");\n");
         }
+        term.operator(generator);
+        generator.appendContents(");\n");
     }
 
 }

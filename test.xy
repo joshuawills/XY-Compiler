@@ -1,11 +1,12 @@
-define magicNumber() -> int { 
-    return 2;
-}
+// 0
+// Do while test 1
 
 define main() -> int {
-    // let's get it started in here
-    // out (magicNumber() + 3);
-    int x = magicNumber();
-    out x;
+
+    mut int xHello = 1;
+    do {
+        out xHello;
+        out "";
+    } while (xHello != 1);
     return 0;
 }
