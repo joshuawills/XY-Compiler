@@ -1,0 +1,20 @@
+define main() -> int {
+
+    int x = in "Enter a positive number here: ";
+    int y = in "Enter a positive number here: ";
+
+    if x <= 0 || y <= 0 {
+        out "You didn't provide a positive number :(\n";
+        return 1;
+    }
+
+    out euclid(x, y);
+
+    return 0;
+}
+
+define euclid(int x, int y) -> int {
+    if (x == 0)
+        return y;
+    return euclid((y % x), x);
+}

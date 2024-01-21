@@ -17,6 +17,8 @@ import compiler.nodes.statement_nodes.conditionals.NodeIf;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicate;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElif;
 import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
+import compiler.nodes.statement_nodes.loops.NodeBreak;
+import compiler.nodes.statement_nodes.loops.NodeContinue;
 import compiler.nodes.statement_nodes.loops.NodeDo;
 import compiler.nodes.statement_nodes.loops.NodeLoop;
 import compiler.nodes.statement_nodes.loops.NodeWhile;
@@ -36,6 +38,7 @@ public class Verifier {
     private final HashMap<String, String> configSettings;
 
     private HashMap<String, Integer> funcCallCounts = new HashMap<>();
+    private int loopDepth = 0;
 
     private ArrayList<Variable> variables = new ArrayList<>();
     private ArrayList<Integer> stack = new ArrayList<>();
@@ -100,7 +103,6 @@ public class Verifier {
 
     private NodeFunction getFunction(String name) {
         List<NodeFunction> functions =  this.program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals(name)).collect(Collectors.toList());
-
         if (functions.size() != 1) { return null; }
         return functions.get(0); // int, s32, string, void
 
@@ -213,9 +215,9 @@ public class Verifier {
             String existingType = variableReturnType(name);
             String assignedType = getExpressionType(s1.getExpression());
             if (!existingType.equals(assignedType))
-        
                 Error.handleError("VERIFIER", String.format("Incompatible types, assigning %s to variable %s when it's %s", assignedType, name, existingType));
-        } else if (s instanceof NodeLet) {
+        
+            } else if (s instanceof NodeLet) {
 
             NodeLet s1 = (NodeLet) s;
             String name = s1.getIdentifier().getValue();
@@ -245,6 +247,7 @@ public class Verifier {
             addVariable(new Variable(s1.getIdentifier().getValue(), !s1.isConstant(), s1.getType()));
 
         } else if (s instanceof NodeScope) {
+
             push();
             for (NodeStatement s1: ((NodeScope) s).getStatements())
                 scanStatement(s1, returnT, fName);
@@ -291,8 +294,10 @@ public class Verifier {
             NodeDo s1 = (NodeDo) s;
 
             push();
+            this.loopDepth++;
             for (NodeStatement s3: ((NodeScope) s1.getScope()).getStatements())
                 scanStatement(s3, returnT, fName);
+            this.loopDepth--;
             pop();
 
             if (!getExpressionType(s1.getExpression()).equals("numeric"))
@@ -305,16 +310,30 @@ public class Verifier {
                 Error.handleError("VERIFIER", "A 'while' condition can only evaluate a numeric expression");
 
             push();
+            this.loopDepth++;
             for (NodeStatement s3: ((NodeScope) s1.getScope()).getStatements())
                 scanStatement(s3, returnT, fName);
+            this.loopDepth--;
             pop();
 
         } else if (s instanceof NodeLoop) {
             NodeLoop s1 = (NodeLoop) s;
             push();
+            this.loopDepth++;
             for (NodeStatement s3: ((NodeScope) s1.getScope()).getStatements())
                 scanStatement(s3, returnT, fName);
+            this.loopDepth--;
             pop();
+        } else if (s instanceof NodeContinue) {
+
+            if (this.loopDepth <= 0)
+                Error.handleError("VERIFIER", "A 'continue' statement may only be used in a loop");
+
+        } else if (s instanceof NodeBreak) {
+
+            if (this.loopDepth <= 0)
+                Error.handleError("VERIFIER", "A 'break' statement may only be used in a loop");
+
         }
 
     }
@@ -329,7 +348,6 @@ public class Verifier {
         NodeFunction f = getFunction("main");
         if (!f.getReturnType().getValue().equals("int"))
             Error.handleError("VERIFIER", "Main function must return an int");
-
 
     }
 

@@ -10,7 +10,6 @@ public class Generator {
 
     private NodeProgram program;
     private ArrayList<String> assemblyBuffer = new ArrayList<>();
-    private int loopDepth = 0;
     private NodeFunction currentFunction = null;
     public void setCurrentFunction(NodeFunction function) { this.currentFunction = function; }
     public NodeFunction getCurrentFunction() { return this.currentFunction; }
@@ -20,10 +19,6 @@ public class Generator {
     public NodeFunction getFunction(String name) {
         return program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals(name)).collect(Collectors.toList()).get(0);
     }
-
-    public void addLoop() { this.loopDepth++; }
-    public void removeLoop() { this.loopDepth--; }
-    public boolean inLoop() {   return this.loopDepth > 0; }
 
     public ArrayList<String> getFunctionNames() {
         return this.allFunctionNames;

@@ -31,13 +31,11 @@ public class NodeDo implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        generator.addLoop();
         generator.appendContents("    do\n");
         scope.operator(generator);
         generator.appendContents("    while (");
         expression.operator(generator);
         generator.appendContents(");\n");
-        generator.removeLoop();
     }
 
 }

@@ -111,11 +111,10 @@ public class Main {
         if (myCompiler.commandArgs.containsKey("help"))
             myCompiler.help();
         
-        // if (!myCompiler.commandArgs.containsKey("sourceName"))
-        //     Error.handleError("KEY", "No source filename provided");
+        if (!myCompiler.commandArgs.containsKey("sourceName"))
+            Error.handleError("KEY", "No source filename provided");
 
-        // String filePath = myCompiler.commandArgs.get("sourceName");
-        String filePath = "test.xy";
+        String filePath = myCompiler.commandArgs.get("sourceName");
         myCompiler.setSource(filePath);
 
         Lexer myLexer = new Lexer(myCompiler.getFileSource());
@@ -154,11 +153,11 @@ public class Main {
             
         Parser myParser = new Parser(tokens, myCompiler.configSettings);
         NodeProgram myNode = myParser.parseProgram();
-        // if (myCompiler.commandArgs.containsKey("parserLog")) {
+        if (myCompiler.commandArgs.containsKey("parserLog")) {
             System.out.println("PARSER: \n");
             for (NodeFunction function: myNode.getNodeFunctions())
                 System.out.println(function.toString());
-        // }
+        }
 
         Generator myGenerator = new Generator(myNode);
 

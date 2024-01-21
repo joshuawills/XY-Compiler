@@ -25,10 +25,8 @@ public class NodeLoop implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        generator.addLoop();
         generator.appendContents("    while (1)\n");
         scope.operator(generator);
-        generator.removeLoop();
     }
 
 }
