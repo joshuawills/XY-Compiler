@@ -22,7 +22,11 @@ public class FuncCallNode extends NodeTerm implements NodeStatement {
         this.parameters = parameters;
         this.isIsolatedCall = isIsolatedCall;
     }
-    
+
+    public void setIsolated() {
+        this.isIsolatedCall = true;
+    }
+
     @Override 
     public String toString() {
         String buffer = "";

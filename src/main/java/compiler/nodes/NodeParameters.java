@@ -23,8 +23,11 @@ public class NodeParameters {
     @Override
     public String toString() {
         ArrayList<String> vars = new ArrayList<>();
-        for (String x: variables.keySet())
-            vars.add(String.format("%s %s", variables.get(x).getValue().toString().toLowerCase(), x));
+        for (String x: variables.keySet()) {
+            String var = variables.get(x).getValue().toString().toLowerCase();
+            if (var.equals("string")) var = "char*";
+            vars.add(String.format("%s %s", var, x));
+        }
         return String.join(", ", vars);
     }
 

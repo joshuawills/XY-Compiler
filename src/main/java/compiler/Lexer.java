@@ -235,6 +235,7 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.DEFINE, this.line, real_column); break;
             case "int":
             case "s32":
+                this.tokens.add(new Token(TokenType.DECLARE, "int", line, real_column)); break;
             case "string":
                 this.tokens.add(new Token(TokenType.DECLARE, this.buffer, line, real_column)); break;
             case "if":

@@ -61,7 +61,6 @@ public class NodeLet implements NodeStatement  {
             case DECLARE:
                 switch (type.getValue()) {
                     case "int":
-                    case "s32":
                         generator.appendContents("    int " + variableName + " = ");
                         break;
                     case "string":

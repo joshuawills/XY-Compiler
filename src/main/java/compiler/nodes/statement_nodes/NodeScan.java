@@ -40,7 +40,6 @@ public class NodeScan implements NodeStatement {
             case DECLARE:
                 switch (type.getValue()) {
                     case "int":
-                    case "s32":
                         generator.appendContents("    int " + identifier.getValue() + ";\n");
                         generator.appendContents("    printf(" + output + ");\n");
                         generator.appendContents("    scanf(\"%d\", " + "&" + identifier.getValue() + ");\n");

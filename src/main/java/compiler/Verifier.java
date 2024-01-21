@@ -35,7 +35,6 @@ public class Verifier {
     private NodeProgram program;
     private final HashMap<String, String> configSettings;
 
-
     private HashMap<String, Integer> funcCallCounts = new HashMap<>();
 
     private ArrayList<Variable> variables = new ArrayList<>();
@@ -93,8 +92,8 @@ public class Verifier {
 
     public String getFunctionReturnType(String name) {
         List<NodeFunction> functions =  this.program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals(name)).collect(Collectors.toList());
-
         if (functions.size() != 1) { return null; }
+        if (functions.get(0).getReturnType().getType().equals(TokenType.VOID)) return "void";
         return functions.get(0).getReturnType().getValue(); // int, s32, string, void
 
     }
@@ -110,7 +109,6 @@ public class Verifier {
     public String mapReturnTypes(String s) {
         switch (s) {
             case "int":
-            case "s32":
                 return "numeric";
             case "string":
                 return "string";
@@ -120,7 +118,6 @@ public class Verifier {
         return "";
     }
 
-    // "numeric", "string", "void"
     private String getExpressionType(NodeExpression expression) {
         String x = expression.getType(this);
         if (expression instanceof FuncCallNode) {
@@ -137,10 +134,8 @@ public class Verifier {
         return x;
     }
 
-    // Returns return thing of function
     private String verifyFunctionCall(FuncCallNode func) {
          
-        // Need to check that all the CL args map up correctly
         String funcName = func.getFunctionName();
         String returnType = getFunctionReturnType(funcName);
         if (returnType == null)
@@ -155,7 +150,7 @@ public class Verifier {
         Integer i = 0;
         for (Map.Entry<String, Token> entry : realParameters.entrySet()) {
             String realType = mapReturnTypes(entry.getValue().getValue());
-            String providedType = getExpressionType(parametersProvided.get(0));
+            String providedType = getExpressionType(parametersProvided.get(i));
             if (!realType.equals(providedType))
                 Error.handleError("VERIFIER", String.format("Expected arg %s to be of type %s, but received %s", (i + 1), realType, providedType));
             i++;
@@ -330,6 +325,12 @@ public class Verifier {
             Error.handleError("VERIFIER", "A main function must be specified");
          else if (c > 1)
             Error.handleError("VERIFIER", "Only one main function must be specified, you have " + c);
+    
+        NodeFunction f = getFunction("main");
+        if (!f.getReturnType().getValue().equals("int"))
+            Error.handleError("VERIFIER", "Main function must return an int");
+
+
     }
 
     private void checkDuplicateFunctions() {

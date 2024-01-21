@@ -2,6 +2,7 @@ package compiler.nodes;
 
 import compiler.Generator;
 import compiler.Token;
+import compiler.TokenType;
 import compiler.nodes.statement_nodes.NodeScope;
 import compiler.nodes.statement_nodes.NodeStatement;
 
@@ -23,6 +24,8 @@ public class NodeFunction {
 
     @Override
     public String toString() {
+        if (returnType.getType().equals(TokenType.VOID))
+            return String.format("define %s (%s) -> void\n%s\nenddefine\n", functionName, parameters.toString(), statements.toString());
         return String.format("define %s (%s) -> %s\n%s\nenddefine\n", functionName, parameters.toString(), returnType.getValue().toString().toLowerCase(), statements.toString());
     }
 

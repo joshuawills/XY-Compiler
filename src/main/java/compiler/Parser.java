@@ -46,8 +46,10 @@ public class Parser {
     public NodeProgram parseProgram() {
 
         NodeProgram program = new NodeProgram();
-        while (peek() != null)
-            program.appendFunction(parseFunction());
+        while (peek() != null) {
+            NodeFunction f = parseFunction();
+            program.appendFunction(f);
+        }
         return program;
 
     }
@@ -61,7 +63,7 @@ public class Parser {
             return p;
     
         while (true) {
-            Token token = expect(TokenType.INT);
+            Token token = expect(TokenType.DECLARE);
             String name = expect(TokenType.IDENT).getValue();
             if (tryConsume(TokenType.CLOSE_PAREN) != null) {
                 p.addVariable(name, token);
@@ -77,9 +79,7 @@ public class Parser {
         expect(TokenType.DEFINE);
         String functionName = expect(TokenType.IDENT).getValue();
         NodeParameters p = parseParameters();
-
         expect(TokenType.ARROW);
-
         Token returnToken = consume();
         if (!Token.isReturnType(returnToken.getType()))
             Error.handleError("PARSER", "Unrecognized return type: only 'void', 'string' and 'int' are available");
@@ -266,29 +266,32 @@ public class Parser {
             
             case IDENT:
                 ident = t;
-                if (tryConsume(TokenType.OPEN_PAREN) != null) {
-                    iterator--;
-                    return handleFuncCall();
+                if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
+                    this.iterator--;
+                    FuncCallNode x =  handleFuncCall();
+                    x.setIsolated();
+                    expect(TokenType.SEMI);
+                    return x;
                 }
                 
                 t = peek();
                 switch (t.getType()) {
                     case INCREMENT:
                     case DECREMENT:
-                    consume();
-                    expression = new UnaryExpression(t.getType());
+                        consume();
+                        expression = new UnaryExpression(t.getType());
                     break;
                     case PLUS_EQUAL:
                     case DASH_EQUAL:
                     case STAR_EQUAL:
                     case F_SLASH_EQUAL:
-                    consume();
-                    NodeExpression rhs = parseExpression(0);
-                    expression = new UnaryExpression(t.getType(), rhs);
+                        consume();
+                        NodeExpression rhs = parseExpression(0);
+                        expression = new UnaryExpression(t.getType(), rhs);
                     break;
                     default:
-                    expect(TokenType.ASSIGN);
-                    expression = parseExpression(0);
+                        expect(TokenType.ASSIGN);
+                        expression = parseExpression(0);
                 }
                 expect(TokenType.SEMI);
                 return new NodeAssign(ident, expression);

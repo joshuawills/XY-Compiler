@@ -40,7 +40,6 @@ public class NodeReturn implements NodeStatement {
 
                 switch (returnToken.getValue()) {
                     case "int":
-                    case "s32":
                         generator.appendContents(" ");
                         expression.operator(generator);
                         break;
