@@ -19,7 +19,7 @@ public class NodeScan implements NodeStatement {
 
     @Override
     public String toString() {
-        return String.format("%s %s = in %s", type.getValue(), identifier.getValue(), output);
+        return String.format("let %s = in %s", identifier.getValue(), output);
     }
 
     public Token getType() { 
@@ -44,9 +44,15 @@ public class NodeScan implements NodeStatement {
                         generator.appendContents("    printf(" + output + ");\n");
                         generator.appendContents("    scanf(\"%d\", " + "&" + identifier.getValue() + ");\n");
                         break;
+                    case "char":
+                        // TODO
+                        generator.appendContents("    char " + identifier.getValue() + ";\n");
+                        generator.appendContents("    printf(" + output + ");\n");
+                        generator.appendContents("    scanf(\"%c\", " + "&" + identifier.getValue() + ");\n");
+                        break;
                     case "string": // 256 bytes max
                         String name = identifier.getValue();
-                        generator.appendContents("    char " + name + "[256];\n");
+                        generator.appendContents("    char " + name + "[256 + 1];\n");
                         generator.appendContents("    printf(" + output + ");\n");
                         generator.appendContents("    fgets(" + name + ", sizeof(" + name + "), stdin);\n");
                     }

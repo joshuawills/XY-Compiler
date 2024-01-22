@@ -4,28 +4,25 @@ import compiler.Generator;
 import compiler.Token;
 import compiler.Verifier;
 
-public class StringExpression extends NodeTerm {
+public class CharExpression extends NodeTerm {
     
-    public StringExpression(Token token) {
+    public CharExpression(Token token) {
         super(token);
     }
 
-    public StringExpression() {
-        super();
-    }
-
     public String getType(Verifier v) {
-        return "string";
+        return "char";
     }
 
-    @Override
+    @Override 
     public String toString() {
         if (getToken() == null || getToken().getValue() == null)
             return "{}";
-        return String.format("%s", getToken().getValue().toString());
+        return getToken().getValue().toString();
     }
 
     public void operator(Generator generator) {
         generator.appendContents(getToken().getValue());
     }
+
 }

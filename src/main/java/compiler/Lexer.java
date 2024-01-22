@@ -45,6 +45,11 @@ public class Lexer {
                 continue;
             }
 
+            if (peek().equals('\'')) {
+                handleChar();
+                continue;
+            }
+
             if (peek().equals('\n')) {
                 consume();
                 this.incrementLine();
@@ -201,6 +206,17 @@ public class Lexer {
         flushBuffer();
     }
 
+    private void handleChar() {
+        int real_column = this.col;
+        appendBuffer(consume());
+
+        while (peek() != null && !peek().equals('\''))
+            appendBuffer(consume());
+        appendBuffer(consume());
+        this.tokens.add(new Token(TokenType.CHAR_LIT, buffer, line, real_column));
+        flushBuffer();
+    }
+
     private void handleDigit() {
         int real_column = this.col;
         appendBuffer(consume());
@@ -236,7 +252,9 @@ public class Lexer {
             case "int":
             case "s32":
                 this.tokens.add(new Token(TokenType.DECLARE, "int", line, real_column)); break;
+            case "bool":
             case "string":
+            case "char":
                 this.tokens.add(new Token(TokenType.DECLARE, this.buffer, line, real_column)); break;
             case "if":
                 appendTokenNoConsume(TokenType.IF, this.line, real_column); break;

@@ -5,6 +5,7 @@ public enum TokenType {
     SEMI,
     INT_LIT,
     STRING_LIT,
+    CHAR_LIT,
     RETURN,
     ASSIGN,
     IDENT,
@@ -55,7 +56,5 @@ public enum TokenType {
     BITWISE_RIGHT_SHIFT,
     VOID,
     
-    INT,
-    STRING,
     DECLARE
 }

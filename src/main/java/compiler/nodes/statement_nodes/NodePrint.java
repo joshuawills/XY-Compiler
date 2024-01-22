@@ -45,6 +45,9 @@ public class NodePrint implements NodeStatement {
                 case "string":
                     generator.appendContents("    printf(\"%s\\n\", ");
                     break;
+                case "char":
+                    generator.appendContents("    printf(\"%c\\n\", ");
+                    break;
                 default:
             }
         } else {

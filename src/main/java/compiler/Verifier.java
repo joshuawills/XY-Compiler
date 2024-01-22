@@ -111,9 +111,12 @@ public class Verifier {
     public String mapReturnTypes(String s) {
         switch (s) {
             case "int":
+            case "bool":
                 return "numeric";
             case "string":
                 return "string";
+            case "char":
+                return "char";
             case "void":
                 return "void";
         }

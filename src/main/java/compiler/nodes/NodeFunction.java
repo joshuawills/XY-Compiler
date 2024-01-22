@@ -54,6 +54,9 @@ public class NodeFunction {
         String returnValue = (returnType.getValue() == null) ? "void" : returnType.getValue().toString().toLowerCase();
         if (returnValue.equals("string"))
             returnValue = "char *";
+        if (returnValue.equals("bool"))
+            returnValue = "int";
+
         String funcDefinition = String.format("%s %s(%s)\n", returnValue, functionName, parameters.toString());
         generator.appendContents(funcDefinition);
         generator.appendContents("    {\n");

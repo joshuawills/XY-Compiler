@@ -8,6 +8,7 @@ import compiler.nodes.NodeProgram;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.UnaryExpression;
+import compiler.nodes.expression_nodes.term_nodes.CharExpression;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
@@ -100,6 +101,9 @@ public class Parser {
 
             case STRING_LIT:
                 return new StringExpression(consume());
+
+            case CHAR_LIT:
+                return new CharExpression(consume());
 
             case OPEN_PAREN:
                 consume();
@@ -216,7 +220,7 @@ public class Parser {
                 if (tryConsume(TokenType.IN) != null) {
                     String value = expect(TokenType.STRING_LIT).getValue();
                     expect(TokenType.SEMI);
-                    return new NodeScan(value, ident, true, t);
+                    return new NodeScan(value, ident, isConstant, t);
                 }
                 expression = parseExpression(0);
                 expect(TokenType.SEMI);

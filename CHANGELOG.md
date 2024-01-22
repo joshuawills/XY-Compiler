@@ -32,6 +32,11 @@
         - Will need to clean it up next
 - Add strings in function returns
 
+## 22.01.24
+
+- Added in boolean type
+- Added in char type
+
 ## TO-DO
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods)

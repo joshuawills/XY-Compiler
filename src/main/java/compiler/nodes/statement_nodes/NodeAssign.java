@@ -5,6 +5,7 @@ import compiler.Generator;
 import compiler.Token;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
+import compiler.nodes.expression_nodes.UnaryExpression;
 
 public class NodeAssign implements NodeStatement {
     
@@ -51,10 +52,10 @@ public class NodeAssign implements NodeStatement {
 
     public void operator(Generator generator) {
         String variableName = identifier.getValue();
-        if (expression instanceof BinaryExpression) {
-            generator.appendContents("    " + variableName + " = ");
-        } else {
+        if (expression instanceof UnaryExpression) {
             generator.appendContents("    " + variableName);
+        } else {
+            generator.appendContents("    " + variableName + " = ");
         }
         expression.operator(generator);
         generator.appendContents(";\n");
