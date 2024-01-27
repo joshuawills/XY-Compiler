@@ -1,8 +1,13 @@
 define main() -> int {
     // A simple program...
-    int x = "What's your favourite number: ";
-    if x == 42 {
-        out "you have chosen correctly\n";
+    loop {
+        int x = in "What's your favourite number: ";
+        if x == 42 {
+            out "you have chosen correctly\n";
+            break;
+        } else {
+            out "Try again :(\n";
+        }
     }
     return 0;
 }
