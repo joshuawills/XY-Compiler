@@ -64,6 +64,8 @@ public class Parser {
             return p;
     
         while (true) {
+
+            boolean isMutable = (tryConsume(TokenType.MUT) != null);
             Token token = expect(TokenType.DECLARE, TokenType.ARRAY);
             String name;
             if (token.getType().equals(TokenType.ARRAY)) {
@@ -74,11 +76,11 @@ public class Parser {
             }
             name = expect(TokenType.IDENT).getValue();
             if (tryConsume(TokenType.CLOSE_PAREN) != null) {
-                p.addVariable(name, token);
+                p.addVariable(name, token, isMutable);
                 break;
             }
             expect(TokenType.COMMA);
-            p.addVariable(name, token);
+            p.addVariable(name, token, isMutable);
         }
         return p;
     }

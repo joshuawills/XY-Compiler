@@ -1,7 +1,6 @@
-define bubble_sort(array<int> arr, int size) -> void {
+define bubble_sort(mut array<int> arr, int size) -> void {
 
     mut int i = 0;
-
     while i < size - 1 {
 
         mut bool swapped = false;

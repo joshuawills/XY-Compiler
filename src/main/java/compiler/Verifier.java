@@ -84,6 +84,10 @@ public class Verifier {
         return variables.stream().anyMatch(v -> v.getName().equals(n));
     }
 
+     private boolean isMutable(String n) {
+        return variables.stream().filter(v -> v.getName().equals(n)).collect(Collectors.toList()).get(0).isMutable();
+    }
+
     private String variableReturnType(String n) {
         if (!varExists(n)) return null;
         return mapReturnTypes(variables.stream().filter(v -> v.getName().equals(n)).collect(Collectors.toList()).get(0).getType());
@@ -165,6 +169,20 @@ public class Verifier {
         Integer i = 0;
         for (Map.Entry<String, Token> entry : realParameters.entrySet()) {
             String realType = mapReturnTypes(entry.getValue());
+            Boolean isRealMutable = getFunction(funcName).getParameters().isMutable(i);
+            
+            if (parametersProvided.get(i) instanceof IdentExpression) {
+                String varName = ((IdentExpression) parametersProvided.get(i)).getToken().getValue();
+                Boolean isProvidedMutable = isMutable(varName);
+                if (isRealMutable && !isProvidedMutable)
+                    Error.handleError("VERIFIER", String.format("Expected arg %s to be mutable", (i + 1)));
+
+            } else {
+                String providedType = getExpressionType(parametersProvided.get(i));
+                if (!realType.equals(providedType))
+                    Error.handleError("VERIFIER", String.format("Expected arg %s to be of type %s, but received %s", (i + 1), realType, providedType));
+            }
+
             String providedType = getExpressionType(parametersProvided.get(i));
             if (!realType.equals(providedType))
                 Error.handleError("VERIFIER", String.format("Expected arg %s to be of type %s, but received %s", (i + 1), realType, providedType));
@@ -184,8 +202,11 @@ public class Verifier {
             String fName = f.getFunctionName();
             Set<String> keys = f.getParameters().getVariables().keySet();
             Token returnT = f.getReturnType();
-            for (String p: keys)
-                addVariable(new Variable(p, true, f.getParameters().getVariables().get(p)));
+            int i = 0;
+            for (String p: keys) {
+                addVariable(new Variable(p, f.getParameters().isMutable(i), f.getParameters().getVariables().get(p)));
+                i++;
+            }
 
             for (NodeStatement s: f.getStatements().getStatements()) {
                scanStatement(s, returnT, fName);
