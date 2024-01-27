@@ -1,14 +1,13 @@
-define bubble_sort(array<int> arr, int size) -> void {
+define bubble_sort(mut array<int> arr, int size) -> void {
 
     mut int i = 0;
-
-    while i < (size - 1) {
+    while i < size - 1 {
 
         mut bool swapped = false;
         mut int j = 0;
         while j < (size - i - 1) {
 
-            if (arr[j] > arr[j + 1]) {
+            if arr[j] > arr[j + 1] {
                 swapped = true;
                 int temp = arr[j];
                 arr[j] = arr[j + 1];
@@ -27,14 +26,17 @@ define bubble_sort(array<int> arr, int size) -> void {
 
 define main() -> int {
 
-    mut array<int> hello = [-21, 18, -100, 21];
-    bubble_sort(hello, 4);
+    mut array<int> hello = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     mut int i = 0;
-    while i < 4 {
-        out hello[i];
+    while i < 10 {
+        int currentNumber = in "enter a number to sort: ";
+        hello[i] = currentNumber;
         i++;
     }
+    bubble_sort(hello, 10);
+
+    out hello;
 
    
 }       

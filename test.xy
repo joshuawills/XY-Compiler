@@ -1,39 +1,8 @@
-define bubble_sort(mut array<int> arr, int size) -> void {
-
-    mut int i = 0;
-    while i < size - 1 {
-
-        mut bool swapped = false;
-        mut int j = 0;
-        while j < (size - i - 1) {
-
-            if arr[j] > arr[j + 1] {
-                swapped = true;
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-
-            j++;
-        }
-
-        if !swapped break;
-        i++;
-    }
-
-
-}
-
 define main() -> int {
-
-    mut array<int> hello = [-21, 18, -100, 21];
-    bubble_sort(hello, 4);
-
-    mut int i = 0;
-    while i < 4 {
-        out hello[i];
-        i++;
+    // A simple program...
+    int x = "What's your favourite number: ";
+    if x == 42 {
+        out "you have chosen correctly\n";
     }
-
-   
-}       
+    return 0;
+}

@@ -1,0 +1,19 @@
+define reverse(mut array<int> x, int len) -> void {
+
+    mut int i = len - 1;
+    mut int j = 0;
+    while i > j {
+        int temp = x[i];
+        x[i] = x[j];
+        x[j] = temp;
+        i--; j++;
+    }
+
+}
+
+define main() -> int {
+
+    mut array<int> x = [1, 2, 3, 4, 5];
+    reverse(x, 5);
+    out x;
+}

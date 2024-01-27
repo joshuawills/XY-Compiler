@@ -265,7 +265,7 @@ public class Verifier {
 
             String expectedType = mapReturnTypes(s1.getType());
             String realType = getExpressionType(s1.getExpression());
-            if (!expectedType.equals(realType)) // real type is to do
+            if (!realType.endsWith("any") && !expectedType.equals(realType)) // real type is to do
                 Error.handleError("VERIFIER", String.format("Attempting to assign expression of type %s to variable %s of type %s", realType, name, expectedType));
 
             addVariable(new Variable(name, !s1.isConstant(), s1.getType()));

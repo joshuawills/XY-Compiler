@@ -36,7 +36,6 @@ public class ArrayExpression extends NodeTerm {
 
     public String getType(Verifier v) {
         String buffer = "array|";
-
         if (expressions.size() == 0) {
             return buffer.concat("any");
         } else if (expressions.size() == 1) {

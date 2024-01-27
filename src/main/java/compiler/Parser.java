@@ -149,6 +149,10 @@ public class Parser {
             case LEFT_SQUARE:
                 consume();  
                 ArrayList<NodeExpression> expressions = new ArrayList<>();
+
+                if (tryConsume(TokenType.RIGHT_SQUARE) != null)
+                    return new ArrayExpression(expressions);
+
                 while (true) {
                     expressions.add(parseExpression(0));
                     if (tryConsume(TokenType.RIGHT_SQUARE) != null)
