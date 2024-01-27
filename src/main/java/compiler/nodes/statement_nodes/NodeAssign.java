@@ -2,12 +2,10 @@ package compiler.nodes.statement_nodes;
 
 
 import compiler.Generator;
-import compiler.Token;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.UnaryExpression;
 import compiler.nodes.expression_nodes.term_nodes.Assignable;
-import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 
 public class NodeAssign implements NodeStatement {
     

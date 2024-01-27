@@ -3,7 +3,6 @@ package compiler.nodes.expression_nodes.term_nodes;
 import compiler.Generator;
 import compiler.Token;
 import compiler.Verifier;
-import compiler.nodes.NodeProgram;
 import compiler.nodes.expression_nodes.NodeExpression;
 
 public class ArrayAccess extends NodeTerm implements Assignable {

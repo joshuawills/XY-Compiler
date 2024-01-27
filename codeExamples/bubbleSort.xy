@@ -2,13 +2,13 @@ define bubble_sort(array<int> arr, int size) -> void {
 
     mut int i = 0;
 
-    while i < size - 1 {
+    while i < (size - 1) {
 
         mut bool swapped = false;
         mut int j = 0;
         while j < (size - i - 1) {
 
-            if arr[j] > arr[j + 1] {
+            if (arr[j] > arr[j + 1]) {
                 swapped = true;
                 int temp = arr[j];
                 arr[j] = arr[j + 1];

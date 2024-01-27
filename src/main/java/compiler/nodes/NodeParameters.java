@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import compiler.Token;
+import compiler.TokenType;
 
 public class NodeParameters {
     
@@ -24,8 +25,11 @@ public class NodeParameters {
     public String toString() {
         ArrayList<String> vars = new ArrayList<>();
         for (String x: variables.keySet()) {
+            boolean isArr = variables.get(x).getType().equals(TokenType.ARRAY);
             String var = variables.get(x).getValue().toString().toLowerCase();
             if (var.equals("string")) var = "char*";
+            if (isArr)
+                var = var.concat(" *");
             vars.add(String.format("%s %s", var, x));
         }
         return String.join(", ", vars);

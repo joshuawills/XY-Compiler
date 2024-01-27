@@ -37,7 +37,12 @@
 - Added in boolean type
 - Added in char type
 
+## 27.01.24
+
+- Added in array types
+
 ## TO-DO
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods)
 - Add in tests for UnaryExpression type
+- Support specifying variables as mut in function calls

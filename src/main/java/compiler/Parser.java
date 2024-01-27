@@ -49,10 +49,8 @@ public class Parser {
     public NodeProgram parseProgram() {
 
         NodeProgram program = new NodeProgram();
-        while (peek() != null) {
-            NodeFunction f = parseFunction();
-            program.appendFunction(f);
-        }
+        while (peek() != null)
+            program.appendFunction(parseFunction());
         return program;
 
     }
@@ -66,8 +64,15 @@ public class Parser {
             return p;
     
         while (true) {
-            Token token = expect(TokenType.DECLARE);
-            String name = expect(TokenType.IDENT).getValue();
+            Token token = expect(TokenType.DECLARE, TokenType.ARRAY);
+            String name;
+            if (token.getType().equals(TokenType.ARRAY)) {
+                expect(TokenType.LESS_THAN);
+                String inner = expect(TokenType.DECLARE).getValue();
+                expect(TokenType.GREATER_THAN);
+                token.setValue(inner);
+            }
+            name = expect(TokenType.IDENT).getValue();
             if (tryConsume(TokenType.CLOSE_PAREN) != null) {
                 p.addVariable(name, token);
                 break;
@@ -83,9 +88,7 @@ public class Parser {
         String functionName = expect(TokenType.IDENT).getValue();
         NodeParameters p = parseParameters();
         expect(TokenType.ARROW);
-        Token returnToken = consume();
-        if (!Token.isReturnType(returnToken.getType()))
-            Error.handleError("PARSER", "Unrecognized return type: only 'void', 'string' and 'int' are available");
+        Token returnToken = expect(TokenType.DECLARE, TokenType.VOID);
         NodeScope scope = parseScope();
         return new NodeFunction(scope, functionName, returnToken, p);
     }
@@ -108,7 +111,7 @@ public class Parser {
                 return new CharExpression(consume());
 
                 
-                case OPEN_PAREN:
+            case OPEN_PAREN:
                 consume();
                 e = parseExpression(0);
                 if (e == null)
@@ -116,15 +119,14 @@ public class Parser {
                 expect(TokenType.CLOSE_PAREN);
                 return new ParenExpression(e);
                 
-                case NEGATE:
+            case NEGATE:
                 consume();
                 e = parseTerm();
                 if (e == null)
                 Error.handleError("PARSING", "Expected expression");
                 return new NegationExpression(e);
                 
-                case IDENT:
-                
+            case IDENT:
                 // Not a func call
                 Token nextToken = peek(1);
                 if (nextToken == null || (!nextToken.getType().equals(TokenType.OPEN_PAREN) && !nextToken.getType().equals(TokenType.LEFT_SQUARE))) {
@@ -143,7 +145,6 @@ public class Parser {
                 return handleFuncCall();
                 
             case LEFT_SQUARE:
-
                 consume();  
                 ArrayList<NodeExpression> expressions = new ArrayList<>();
                 while (true) {
@@ -219,14 +220,14 @@ public class Parser {
         switch (t.getType()) {
             case RETURN:
                 if (tryConsume(TokenType.SEMI) != null)
-                return new NodeReturn();
+                    return new NodeReturn();
                 
                 expression = parseExpression(0);
                 if (expression == null) {
                     if (peek() == null)
-                    Error.handleError("Parsing", "Invalid expression near EOF");
+                        Error.handleError("Parsing", "Invalid expression near EOF");
                     else
-                    Error.handleError("Parsing", "Invalid expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
+                        Error.handleError("Parsing", "Invalid expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
                 }
                 expect(TokenType.SEMI);
                 return new NodeReturn(expression);
@@ -245,7 +246,7 @@ public class Parser {
                 if (t.getType().equals(TokenType.ARRAY)) {
                     expect(TokenType.LESS_THAN);
                     Token inner = expect(TokenType.DECLARE);
-                    t.setValue(inner.getValue().toString());
+                    t.setValue(inner.getValue());
                     expect(TokenType.GREATER_THAN);
                 }
 

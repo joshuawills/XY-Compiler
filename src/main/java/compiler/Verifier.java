@@ -143,6 +143,8 @@ public class Verifier {
             if (!varExists(name))
                 Error.handleError("VERIFIER", "Reference to undeclared variable: " + name);
             return variableReturnType(name);
+        } else if (expression instanceof ArrayAccess) {
+            x = x.split("\\|")[1];
         }
         return x;
     }
@@ -183,7 +185,7 @@ public class Verifier {
             Set<String> keys = f.getParameters().getVariables().keySet();
             Token returnT = f.getReturnType();
             for (String p: keys)
-                addVariable(new Variable(p, false, f.getParameters().getVariables().get(p)));
+                addVariable(new Variable(p, true, f.getParameters().getVariables().get(p)));
 
             for (NodeStatement s: f.getStatements().getStatements()) {
                scanStatement(s, returnT, fName);
@@ -217,11 +219,9 @@ public class Verifier {
 
             NodeAssign s1 = (NodeAssign) s;
             String name = s1.getIdentifier().convert();
-            boolean access = false;
-            if (name.contains("[")) {
-                access = true;
+            boolean access = (s1.getIdentifier() instanceof ArrayAccess);
+            if (access)
                 name = name.split("\\[")[0];
-            }
             if (!varExists(name))
                 Error.handleError("VERIFIER", "Attempted reassignment to undeclared variable: " +  name);
             Variable currentVar = getVariable(name);
@@ -246,6 +246,7 @@ public class Verifier {
             String realType = getExpressionType(s1.getExpression());
             if (!expectedType.equals(realType)) // real type is to do
                 Error.handleError("VERIFIER", String.format("Attempting to assign expression of type %s to variable %s of type %s", realType, name, expectedType));
+
             addVariable(new Variable(name, !s1.isConstant(), s1.getType()));
 
         } else if (s instanceof NodePrint) {
@@ -361,8 +362,7 @@ public class Verifier {
          else if (c > 1)
             Error.handleError("VERIFIER", "Only one main function must be specified, you have " + c);
     
-        NodeFunction f = getFunction("main");
-        if (!f.getReturnType().getValue().equals("int"))
+        if (!getFunction("main").getReturnType().getValue().equals("int"))
             Error.handleError("VERIFIER", "Main function must return an int");
 
     }

@@ -3,6 +3,7 @@ package compiler.nodes.expression_nodes;
 import compiler.Generator;
 import compiler.TokenType;
 import compiler.Verifier;
+import compiler.nodes.expression_nodes.term_nodes.ArrayAccess;
 import compiler.Error;
 
 public class BinaryExpression implements NodeExpression {
@@ -18,11 +19,16 @@ public class BinaryExpression implements NodeExpression {
     public BinaryExpression() {}
 
     public String getType(Verifier v) {
-        if (!lhs.getType(v).equals("numeric"))
-            Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
 
-        if (!rhs.getType(v).equals("numeric"))
-            Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
+        if (!(lhs instanceof ArrayAccess)) {
+            if (!lhs.getType(v).equals("numeric"))
+                Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
+        }
+
+        if (!(rhs instanceof ArrayAccess)) {
+            if (!rhs.getType(v).equals("numeric"))
+                Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
+        }
 
         return "numeric";
     }
