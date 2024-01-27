@@ -144,6 +144,10 @@ public class Lexer {
                     appendToken(TokenType.OPEN_CURLY); break;
                 case "}":
                     appendToken(TokenType.CLOSE_CURLY); break;
+                case "[":
+                    appendToken(TokenType.LEFT_SQUARE); break;
+                case "]":
+                    appendToken(TokenType.RIGHT_SQUARE); break;
                 case "<":
                     appendToken(TokenType.LESS_THAN); break;
                 case ">":
@@ -249,6 +253,8 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.RETURN, this.line, real_column); break;
             case "define":
                 appendTokenNoConsume(TokenType.DEFINE, this.line, real_column); break;
+            case "array":
+                this.tokens.add(new Token(TokenType.ARRAY, this.line, real_column)); break;
             case "int":
             case "s32":
                 this.tokens.add(new Token(TokenType.DECLARE, "int", line, real_column)); break;

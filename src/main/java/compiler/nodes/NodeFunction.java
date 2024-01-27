@@ -59,10 +59,7 @@ public class NodeFunction {
 
         String funcDefinition = String.format("%s %s(%s)\n", returnValue, functionName, parameters.toString());
         generator.appendContents(funcDefinition);
-        generator.appendContents("    {\n");
-        for (NodeStatement statement: statements.getStatements())
-            statement.operator(generator);
-        generator.appendContents("    }\n");
+        statements.operator(generator);
 
     }
 

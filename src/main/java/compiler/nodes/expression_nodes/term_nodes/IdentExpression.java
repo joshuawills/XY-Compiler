@@ -7,7 +7,7 @@ import compiler.Generator;
 import compiler.Error;
 
 
-public class IdentExpression extends NodeTerm {
+public class IdentExpression extends NodeTerm implements Assignable {
     
     public IdentExpression(Token token) {
         super(token); 
@@ -25,7 +25,7 @@ public class IdentExpression extends NodeTerm {
             Error.handleError("VERIFIER", "Use of uninitialised variable: " + variableName);
 
         x.setUsed();
-        return v.mapReturnTypes(x.getType().getValue());
+        return v.mapReturnTypes(x.getType());
     }
     @Override
     public String toString() {
@@ -38,6 +38,10 @@ public class IdentExpression extends NodeTerm {
         String variableName = getToken().getValue();
         generator.appendContents(variableName);
 
+    }
+
+    public String convert() {
+        return getToken().getValue();
     }
 
 }

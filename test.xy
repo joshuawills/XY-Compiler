@@ -1,6 +1,13 @@
 define main() -> int {
 
-    mut char c = in "Enter your favourite character! ";
-    c = 'h';
-    out c;
-}
+    mut array<string> hello = ["a", "b", "c"];
+    hello[0] = "hello";
+
+    mut int i = 0;
+    while i <= 2 {
+        out hello[i];
+        i++;
+    }
+
+    return 0;
+}       

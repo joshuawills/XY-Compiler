@@ -34,11 +34,12 @@ public class NodeScope implements NodeStatement {
     }
 
     public void operator(Generator generator) {
-        generator.appendContents("    {\n");
+        generator.appendContents("{");
         for (NodeStatement statement: statements) {
+            generator.appendContents("\n    ");
             statement.operator(generator);
         }
-        generator.appendContents("    }\n");
+        generator.appendContents("}");
     }
 
 }

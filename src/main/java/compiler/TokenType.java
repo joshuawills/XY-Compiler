@@ -56,5 +56,9 @@ public enum TokenType {
     BITWISE_RIGHT_SHIFT,
     VOID,
     
-    DECLARE
+    DECLARE,
+    ARRAY,
+
+    LEFT_SQUARE,
+    RIGHT_SQUARE
 }

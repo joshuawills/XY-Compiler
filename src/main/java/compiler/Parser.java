@@ -8,6 +8,8 @@ import compiler.nodes.NodeProgram;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.UnaryExpression;
+import compiler.nodes.expression_nodes.term_nodes.ArrayAccess;
+import compiler.nodes.expression_nodes.term_nodes.ArrayExpression;
 import compiler.nodes.expression_nodes.term_nodes.CharExpression;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
@@ -105,30 +107,52 @@ public class Parser {
             case CHAR_LIT:
                 return new CharExpression(consume());
 
-            case OPEN_PAREN:
+                
+                case OPEN_PAREN:
                 consume();
                 e = parseExpression(0);
                 if (e == null)
-                    Error.handleError("PARSING", "Expected expression");
+                Error.handleError("PARSING", "Expected expression");
                 expect(TokenType.CLOSE_PAREN);
                 return new ParenExpression(e);
-
-            case NEGATE:
+                
+                case NEGATE:
                 consume();
                 e = parseTerm();
                 if (e == null)
-                    Error.handleError("PARSING", "Expected expression");
+                Error.handleError("PARSING", "Expected expression");
                 return new NegationExpression(e);
-
-            case IDENT:
-
+                
+                case IDENT:
+                
                 // Not a func call
                 Token nextToken = peek(1);
-                if (nextToken == null || !nextToken.getType().equals(TokenType.OPEN_PAREN))
+                if (nextToken == null || (!nextToken.getType().equals(TokenType.OPEN_PAREN) && !nextToken.getType().equals(TokenType.LEFT_SQUARE))) {
                     return new IdentExpression(consume());
-
+                }
+                
+                // Array Access
+                if (nextToken != null && nextToken.getType().equals(TokenType.LEFT_SQUARE)) {
+                    consume(); consume();
+                    NodeExpression expression = parseExpression(0);
+                    expect(TokenType.RIGHT_SQUARE);
+                    return new ArrayAccess(t, expression);
+                }
+                
                 // Is a func call
                 return handleFuncCall();
+                
+            case LEFT_SQUARE:
+
+                consume();  
+                ArrayList<NodeExpression> expressions = new ArrayList<>();
+                while (true) {
+                    expressions.add(parseExpression(0));
+                    if (tryConsume(TokenType.RIGHT_SQUARE) != null)
+                        break;
+                    expect(TokenType.COMMA);
+                }
+                return new ArrayExpression(expressions);
 
             default:
                 return null;
@@ -209,15 +233,27 @@ public class Parser {
             
             case MUT:
             case DECLARE:
+            case ARRAY:
+
                 // Declare
                 boolean isConstant = true;
                 if (t.getType().equals(TokenType.MUT)) {
                     isConstant = false;
-                    t = expect(TokenType.DECLARE);
+                    t = expect(TokenType.DECLARE, TokenType.ARRAY);
                 }
+
+                if (t.getType().equals(TokenType.ARRAY)) {
+                    expect(TokenType.LESS_THAN);
+                    Token inner = expect(TokenType.DECLARE);
+                    t.setValue(inner.getValue().toString());
+                    expect(TokenType.GREATER_THAN);
+                }
+
                 ident = expect(TokenType.IDENT);
                 expect(TokenType.ASSIGN);
                 if (tryConsume(TokenType.IN) != null) {
+                    if (t.getType().equals(TokenType.ARRAY))
+                        Error.handleError("PARSER", "Can't scan an array");
                     String value = expect(TokenType.STRING_LIT).getValue();
                     expect(TokenType.SEMI);
                     return new NodeScan(value, ident, isConstant, t);
@@ -270,36 +306,48 @@ public class Parser {
             
             case IDENT:
                 ident = t;
+                boolean isArrayAccess = false;
                 if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
+                    // Func call
                     this.iterator--;
                     FuncCallNode x =  handleFuncCall();
                     x.setIsolated();
                     expect(TokenType.SEMI);
                     return x;
                 }
+                NodeExpression index = null;
+                if (peek() != null && peek().getType().equals(TokenType.LEFT_SQUARE)) {
+                    isArrayAccess = true;
+                    consume();
+                    index = parseExpression(0);
+                    expect(TokenType.RIGHT_SQUARE);
+                }
                 
                 t = peek();
                 switch (t.getType()) {
-                    case INCREMENT:
-                    case DECREMENT:
-                        consume();
-                        expression = new UnaryExpression(t.getType());
+                case INCREMENT:
+                case DECREMENT:
+                    consume();
+                    expression = new UnaryExpression(t.getType());
                     break;
-                    case PLUS_EQUAL:
-                    case DASH_EQUAL:
-                    case STAR_EQUAL:
-                    case F_SLASH_EQUAL:
-                        consume();
-                        NodeExpression rhs = parseExpression(0);
-                        expression = new UnaryExpression(t.getType(), rhs);
-                    break;
-                    default:
-                        expect(TokenType.ASSIGN);
-                        expression = parseExpression(0);
+                case PLUS_EQUAL:
+                case DASH_EQUAL:
+                case STAR_EQUAL:
+                case F_SLASH_EQUAL:
+                    consume();
+                    NodeExpression rhs = parseExpression(0);
+                    expression = new UnaryExpression(t.getType(), rhs);
+                break;
+                default:
+                    expect(TokenType.ASSIGN);
+                    expression = parseExpression(0);
                 }
+
                 expect(TokenType.SEMI);
-                return new NodeAssign(ident, expression);
-            
+                if (!isArrayAccess)
+                    return new NodeAssign(new IdentExpression(ident), expression);
+                else 
+                    return new NodeAssign(new ArrayAccess(ident, index), expression);
             default:
                 this.iterator--; // decrement from original consumption at start of method
                 return null;
@@ -374,6 +422,17 @@ public class Parser {
             Error.handleError("Parsing", String.format("Expected %s, Received nothing", type).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
         if (!currentToken.getType().equals(type)) {
             Error.handleError("Parsing", String.format("Expected %s, Received %s", type, currentToken.getType()).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
+        }
+        this.iterator++;
+        return currentToken;
+    }
+
+    private Token expect(TokenType typeOne, TokenType typeTwo) {
+        Token currentToken = peek();
+        if (currentToken == null)
+            Error.handleError("Parsing", String.format("Expected %s, Received nothing", typeOne).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
+        if (!(currentToken.getType().equals(typeOne) || currentToken.getType().equals(typeTwo))) {
+            Error.handleError("Parsing", String.format("Expected %s, Received %s", typeOne, currentToken.getType()).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
         }
         this.iterator++;
         return currentToken;

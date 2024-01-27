@@ -50,7 +50,6 @@ public class NodeLet implements NodeStatement  {
     public String toString() {
         if (identifier == null || expression == null)
             return "{}";
-
         return String.format("let %s = %s", identifier.getValue(), expression.toString());
     }
 
@@ -62,13 +61,27 @@ public class NodeLet implements NodeStatement  {
                 switch (type.getValue()) {
                     case "int":
                     case "bool":
-                        generator.appendContents("    int " + variableName + " = ");
+                        generator.appendContents("int " + variableName + " = ");
                         break;
                     case "string":
-                        generator.appendContents("    char *" + variableName + " = ");
+                        generator.appendContents("char *" + variableName + " = ");
                         break;
                     case "char":
-                        generator.appendContents("    char " + variableName + " = ");
+                        generator.appendContents("char " + variableName + " = ");
+                        break;
+                }
+                break;
+            case ARRAY:
+                switch (type.getValue()) {
+                    case "int":
+                    case "bool":
+                        generator.appendContents("int " + variableName + "[] = "); 
+                        break;
+                    case "string":
+                        generator.appendContents("char *" + variableName + "[] = "); 
+                        break;
+                    case "char":
+                        generator.appendContents("char " + variableName + "[] = "); 
                         break;
                 }
                 break;
@@ -76,7 +89,7 @@ public class NodeLet implements NodeStatement  {
                 Error.handleError("Unrecognized declarative value: " + thisType);
         }
         expression.operator(generator);
-        generator.appendContents(";\n");
+        generator.appendContents(";");
     }   
 
 }

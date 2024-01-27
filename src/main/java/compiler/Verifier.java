@@ -3,6 +3,7 @@ package compiler;
 import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeProgram;
 import compiler.nodes.expression_nodes.NodeExpression;
+import compiler.nodes.expression_nodes.term_nodes.ArrayAccess;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
@@ -85,7 +86,7 @@ public class Verifier {
 
     private String variableReturnType(String n) {
         if (!varExists(n)) return null;
-        return mapReturnTypes(variables.stream().filter(v -> v.getName().equals(n)).collect(Collectors.toList()).get(0).getType().getValue());
+        return mapReturnTypes(variables.stream().filter(v -> v.getName().equals(n)).collect(Collectors.toList()).get(0).getType());
     }
 
     public Variable getVariable(String n) {
@@ -93,11 +94,10 @@ public class Verifier {
         return variables.stream().filter(v -> v.getName().equals(n)).collect(Collectors.toList()).get(0);
     }
 
-    public String getFunctionReturnType(String name) {
+    public Token getFunctionReturnType(String name) {
         List<NodeFunction> functions =  this.program.getNodeFunctions().stream().filter(f -> f.getFunctionName().equals(name)).collect(Collectors.toList());
         if (functions.size() != 1) { return null; }
-        if (functions.get(0).getReturnType().getType().equals(TokenType.VOID)) return "void";
-        return functions.get(0).getReturnType().getValue(); // int, s32, string, void
+        return functions.get(0).getReturnType(); // int, s32, string, void
 
     }
 
@@ -108,16 +108,24 @@ public class Verifier {
 
     }
 
-    public String mapReturnTypes(String s) {
-        switch (s) {
+    public String mapReturnTypes(Token s) 
+    {
+        
+        String buffer = "";
+        if (s.getType().equals(TokenType.ARRAY)) 
+            buffer = buffer.concat("array|");
+
+            switch (s.getValue()) {
             case "int":
             case "bool":
-                return "numeric";
+                return buffer.concat("numeric");
             case "string":
-                return "string";
+                return buffer.concat("string");
             case "char":
-                return "char";
+                return buffer.concat("char");
             case "void":
+                if (buffer.equals("array|"))
+                    Error.handleError("VERIFIER", "Can't construct an array<void>");
                 return "void";
         }
         return "";
@@ -127,7 +135,7 @@ public class Verifier {
         String x = expression.getType(this);
         if (expression instanceof FuncCallNode) {
             FuncCallNode expression1 = (FuncCallNode) expression;
-            String returnType = verifyFunctionCall(expression1);
+            Token returnType = verifyFunctionCall(expression1);
             return mapReturnTypes(returnType);
         } else if (expression instanceof IdentExpression) {
             IdentExpression expression2 = (IdentExpression) expression;
@@ -139,10 +147,10 @@ public class Verifier {
         return x;
     }
 
-    private String verifyFunctionCall(FuncCallNode func) {
+    private Token verifyFunctionCall(FuncCallNode func) {
          
         String funcName = func.getFunctionName();
-        String returnType = getFunctionReturnType(funcName);
+        Token returnType = getFunctionReturnType(funcName);
         if (returnType == null)
             Error.handleError("VERIFIER", "Call to undeclared function: " + funcName);
         
@@ -154,7 +162,7 @@ public class Verifier {
 
         Integer i = 0;
         for (Map.Entry<String, Token> entry : realParameters.entrySet()) {
-            String realType = mapReturnTypes(entry.getValue().getValue());
+            String realType = mapReturnTypes(entry.getValue());
             String providedType = getExpressionType(parametersProvided.get(i));
             if (!realType.equals(providedType))
                 Error.handleError("VERIFIER", String.format("Expected arg %s to be of type %s, but received %s", (i + 1), realType, providedType));
@@ -195,7 +203,7 @@ public class Verifier {
 
             String returnType = "void";
             if (returnT.getValue() != null)
-                returnType = mapReturnTypes(returnT.getValue());
+                returnType = mapReturnTypes(returnT);
 
             if (!type.equals(returnType)) {
                 Error.handleError("VERIFIER", String.format("Incompatible return types in '%s' function. Expected %s, received %s", fName, returnType, type));
@@ -208,14 +216,19 @@ public class Verifier {
         } else if (s instanceof NodeAssign) {
 
             NodeAssign s1 = (NodeAssign) s;
-            String name = s1.getIdentifier().getValue();
+            String name = s1.getIdentifier().convert();
+            boolean access = false;
+            if (name.contains("[")) {
+                access = true;
+                name = name.split("\\[")[0];
+            }
             if (!varExists(name))
                 Error.handleError("VERIFIER", "Attempted reassignment to undeclared variable: " +  name);
             Variable currentVar = getVariable(name);
             if (!currentVar.isMutable())
                 Error.handleError("VERIFIER", "Attempted reassignment to a constant variable: " + name);
             currentVar.setReassigned();
-            String existingType = variableReturnType(name);
+            String existingType = (access) ? variableReturnType(name).split("\\|")[1]: variableReturnType(name);
             String assignedType = getExpressionType(s1.getExpression());
             if (!existingType.equals(assignedType))
                 Error.handleError("VERIFIER", String.format("Incompatible types, assigning %s to variable %s when it's %s", assignedType, name, existingType));
@@ -229,9 +242,9 @@ public class Verifier {
             if (varExists(name))
                 Error.handleError("VERIFIER", "Attempted reassignment to previously declared identifier: " + name);
 
-            String expectedType = mapReturnTypes(s1.getType().getValue());
+            String expectedType = mapReturnTypes(s1.getType());
             String realType = getExpressionType(s1.getExpression());
-            if (!expectedType.equals(realType))
+            if (!expectedType.equals(realType)) // real type is to do
                 Error.handleError("VERIFIER", String.format("Attempting to assign expression of type %s to variable %s of type %s", realType, name, expectedType));
             addVariable(new Variable(name, !s1.isConstant(), s1.getType()));
 

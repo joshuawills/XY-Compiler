@@ -32,7 +32,7 @@ public class NodeWhile implements NodeStatement{
     }
 
     public void operator(Generator generator) {
-        generator.appendContents("    while (");
+        generator.appendContents("while (");
         expression.operator(generator);
         generator.appendContents(")\n");
         scope.operator(generator);

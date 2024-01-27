@@ -2,6 +2,7 @@ package compiler.nodes.statement_nodes;
 
 
 import compiler.Generator;
+import compiler.nodes.expression_nodes.term_nodes.ArrayAccess;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.StringExpression;
@@ -32,29 +33,35 @@ public class NodePrint implements NodeStatement {
     }
 
     public void operator(Generator generator) {
+                                                        
+        
         if (term instanceof StringExpression) {
             generator.appendContents("    printf(" + term.toString() + ");\n");
             return;
         }
         
-        if (term instanceof IdentExpression) {
+        if (term instanceof IdentExpression || term instanceof ArrayAccess) {
             switch (returnType) {
                 case "numeric":
-                    generator.appendContents("    printf(\"%d\\n\", ");
+                case "array|numeric":
+                    generator.appendContents("printf(\"%d\\n\", ");
                     break;
                 case "string":
-                    generator.appendContents("    printf(\"%s\\n\", ");
+                case "array|string":
+                    generator.appendContents("printf(\"%s\\n\", ");
                     break;
                 case "char":
-                    generator.appendContents("    printf(\"%c\\n\", ");
+                case "array|char":
+                    generator.appendContents("printf(\"%c\\n\", ");
                     break;
                 default:
             }
         } else {
-            generator.appendContents("    printf(\"%d\\n\", ");
+
+            generator.appendContents("printf(\"%d\\n\", ");
         }
         term.operator(generator);
-        generator.appendContents(");\n");
+        generator.appendContents(");");
     }
 
 }

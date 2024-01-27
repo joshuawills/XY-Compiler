@@ -6,12 +6,14 @@ import compiler.Token;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.UnaryExpression;
+import compiler.nodes.expression_nodes.term_nodes.Assignable;
+import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 
 public class NodeAssign implements NodeStatement {
     
-    private Token identifier = null;
+    private Assignable identifier = null;
 
-    public NodeAssign(Token identifier, NodeExpression expression) {
+    public NodeAssign(Assignable identifier, NodeExpression expression) {
         this.identifier = identifier;
         this.expression = expression;
     }
@@ -20,11 +22,11 @@ public class NodeAssign implements NodeStatement {
 
     }
 
-    public Token getIdentifier() {
+    public Assignable getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(Token identifier) {
+    public void setIdentifier(Assignable identifier) {
         this.identifier = identifier;
     }
 
@@ -45,21 +47,21 @@ public class NodeAssign implements NodeStatement {
             return "{}";
 
         if (expression instanceof BinaryExpression) {
-            return String.format("%s = %s", identifier.getValue(), expression.toString());
+            return String.format("%s = %s", identifier.toString(), expression.toString());
         }
-        return String.format("%s%s", identifier.getValue(), expression.toString());
+        return String.format("%s%s", identifier.toString(), expression.toString());
     }
 
     public void operator(Generator generator) {
-        String variableName = identifier.getValue();
+
+        String variableName = identifier.convert();
         if (expression instanceof UnaryExpression) {
-            generator.appendContents("    " + variableName);
+            generator.appendContents(variableName);
         } else {
-            generator.appendContents("    " + variableName + " = ");
+            generator.appendContents(variableName + " = ");
         }
         expression.operator(generator);
-        generator.appendContents(";\n");
-
+        generator.appendContents(";");
     } 
 
 }
