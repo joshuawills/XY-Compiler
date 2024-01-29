@@ -1,6 +1,7 @@
 package compiler;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Handler;
 
 import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeParameters;
@@ -42,10 +43,12 @@ public class Parser {
     private final ArrayList<Token> tokens;
     private int iterator = 0;
     private final HashMap<String, String> configSettings;
+    private Error handler;
 
-    public Parser(ArrayList<Token> tokens, HashMap<String, String> configSettings) {
+    public Parser(ArrayList<Token> tokens, HashMap<String, String> configSettings, Error handler) {
         this.tokens = tokens;
         this.configSettings = configSettings;
+        this.handler = handler;
     }
 
     public NodeProgram parseProgram() {
@@ -120,16 +123,12 @@ public class Parser {
             case OPEN_PAREN:
                 consume();
                 e = parseExpression(0);
-                if (e == null)
-                    Error.handleError("PARSING", "Expected expression");
                 expect(TokenType.CLOSE_PAREN);
                 return new ParenExpression(e);
                 
             case NEGATE:
                 consume();
                 e = parseTerm();
-                if (e == null)
-                    Error.handleError("PARSING", "Expected expression");
                 return new NegationExpression(e);
                 
             case IDENT:
@@ -209,7 +208,7 @@ public class Parser {
                     myExpression.setOperator(operator.getType());
                     break;
                 default:
-                    Error.handleError("PARSING", "Unknown operator");
+                    handler.unknownOperator(operator.getType(), peek().getLine(), peek().getCol());
             }
             
             myExpression.setLHS(lhs);
@@ -282,12 +281,10 @@ public class Parser {
 
             case IDENT:
                 ident = t;
-                if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
-                    Error.handleError("PARSER", "No func call in for-loop initialization");
-                }
-                if (peek() != null && peek().getType().equals(TokenType.LEFT_SQUARE)) {
-                    Error.handleError("PARSER", "No array-access setting in for-loop initialization");
-                }
+                if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN))
+                    handler.funcCallInForLoopInit(peek().getLine(), peek().getCol());
+                if (peek() != null && peek().getType().equals(TokenType.LEFT_SQUARE))
+                    handler.arrayAccessInForLoopInit(peek().getLine(), peek().getCol());
                 t = peek();
                 switch (t.getType()) {
                 case INCREMENT:
@@ -309,7 +306,7 @@ public class Parser {
                 }
                 return new NodeAssign(new IdentExpression(ident), expression);
             default:
-                Error.handleError("PARSER", "For loop's initializer can only be a variable declaration");
+                handler.forLoopInit(peek().getLine(), peek().getCol());
                 return null;
         }
 
@@ -327,14 +324,7 @@ public class Parser {
             case RETURN:
                 if (tryConsume(TokenType.SEMI) != null)
                     return new NodeReturn();
-                
                 expression = parseExpression(0);
-                if (expression == null) {
-                    if (peek() == null)
-                        Error.handleError("Parsing", "Invalid expression near EOF");
-                    else
-                        Error.handleError("Parsing", "Invalid expression\n    line: " + peek(-1).getLine() + ", col: " + peek(-1).getCol());
-                }
                 expect(TokenType.SEMI);
                 return new NodeReturn(expression);
             
@@ -360,7 +350,7 @@ public class Parser {
                 expect(TokenType.ASSIGN);
                 if (tryConsume(TokenType.IN) != null) {
                     if (t.getType().equals(TokenType.ARRAY))
-                        Error.handleError("PARSER", "Can't scan an array");
+                        handler.scanArray(peek().getLine(), peek().getCol());
                     String value = expect(TokenType.STRING_LIT).getValue();
                     expect(TokenType.SEMI);
                     return new NodeScan(value, ident, isConstant, t);
@@ -397,7 +387,6 @@ public class Parser {
                     expect(TokenType.SEMI);
                 }
                 NodeStatement iterator;
-                // The iterator needs work TODO
                 if (tryConsume(TokenType.CLOSE_PAREN) != null) {
                     iterator = null;
                 } else {
@@ -504,13 +493,13 @@ public class Parser {
             NodeTerm term = parseTerm();
             parameters.add(term);
             if (term == null)
-                Error.handleError("PARSING", "Unable to parse term");
+                handler.NoTermParse(peek().getLine(), peek().getCol());
             if (tryConsume(TokenType.COMMA) != null) {
                 continue;
             } else if (tryConsume(TokenType.CLOSE_PAREN) != null) {
                 return new FuncCallNode(funcName, parameters);
             } else {
-                Error.handleError("PARSING", "Unexpected token" + consume().toString());
+                handler.unexpectedTokenParameters(peek().getType(), peek().getLine(), peek().getCol());
             }
         }
     }
@@ -557,10 +546,9 @@ public class Parser {
     private Token expect(TokenType type) {
         Token currentToken = peek();
         if (currentToken == null)
-            Error.handleError("Parsing", String.format("Expected %s, Received nothing", type).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
-        if (!currentToken.getType().equals(type)) {
-            Error.handleError("Parsing", String.format("Expected %s, Received %s", type, currentToken.getType()).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
-        }
+            handler.receivedWrongToken(type, TokenType.DEFAULT, peek().getLine(), peek().getCol());
+        if (!currentToken.getType().equals(type))
+            handler.receivedWrongToken(type, currentToken.getType(), peek().getLine(), peek().getCol());
         this.iterator++;
         return currentToken;
     }
@@ -568,10 +556,9 @@ public class Parser {
     private Token expect(TokenType typeOne, TokenType typeTwo) {
         Token currentToken = peek();
         if (currentToken == null)
-            Error.handleError("Parsing", String.format("Expected %s, Received nothing", typeOne).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
-        if (!(currentToken.getType().equals(typeOne) || currentToken.getType().equals(typeTwo))) {
-            Error.handleError("Parsing", String.format("Expected %s, Received %s", typeOne, currentToken.getType()).concat("\n    line: " + peek().getLine() + ", col: " + peek().getCol()));
-        }
+            handler.receivedWrongToken(typeOne, TokenType.DEFAULT, peek().getLine(), peek().getCol());
+        if (!(currentToken.getType().equals(typeOne) || currentToken.getType().equals(typeTwo)))
+            handler.receivedWrongToken(typeOne, currentToken.getType(), peek().getLine(), peek().getCol());
         this.iterator++;
         return currentToken;
     }

@@ -43,13 +43,15 @@ public class Verifier {
     private HashMap<String, Integer> funcCallCounts = new HashMap<>();
     private int loopDepth = 0;
     private int ITcount = 0;
+    private Error handler;
 
     private ArrayList<Variable> variables = new ArrayList<>();
     private ArrayList<Integer> stack = new ArrayList<>();
 
-    public Verifier(NodeProgram program, HashMap<String, String> configSettings) {
+    public Verifier(NodeProgram program, HashMap<String, String> configSettings, Error handler) {
         this.program = program;
         this.configSettings = configSettings;
+        this.handler = handler;
     }
 
     public int getITCount() {
@@ -80,9 +82,9 @@ public class Verifier {
 
         for (Variable v: popped) {
             if (v.isMutable() && !v.isReassigned())
-                Error.minorError("VERIFIER", "Variable '" + v.getName() + "' is declared as mutable but never reassigned.");
+                handler.unnecessaryMutable(v.getName(), v.getLine(), v.getCol());
             if (!v.isUsed())
-                Error.minorError("VERIFIER", "Variable '" + v.getName() + "' is defined but never used.");
+                handler.unusedVariable(v.getName(), v.getLine(), v.getCol());
         }
 
     }
@@ -226,7 +228,8 @@ public class Verifier {
             Token returnT = f.getReturnType();
             int i = 0;
             for (String p: keys) {
-                addVariable(new Variable(p, f.getParameters().isMutable(i), f.getParameters().getVariables().get(p)));
+                Token token = f.getParameters().getVariables().get(p);
+                addVariable(new Variable(p, f.getParameters().isMutable(i), token, token.getLine(), token.getCol()));
                 i++;
             }
 
@@ -288,28 +291,28 @@ public class Verifier {
         
             } else if (s instanceof NodeLet) {
 
-            NodeLet s1 = (NodeLet) s;
-            String name = s1.getIdentifier().getValue();
-            checkVariable(name);
+                NodeLet s1 = (NodeLet) s;
+                String name = s1.getIdentifier().getValue();
+                checkVariable(name);
 
-            if (varExists(name))
-                Error.handleError("VERIFIER", "Attempted reassignment to previously declared identifier: " + name);
+                if (varExists(name))
+                    Error.handleError("VERIFIER", "Attempted reassignment to previously declared identifier: " + name);
 
-            String expectedType = mapReturnTypes(s1.getType());
-            String realType = getExpressionType(s1.getExpression());
+                String expectedType = mapReturnTypes(s1.getType());
+                String realType = getExpressionType(s1.getExpression());
 
-            if (realType.equals("it") && ITcount <= 0)
-                Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");
-            if (realType.equals("it")) {
-                ItExpression x = (ItExpression) s1.getExpression();
-                x.setDepth(ITcount);
-                realType = "numeric";
-            }
+                if (realType.equals("it") && ITcount <= 0)
+                    Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");
+                if (realType.equals("it")) {
+                    ItExpression x = (ItExpression) s1.getExpression();
+                    x.setDepth(ITcount);
+                    realType = "numeric";
+                }
 
-            if (!realType.endsWith("any") && !expectedType.equals(realType)) // real type is to do
-                Error.handleError("VERIFIER", String.format("Attempting to assign expression of type %s to variable %s of type %s", realType, name, expectedType));
-
-            addVariable(new Variable(name, !s1.isConstant(), s1.getType()));
+                if (!realType.endsWith("any") && !expectedType.equals(realType)) // real type is to do
+                    Error.handleError("VERIFIER", String.format("Attempting to assign expression of type %s to variable %s of type %s", realType, name, expectedType));
+                Token identifier = s1.getIdentifier();
+                addVariable(new Variable(name, !s1.isConstant(), s1.getType(), identifier.getLine(), identifier.getCol()));
 
         } else if (s instanceof NodePrint) {
 
@@ -332,7 +335,8 @@ public class Verifier {
             if (((NodeScan) s).getType().getValue().equals("void"))
                 Error.handleError("VERIFIER", "'in' method can only scan types that are numeric or strings, not void");
             NodeScan s1 = (NodeScan) s;
-            addVariable(new Variable(s1.getIdentifier().getValue(), !s1.isConstant(), s1.getType()));
+            Token identifier = s1.getIdentifier();
+            addVariable(new Variable(identifier.getValue(), !s1.isConstant(), s1.getType(), identifier.getLine(), identifier.getCol()));
 
         } else if (s instanceof NodeScope) {
 

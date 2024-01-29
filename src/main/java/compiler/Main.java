@@ -117,7 +117,8 @@ public class Main {
 		String filePath = myCompiler.commandArgs.get("sourceName");
 		myCompiler.setSource(filePath);
 
-		Lexer myLexer = new Lexer(myCompiler.getFileSource());
+		Error myHandler = new Error(myCompiler.getFileSource(), filePath);
+		Lexer myLexer = new Lexer(myCompiler.getFileSource(), myHandler);
 
 		// Read in config settings
 		File possibleConfig = new File("xy.config");
@@ -151,7 +152,7 @@ public class Main {
 				System.out.println("\t" + x.toString());
 		}
 			
-		Parser myParser = new Parser(tokens, myCompiler.configSettings);
+		Parser myParser = new Parser(tokens, myCompiler.configSettings, myHandler);
 		NodeProgram myNode = myParser.parseProgram();
 		if (myCompiler.commandArgs.containsKey("parserLog")) {
 			System.out.println("PARSER: \n");
@@ -161,7 +162,7 @@ public class Main {
 
 		Generator myGenerator = new Generator(myNode);
 
-		Verifier myVerifier = new Verifier(myNode, myCompiler.configSettings);
+		Verifier myVerifier = new Verifier(myNode, myCompiler.configSettings, myHandler);
 		myVerifier.verify();
 
 		String contents = myGenerator.generateProgram();

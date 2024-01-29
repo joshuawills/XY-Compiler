@@ -4,9 +4,11 @@ import java.util.ArrayList;
 public class Lexer {
     
     private final String contents;
+    private final Error handler;
     private String buffer = "";
     private int position = 0;
     private final ArrayList<Token> tokens = new ArrayList<>();
+
 
     private int line = 1; private int col = 1;
 
@@ -14,8 +16,9 @@ public class Lexer {
     private void incrementLine() { this.line++; resetCol(); }
     private void incrementCol() { this.col++; }
 
-    public Lexer(String contents) {
+    public Lexer(String contents, Error handler) {
         this.contents = contents;
+        this.handler = handler;
     }
     
     private static boolean isAlphaNumeric(Character c) { return Character.isDigit(c) || Character.isLetter(c) || c.equals('_'); }
@@ -28,7 +31,7 @@ public class Lexer {
     
     private void checkIdentifier(String ident) {
         if (ident.startsWith("__lc__"))
-            Error.handleError("LEXER","Can't declare an identifier that starts with __lc__. That's a reserved keyword");
+            handler.invalidIdentName(ident, line, col);
     }
 
     public ArrayList<Token> tokenize() {
@@ -170,10 +173,8 @@ public class Lexer {
                 case "^":
                     appendToken(TokenType.BITWISE_XOR); break;
                 default:
-                    Error.handleError("LEXER", "Unknown punctuation (" + peek() + ")\n    line: " + this.line + ", col: " + this.col);
+                    handler.unknownPunctuation(peek().toString(), line, col);
             }
-
-
         }
         return this.tokens;
     }

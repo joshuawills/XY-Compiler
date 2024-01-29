@@ -1,0 +1,3 @@
+define main() -> int {
+    mut array<string> x = ["hello"];
+}
