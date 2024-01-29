@@ -37,12 +37,9 @@ public class NodeReturn implements NodeStatement {
         generator.appendContents("    return");
         switch (returnToken.getType()) {
             case DECLARE:
-
                 switch (returnToken.getValue()) {
                     case "int":
-                        generator.appendContents(" ");
-                        expression.operator(generator);
-                        break;
+                    case "bool":
                     case "string":
                         generator.appendContents(" ");
                         expression.operator(generator);

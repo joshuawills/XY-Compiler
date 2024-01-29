@@ -41,8 +41,19 @@
 
 - Added in array types
 
+
+## 28.01.24
+
+- Support specifying variables as mut in function calls 
+- `__lc__` is a reversed word - need to actually implement in code
+- loops with num specifiers (like `for i in range(10)` or whatever in python) 
+
+## 29.01.24
+
+- Implementation of for loops
+
 ## TO-DO
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods)
 - Add in tests for UnaryExpression type
-- Support specifying variables as mut in function calls 
+- Add a keyword for the iterator value `it`

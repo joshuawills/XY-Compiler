@@ -3,9 +3,9 @@ package compiler;
 
 public class Token {
     
-    private TokenType type;
+    private final TokenType type;
     private String value = null;
-    private Integer line; private Integer col;
+    private final Integer line; private final Integer col;
     
     public Token(TokenType type, int line, int col) {
         this.type = type;
@@ -70,9 +70,6 @@ public class Token {
         return String.format("{type: %s, val: %s (%s, %s)}", this.getType(), this.getValue(), this.getLine().toString(), this.getCol().toString());
     }
 
-    public void setType(TokenType t) {
-        this.type = t;
-    }
 
     public void setValue(String v) {
         this.value = v;
@@ -85,10 +82,5 @@ public class Token {
     public String getValue() {
         return this.value;
     }
-
-    public static boolean isReturnType(TokenType type) {
-        return type.equals(TokenType.DECLARE) || type.equals(TokenType.VOID);
-    }
-
 
 }

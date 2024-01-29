@@ -7,8 +7,8 @@ import compiler.nodes.statement_nodes.NodeStatement;
 
 public class NodeWhile implements NodeStatement{
     
-    private NodeExpression expression = null;
-    private NodeScope scope = null;
+    private NodeExpression expression;
+    private NodeScope scope;
 
     public NodeWhile(NodeExpression expression, NodeScope scope) {
         this.expression = expression;

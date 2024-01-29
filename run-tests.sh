@@ -2,12 +2,12 @@
 
 help() {
     echo "How to use test suite:"
-    echo "\tCreate a file with the format test_[a-z]+.xy in the tests directory"
-    echo "\tMake the first line a comment with the expected exit code: E.g. // exit 1"
-    echo "\tIf there's any stdout you want to test, create a file with the same name but with .txt instead of .xy"
-    echo "\tThe script will then do a diff compare to make sure it's the same"
-    echo "\tNo need to provide the .txt file if there's no output to test"
-    echo "\tIf you expect the program to have a build fail place 'FAIL' on the first line rather than a number"
+    echo "    Create a file with the format test_[a-z]+.xy in the tests directory"
+    echo "    Make the first line a comment with the expected exit code: E.g. // exit 1"
+    echo "    If there's any stdout you want to test, create a file with the same name but with .txt instead of .xy"
+    echo "    The script will then do a diff compare to make sure it's the same"
+    echo "    No need to provide the .txt file if there's no output to test"
+    echo "    If you expect the program to have a build fail place 'FAIL' on the first line rather than a number"
     echo
     exit 0
 }
@@ -37,16 +37,16 @@ fi
 while IFS= read -r file
 do
     rawName=$file
-    file=$(basename $file)  
+    file=$(basename "$file")
     # Ignoring any other random files that aren't .txt or .xy
-    if ! (echo $file | grep -Eq "test_[0-9]+\.(xy|txt)$")
+    if ! (echo "$file" | grep -Eq "test_[0-9]+\.(xy|txt)$")
     then
         echo "Skipping over ${YELLOW}${file}${RESET}: invalid filename"
         continue
     fi
 
     # If it's not a .xy file, ignore
-    if ! echo $file | grep -Eq "\.xy$"
+    if ! echo "$file" | grep -Eq "\.xy$"
     then 
         continue
     fi
@@ -63,7 +63,7 @@ do
         fi
     fi
 
-    SUMMARY=$(head -n2 "$rawName" | tail -n1 | sed -e "s/\/\/ //g" | tr a-z A-Z)
+    SUMMARY=$(head -n2 "$rawName" | tail -n1 | sed -e "s/\/\/ //g" | tr "[:lower:]" "[:upper:]")
 
     # Attempt to build the executable
     java -jar build/libs/xy_java-1.0-SNAPSHOT.jar "$rawName"  >> /dev/null 2>&1
@@ -147,10 +147,10 @@ echo "Test suite completed: "
 
 if [ "$PASS" = "$TOTAL" ] 
 then 
-    echo "\t${GREEN}All passed${RESET}"
-    echo "\t${TOTAL} total"
+    echo "    ${GREEN}All passed${RESET}"
+    echo "    ${TOTAL} total"
 else
-    echo "\t${GREEN}${PASS} passed${RESET}"
-    echo "\t${RED}${FAIL} failed${RESET}"
-    echo "\t${TOTAL} total"
+    echo "    ${GREEN}${PASS} passed${RESET}"
+    echo "    ${RED}${FAIL} failed${RESET}"
+    echo "    ${TOTAL} total"
 fi

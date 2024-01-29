@@ -32,6 +32,7 @@ import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
 import compiler.nodes.statement_nodes.loops.NodeBreak;
 import compiler.nodes.statement_nodes.loops.NodeContinue;
 import compiler.nodes.statement_nodes.loops.NodeDo;
+import compiler.nodes.statement_nodes.loops.NodeFor;
 import compiler.nodes.statement_nodes.loops.NodeLoop;
 import compiler.nodes.statement_nodes.loops.NodeWhile;
 
@@ -39,7 +40,7 @@ public class Parser {
 
     private final ArrayList<Token> tokens;
     private int iterator = 0;
-    private HashMap<String, String> configSettings = new HashMap<>();
+    private final HashMap<String, String> configSettings;
 
     public Parser(ArrayList<Token> tokens, HashMap<String, String> configSettings) {
         this.tokens = tokens;
@@ -99,7 +100,7 @@ public class Parser {
     private NodeTerm parseTerm() {
         
         Token t = peek();
-        NodeExpression e = null;
+        NodeExpression e;
         if (t == null) return null;
 
         switch (t.getType()) {
@@ -117,7 +118,7 @@ public class Parser {
                 consume();
                 e = parseExpression(0);
                 if (e == null)
-                Error.handleError("PARSING", "Expected expression");
+                    Error.handleError("PARSING", "Expected expression");
                 expect(TokenType.CLOSE_PAREN);
                 return new ParenExpression(e);
                 
@@ -125,7 +126,7 @@ public class Parser {
                 consume();
                 e = parseTerm();
                 if (e == null)
-                Error.handleError("PARSING", "Expected expression");
+                    Error.handleError("PARSING", "Expected expression");
                 return new NegationExpression(e);
                 
             case IDENT:
@@ -136,7 +137,7 @@ public class Parser {
                 }
                 
                 // Array Access
-                if (nextToken != null && nextToken.getType().equals(TokenType.LEFT_SQUARE)) {
+                if (nextToken.getType().equals(TokenType.LEFT_SQUARE)) {
                     consume(); consume();
                     NodeExpression expression = parseExpression(0);
                     expect(TokenType.RIGHT_SQUARE);
@@ -215,12 +216,108 @@ public class Parser {
         return lhs;
     }
     
+    private NodeStatement parseIterator() {
+
+        Token t = consume();
+        Token ident;
+        NodeExpression expression;
+        if (t == null) return null;
+
+        switch (t.getType()) {
+            case IDENT:
+                ident = t;
+                if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN))
+                    Error.handleError("PARSER", "No func call in for-loop iterator");
+                if (peek() != null && peek().getType().equals(TokenType.LEFT_SQUARE))
+                    Error.handleError("PARSER", "No array-access setting in for-loop initialization");
+                t = peek();
+                switch (t.getType()) {
+                case INCREMENT:
+                case DECREMENT:
+                    consume();
+                    expression = new UnaryExpression(t.getType());
+                    break;
+                case PLUS_EQUAL:
+                case DASH_EQUAL:
+                case STAR_EQUAL:
+                case F_SLASH_EQUAL:
+                    consume();
+                    NodeExpression rhs = parseExpression(0);
+                    expression = new UnaryExpression(t.getType(), rhs);
+                    break;
+                default:
+                    expect(TokenType.ASSIGN);
+                    expression = parseExpression(0);
+                }
+                return new NodeAssign(new IdentExpression(ident), expression);
+            default:
+                Error.handleError("PARSING", "Unrecognized iterator for a for-loop.");            
+        }
+        return null;
+    }
+
+    private NodeStatement parseInitializer() {
+
+        Token t = consume();
+        Token ident;
+        NodeExpression expression;
+        if (t == null) return null;
+
+        switch (t.getType()) {
+            case MUT:
+            case DECLARE:
+                // Declare
+                boolean isConstant = true;
+                if (t.getType().equals(TokenType.MUT)) {
+                    isConstant = false;
+                    t = expect(TokenType.DECLARE);
+                }
+                ident = expect(TokenType.IDENT);
+                expect(TokenType.ASSIGN);
+                expression = parseExpression(0);
+                return new NodeLet(ident, expression, isConstant, t);
+
+            case IDENT:
+                ident = t;
+                if (peek() != null && peek().getType().equals(TokenType.OPEN_PAREN)) {
+                    Error.handleError("PARSER", "No func call in for-loop initialization");
+                }
+                if (peek() != null && peek().getType().equals(TokenType.LEFT_SQUARE)) {
+                    Error.handleError("PARSER", "No array-access setting in for-loop initialization");
+                }
+                t = peek();
+                switch (t.getType()) {
+                case INCREMENT:
+                case DECREMENT:
+                    consume();
+                    expression = new UnaryExpression(t.getType());
+                    break;
+                case PLUS_EQUAL:
+                case DASH_EQUAL:
+                case STAR_EQUAL:
+                case F_SLASH_EQUAL:
+                    consume();
+                    NodeExpression rhs = parseExpression(0);
+                    expression = new UnaryExpression(t.getType(), rhs);
+                break;
+                default:
+                    expect(TokenType.ASSIGN);
+                    expression = parseExpression(0);
+                }
+                return new NodeAssign(new IdentExpression(ident), expression);
+            default:
+                Error.handleError("PARSER", "For loop's initializer can only be a variable declaration");
+                return null;
+        }
+
+    }
+
     private NodeStatement parseStatement() {
         
         Token t = consume();
         if (t == null) return null;
-        NodeExpression expression = null;
-        Token ident = null;
+        NodeExpression expression;
+        Token ident;
         NodeScope scope;
         
         switch (t.getType()) {
@@ -281,7 +378,38 @@ public class Parser {
                 checkCurly("while");
                 return new NodeWhile(expression, parseScope());
             
+            case FOR:
+                expect(TokenType.OPEN_PAREN);
+                NodeStatement initializer;
+                if (tryConsume(TokenType.SEMI) != null) {
+                    initializer = null;
+                } else {
+                    initializer = parseInitializer();
+                    expect(TokenType.SEMI);
+                }
+                if (tryConsume(TokenType.SEMI) != null) {
+                    expression = null;
+                } else {
+                    expression = parseExpression(0);
+                    expect(TokenType.SEMI);
+                }
+                NodeStatement iterator;
+                // The iterator needs work TODO
+                if (tryConsume(TokenType.CLOSE_PAREN) != null) {
+                    iterator = null;
+                } else {
+                    iterator = parseIterator();
+                    expect(TokenType.CLOSE_PAREN);
+                }
+                scope = parseScope();
+                return new NodeFor(initializer, expression, iterator, scope);
+
             case LOOP:
+                if (peek() != null && peek().getType().equals(TokenType.INT_LIT)) {
+                    String count = peek().getValue();
+                    consume();
+                    return new NodeLoop(parseScope(), count);
+                }
                 return new NodeLoop(parseScope());
             
             case DO:
@@ -474,14 +602,14 @@ public class Parser {
     private void checkParens(String area) {
         if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
             if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
-            Error.minorError("CONFIG-SPECIFIC", "Missing () around " + area + " statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+                Error.minorError("CONFIG-SPECIFIC", "Missing () around " + area + " statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
         }
     }
 
     private void checkCurly(String area) {
         if (configSettings.containsKey("MANDATE-BRACKETS") && configSettings.get("MANDATE-BRACKETS").equals("true")) {
             if (peek() != null && !peek().getType().equals(TokenType.OPEN_PAREN))
-            Error.minorError("CONFIG-SPECIFIC", "Missing {} around " + area + " statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
+                Error.minorError("CONFIG-SPECIFIC", "Missing {} around " + area + " statement\n    line: " + peek(0).getLine() + ", col: " + peek(0).getCol());
         }
     }
 

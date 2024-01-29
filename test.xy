@@ -1,13 +1,6 @@
+define notHundred(int x) -> bool { return x != 100; }
+
 define main() -> int {
-    // A simple program...
-    loop {
-        int x = in "What's your favourite number: ";
-        if x == 42 {
-            out "you have chosen correctly\n";
-            break;
-        } else {
-            out "Try again :(\n";
-        }
-    }
-    return 0;
+
+    for (;;) out "what\n";
 }

@@ -2,9 +2,9 @@ package compiler;
 
 public class Variable {
     
-    private String name;
-    private Token type;
-    private boolean isMutable = false;
+    private final String name;
+    private final Token type;
+    private final boolean isMutable;
     private boolean isReassigned = false;
     private boolean isUsed = false;
 
@@ -25,8 +25,7 @@ public class Variable {
 
     @Override
     public String toString() {
-        String x = String.format("{%s, %s}", name, type.getType());
-        return x;
+        return String.format("{%s, %s}", name, type.getType());
     }
 
 

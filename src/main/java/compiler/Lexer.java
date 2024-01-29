@@ -3,10 +3,10 @@ import java.util.ArrayList;
 
 public class Lexer {
     
-    private String contents;
+    private final String contents;
     private String buffer = "";
     private int position = 0;
-    private ArrayList<Token> tokens = new ArrayList<>();
+    private final ArrayList<Token> tokens = new ArrayList<>();
 
     private int line = 1; private int col = 1;
 
@@ -284,6 +284,8 @@ public class Lexer {
                 appendTokenNoConsume(TokenType.BREAK, this.line, real_column); break;
             case "loop":
                 appendTokenNoConsume(TokenType.LOOP, this.line, real_column); break;
+            case "for":
+                appendTokenNoConsume(TokenType.FOR, this.line, real_column); break;
             case "void":
                 appendTokenNoConsume(TokenType.VOID, this.line, real_column); break;
             case "true":

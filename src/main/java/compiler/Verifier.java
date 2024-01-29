@@ -21,6 +21,7 @@ import compiler.nodes.statement_nodes.conditionals.NodeIfPredicateElse;
 import compiler.nodes.statement_nodes.loops.NodeBreak;
 import compiler.nodes.statement_nodes.loops.NodeContinue;
 import compiler.nodes.statement_nodes.loops.NodeDo;
+import compiler.nodes.statement_nodes.loops.NodeFor;
 import compiler.nodes.statement_nodes.loops.NodeLoop;
 import compiler.nodes.statement_nodes.loops.NodeWhile;
 
@@ -354,8 +355,34 @@ public class Verifier {
             this.loopDepth--;
             pop();
 
+        } else if (s instanceof NodeFor) {
+            NodeFor s1 = (NodeFor) s;
+            push();
+            this.loopDepth++;
+            
+            if (s1.getInitializer() != null)
+                scanStatement(s1.getInitializer(), returnT, fName);
+            if (s1.getCondition() != null) {
+                if (!getExpressionType(s1.getCondition()).equals("numeric"))
+                    Error.handleError("VERIFIER", "A 'for' loop can only evaluate a numeric expression");
+            }
+            if (s1.getIterator() != null)
+                scanStatement(s1.getIterator(), returnT, fName);
+            for (NodeStatement s3: ((NodeScope) s1.getScope()).getStatements())
+                scanStatement(s3, returnT, fName);
+
+            this.loopDepth--;
+            pop();
+
         } else if (s instanceof NodeLoop) {
             NodeLoop s1 = (NodeLoop) s;
+
+            if (s1.getCount() != null) {
+                Integer realCount = Integer.parseInt(s1.getCount());
+                if (realCount <= 0)
+                    Error.handleError("VERIFIER", "Can't provide a non-natural number as a loop count specifier");
+            }
+
             push();
             this.loopDepth++;
             for (NodeStatement s3: ((NodeScope) s1.getScope()).getStatements())
