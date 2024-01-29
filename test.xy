@@ -1,6 +1,9 @@
-define notHundred(int x) -> bool { return x != 100; }
+define isFive(int x) -> bool { return x == 5; }
 
 define main() -> int {
+    loop {
+        out it;
+        if it == 100000 break;
+    }
 
-    for (;;) out "what\n";
 }

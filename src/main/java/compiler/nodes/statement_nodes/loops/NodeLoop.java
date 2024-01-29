@@ -8,6 +8,7 @@ public class NodeLoop implements NodeStatement {
     
     private NodeScope scope = null;
     private String count;
+    private Integer depth;
 
     public NodeLoop(NodeScope scope) {
         this.scope = scope;
@@ -16,6 +17,10 @@ public class NodeLoop implements NodeStatement {
     public NodeLoop(NodeScope scope, String count) {
         this.scope = scope;
         this.count = count;
+    }
+
+    public void setDepth(Integer depth) {
+        this.depth = depth;
     }
 
     public NodeScope getScope() {
@@ -35,10 +40,11 @@ public class NodeLoop implements NodeStatement {
     }
 
     public void operator(Generator generator) {
+        String keyword = "__lc__" + depth + "_";
         if (count == null)
-            generator.appendContents("    while (1)\n");
+            generator.appendContents("for (int " + keyword + " = 0;;" + keyword + "++)\n");
         else
-            generator.appendContents("for (int __lc__ = 0; __lc__ < " + count + "; __lc__++)\n");
+            generator.appendContents("for (int " + keyword + " = 0; " + keyword + " < " + count + "; " + keyword + "++)\n");
         scope.operator(generator);
     }
 

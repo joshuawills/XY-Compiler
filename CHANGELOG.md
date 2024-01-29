@@ -51,9 +51,11 @@
 ## 29.01.24
 
 - Implementation of for loops
+- Add a keyword for the iterator value `it`
+    - Only applies in `loop`, applies to latest
+
 
 ## TO-DO
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods)
 - Add in tests for UnaryExpression type
-- Add a keyword for the iterator value `it`

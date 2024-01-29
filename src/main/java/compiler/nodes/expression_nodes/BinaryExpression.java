@@ -4,6 +4,7 @@ import compiler.Generator;
 import compiler.TokenType;
 import compiler.Verifier;
 import compiler.nodes.expression_nodes.term_nodes.ArrayAccess;
+import compiler.nodes.expression_nodes.term_nodes.ItExpression;
 import compiler.Error;
 
 public class BinaryExpression implements NodeExpression {
@@ -21,12 +22,26 @@ public class BinaryExpression implements NodeExpression {
     public String getType(Verifier v) {
 
         if (!(lhs instanceof ArrayAccess)) {
-            if (!lhs.getType(v).equals("numeric"))
+            String type = lhs.getType(v);
+            if (type.equals("it"))  {
+                ItExpression x = (ItExpression) lhs;
+                x.setDepth(v.getITCount());
+                type = "numeric";
+                if (v.getITCount() <= 0) Error.handleError("VERIFIER", "Can't use 'it' keyword outside of loop context");
+            }
+            if (!type.equals("numeric"))
                 Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
         }
 
         if (!(rhs instanceof ArrayAccess)) {
-            if (!rhs.getType(v).equals("numeric"))
+            String type = lhs.getType(v);
+            if (type.equals("it"))  {
+                ItExpression x = (ItExpression) lhs;
+                x.setDepth(v.getITCount());
+                type = "numeric";
+                if (v.getITCount() <= 0) Error.handleError("VERIFIER", "Can't use 'it' keyword outside of loop context");
+            }
+            if (!type.equals("numeric"))
                 Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
         }
 

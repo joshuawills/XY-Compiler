@@ -292,6 +292,8 @@ public class Lexer {
                 this.tokens.add(new Token(TokenType.INT_LIT, "1", line, real_column)); break;
             case "false":
                 this.tokens.add(new Token(TokenType.INT_LIT, "0", line, real_column)); break;
+            case "it":
+                this.tokens.add(new Token(TokenType.IT, this.line, real_column)); break;
             default:
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;

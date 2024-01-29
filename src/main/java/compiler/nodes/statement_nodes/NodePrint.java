@@ -77,11 +77,11 @@ public class NodePrint implements NodeStatement {
             generator.appendContents("    printf(" + term.toString() + ");\n");
             return;
         }
-        System.out.println("returnType is: " + returnType);
         switch (returnType) {
             case "string":
-                generator.appendContents("printf(\"%s\\n\", ");
-                break;
+            generator.appendContents("printf(\"%s\\n\", ");
+            break;
+            case "it":
             case "numeric":
                 generator.appendContents("printf(\"%d\\n\", ");
                 break;

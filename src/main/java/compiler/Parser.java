@@ -14,6 +14,7 @@ import compiler.nodes.expression_nodes.term_nodes.CharExpression;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
 import compiler.nodes.expression_nodes.term_nodes.IntLitExpression;
+import compiler.nodes.expression_nodes.term_nodes.ItExpression;
 import compiler.nodes.expression_nodes.term_nodes.NegationExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.expression_nodes.term_nodes.ParenExpression;
@@ -113,6 +114,8 @@ public class Parser {
             case CHAR_LIT:
                 return new CharExpression(consume());
 
+            case IT:
+                consume(); return new ItExpression(); 
                 
             case OPEN_PAREN:
                 consume();

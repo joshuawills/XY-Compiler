@@ -6,6 +6,7 @@ import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.term_nodes.ArrayAccess;
 import compiler.nodes.expression_nodes.term_nodes.FuncCallNode;
 import compiler.nodes.expression_nodes.term_nodes.IdentExpression;
+import compiler.nodes.expression_nodes.term_nodes.ItExpression;
 import compiler.nodes.expression_nodes.term_nodes.NodeTerm;
 import compiler.nodes.statement_nodes.NodeAssign;
 import compiler.nodes.statement_nodes.NodeLet;
@@ -41,6 +42,7 @@ public class Verifier {
 
     private HashMap<String, Integer> funcCallCounts = new HashMap<>();
     private int loopDepth = 0;
+    private int ITcount = 0;
 
     private ArrayList<Variable> variables = new ArrayList<>();
     private ArrayList<Integer> stack = new ArrayList<>();
@@ -48,6 +50,10 @@ public class Verifier {
     public Verifier(NodeProgram program, HashMap<String, String> configSettings) {
         this.program = program;
         this.configSettings = configSettings;
+    }
+
+    public int getITCount() {
+        return this.ITcount;
     }
 
     private void push() {
@@ -123,6 +129,7 @@ public class Verifier {
             switch (s.getValue()) {
             case "int":
             case "bool":
+            case "it":
                 return buffer.concat("numeric");
             case "string":
                 return buffer.concat("string");
@@ -180,11 +187,25 @@ public class Verifier {
 
             } else {
                 String providedType = getExpressionType(parametersProvided.get(i));
+                if (providedType.equals("it") && ITcount <= 0)
+                    Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");  
+                if (providedType.equals("it"))  {
+                    ItExpression x = (ItExpression) parametersProvided.get(i);
+                    x.setDepth(ITcount);
+                    providedType = "numeric";
+                }
                 if (!realType.equals(providedType))
                     Error.handleError("VERIFIER", String.format("Expected arg %s to be of type %s, but received %s", (i + 1), realType, providedType));
             }
 
             String providedType = getExpressionType(parametersProvided.get(i));
+            if (providedType.equals("it") && ITcount <= 0)
+                Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");  
+            if (providedType.equals("it")) {
+                ItExpression x = (ItExpression) parametersProvided.get(i);
+                x.setDepth(ITcount);
+                providedType = "numeric";  
+            } 
             if (!realType.equals(providedType))
                 Error.handleError("VERIFIER", String.format("Expected arg %s to be of type %s, but received %s", (i + 1), realType, providedType));
             i++;
@@ -252,6 +273,15 @@ public class Verifier {
             currentVar.setReassigned();
             String existingType = (access) ? variableReturnType(name).split("\\|")[1]: variableReturnType(name);
             String assignedType = getExpressionType(s1.getExpression());
+
+            if (assignedType.equals("it") && ITcount <= 0)
+                Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");
+            if (assignedType.equals("it")) {
+                ItExpression x = (ItExpression) s1.getExpression();
+                x.setDepth(ITcount);
+                assignedType = "numeric";
+            }
+
             if (!existingType.equals(assignedType))
                 Error.handleError("VERIFIER", String.format("Incompatible types, assigning %s to variable %s when it's %s", assignedType, name, existingType));
         
@@ -266,6 +296,15 @@ public class Verifier {
 
             String expectedType = mapReturnTypes(s1.getType());
             String realType = getExpressionType(s1.getExpression());
+
+            if (realType.equals("it") && ITcount <= 0)
+                Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");
+            if (realType.equals("it")) {
+                ItExpression x = (ItExpression) s1.getExpression();
+                x.setDepth(ITcount);
+                realType = "numeric";
+            }
+
             if (!realType.endsWith("any") && !expectedType.equals(realType)) // real type is to do
                 Error.handleError("VERIFIER", String.format("Attempting to assign expression of type %s to variable %s of type %s", realType, name, expectedType));
 
@@ -274,6 +313,15 @@ public class Verifier {
         } else if (s instanceof NodePrint) {
 
             NodePrint s1 = (NodePrint) s;
+
+            if (getExpressionType(s1.getTerm()).equals("it")) {
+                ItExpression x = (ItExpression) s1.getTerm();
+                x.setDepth(ITcount);
+
+                if (ITcount <= 0)
+                    Error.handleError("VERIFIER", "Can't call 'it' in a non-loop context");
+            }
+
             s1.setReturnType(getExpressionType(s1.getTerm()));
             if (s1.getTerm().getType(this).equals("void"))
                 Error.handleError("VERIFIER", "'out' method can only log types that are numeric or strings, not void");
@@ -385,8 +433,11 @@ public class Verifier {
 
             push();
             this.loopDepth++;
+            this.ITcount++;
+            s1.setDepth(ITcount);
             for (NodeStatement s3: ((NodeScope) s1.getScope()).getStatements())
                 scanStatement(s3, returnT, fName);
+            this.ITcount--;
             this.loopDepth--;
             pop();
         } else if (s instanceof NodeContinue) {
