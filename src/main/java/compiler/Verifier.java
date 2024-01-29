@@ -281,9 +281,10 @@ public class Verifier {
                 x.setDepth(ITcount);
                 assignedType = "numeric";
             }
-
-            if (!existingType.equals(assignedType))
-                Error.handleError("VERIFIER", String.format("Incompatible types, assigning %s to variable %s when it's %s", assignedType, name, existingType));
+            if (!(existingType.equals("char") && assignedType.equals("numeric")) || (existingType.equals("numeric") && assignedType.equals("char"))) {
+                if (!existingType.equals(assignedType))
+                    Error.handleError("VERIFIER", String.format("Incompatible types, assigning %s to variable %s when it's %s", assignedType, name, existingType));
+            }
         
             } else if (s instanceof NodeLet) {
 

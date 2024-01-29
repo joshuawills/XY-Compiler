@@ -53,9 +53,12 @@
 - Implementation of for loops
 - Add a keyword for the iterator value `it`
     - Only applies in `loop`, applies to latest
+- Add in tests for UnaryExpression type
 
 
 ## TO-DO
 
-- Make sure something is actually returned for strings and integers (i.e. non void return methods)
-- Add in tests for UnaryExpression type
+- Make sure something is actually returned for strings and integers (i.e. non void return methods) (difficult)
+- Improve error messages significantly (medium)
+- Add in assert statements (easy)
+- New array declaration approaches

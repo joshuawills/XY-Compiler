@@ -26,6 +26,11 @@ public class Lexer {
 
     private boolean isNumber() { return (Character.isDigit(peek())) || (peek().toString().equals("-") && peek(1) != null && Character.isDigit(peek(1))); }
     
+    private void checkIdentifier(String ident) {
+        if (ident.startsWith("__lc__"))
+            Error.handleError("LEXER","Can't declare an identifier that starts with __lc__. That's a reserved keyword");
+    }
+
     public ArrayList<Token> tokenize() {
         
         while (this.position < this.contents.length()) {
@@ -295,6 +300,7 @@ public class Lexer {
             case "it":
                 this.tokens.add(new Token(TokenType.IT, this.line, real_column)); break;
             default:
+                checkIdentifier(buffer);
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));
                 break;
         }

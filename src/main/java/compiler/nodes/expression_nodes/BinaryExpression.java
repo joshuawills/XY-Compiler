@@ -29,7 +29,7 @@ public class BinaryExpression implements NodeExpression {
                 type = "numeric";
                 if (v.getITCount() <= 0) Error.handleError("VERIFIER", "Can't use 'it' keyword outside of loop context");
             }
-            if (!type.equals("numeric"))
+            if (!(type.equals("numeric") || type.equals("char")))
                 Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
         }
 
@@ -41,7 +41,7 @@ public class BinaryExpression implements NodeExpression {
                 type = "numeric";
                 if (v.getITCount() <= 0) Error.handleError("VERIFIER", "Can't use 'it' keyword outside of loop context");
             }
-            if (!type.equals("numeric"))
+            if (!(type.equals("numeric") || type.equals("char")))
                 Error.handleError("VERIFIER", "Inappropriate attempt to use a non-numeric type in a string expression");
         }
 
