@@ -1,0 +1,8 @@
+// FAIL
+// Using it outside of loop
+
+define main() -> int {
+
+    out it;
+
+}

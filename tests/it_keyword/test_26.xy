@@ -1,0 +1,12 @@
+// 0
+// Raw loop
+
+define main() -> int {
+
+    loop {
+        if it == 10 break;
+        out it;
+    }
+    return 0;
+
+}

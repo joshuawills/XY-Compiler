@@ -1,0 +1,10 @@
+// FAIL
+// Using it outside of loop 2
+
+define main() -> int {
+
+    while (true) {
+        out it;
+    }
+
+}

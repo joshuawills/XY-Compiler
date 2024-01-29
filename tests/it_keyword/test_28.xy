@@ -1,0 +1,12 @@
+// 0
+// Ensuring 'it' accesses the latest loop
+
+define main() -> int {
+    loop {
+        loop 1 {
+            out it;
+        }
+        if it == 5 break;
+    }
+    return 0;
+}

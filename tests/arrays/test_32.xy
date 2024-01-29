@@ -1,0 +1,36 @@
+// 0
+// Basic bubble sort
+
+define bubble_sort(mut array<int> arr, int size) -> void {
+
+    mut int i = 0;
+    while i < size - 1 {
+
+        mut bool swapped = false;
+        mut int j = 0;
+        while j < (size - i - 1) {
+
+            if arr[j] > arr[j + 1] {
+                swapped = true;
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+
+            j++;
+        }
+
+        if !swapped break;
+        i++;
+    }
+
+
+}
+
+define main() -> int {
+
+    mut array<int> hello = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+    bubble_sort(hello, 10);
+    out hello;
+   
+}       

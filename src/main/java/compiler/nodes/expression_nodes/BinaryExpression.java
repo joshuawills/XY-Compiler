@@ -34,9 +34,9 @@ public class BinaryExpression implements NodeExpression {
         }
 
         if (!(rhs instanceof ArrayAccess)) {
-            String type = lhs.getType(v);
+            String type = rhs.getType(v);
             if (type.equals("it"))  {
-                ItExpression x = (ItExpression) lhs;
+                ItExpression x = (ItExpression) rhs;
                 x.setDepth(v.getITCount());
                 type = "numeric";
                 if (v.getITCount() <= 0) Error.handleError("VERIFIER", "Can't use 'it' keyword outside of loop context");

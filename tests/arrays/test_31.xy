@@ -1,0 +1,16 @@
+// 0
+// Logging out basic arrays
+
+define main() -> int {
+
+    array<int> x = [1, 2, 3];
+    out x;
+    array<char> y = ['a', 'b', 'c', 'd'];
+    out y;
+    array<bool> z = [true, false, 1 == 1];
+    out z;
+    array<string> a = ["hello", "world", "!"];
+    out a;
+    return 0;
+
+}

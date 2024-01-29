@@ -1,0 +1,19 @@
+// 0
+// Basic binary expressions and ordering
+
+define main() -> int {
+
+    int x = 21;
+    int y = 3;
+    out (x / y);
+    out (x + 21 * y);
+    out ((x + 21) * y);
+    out (x && y);
+    out (x || y);
+    out (0 || y );
+    out (x && (0 || (x && 0)));
+    out (1 & 0);
+    out (1 | 0);
+    out (1 << 2);
+    return 0;
+}
