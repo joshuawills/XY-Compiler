@@ -10,6 +10,7 @@ public class Error
     private static final String ANSI_RED = "\u001B[31m";
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001b[34m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
 
     public Error(String fileContents, String fileName) {
         this.fileContents = fileContents;
@@ -42,7 +43,7 @@ public class Error
     }
 
     public void logLines(int line, int col) {
-        System.err.println(this.fileName + ":" + line + ":" + col + ":");
+        System.err.println(ANSI_YELLOW + this.fileName + ":" + line + ":" + col + ANSI_RESET + ":");
         for (Integer i = line - 2; i <= line + 2; i++) {
             if (i >= 1 && i <= this.numLines) {
                 System.err.println(String.format("%5s | " + this.fileContents.split("\n")[i - 1], i));
@@ -53,78 +54,99 @@ public class Error
 
     // Remove above
     public void invalidIdentName(String name, int line, int col) {
-        System.err.println(ANSI_RED + "INVALID IDENTIFIER NAME" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: invalid identifier name" + ANSI_RESET);
         System.err.println(String.format("The name '%s' is a reserved keyword in XY. Please choose another identifier", name));
         logLines(line, col);
         System.exit(1);
     } 
 
     public void unknownPunctuation(String name, int line, int col) {
-        System.err.println(ANSI_RED + "UNKNOWN PUNCTUATION" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: unknown punctuation" + ANSI_RESET);
         System.err.println(String.format("The punctuation '%s' is unrecognized by the XY compiler. Please refer to the formal docs", name));
         logLines(line, col);
         System.exit(1);
     }
 
     public void unknownOperator(TokenType operator, int line, int col) {
-        System.err.println(ANSI_RED + "UNKNOWN OPERATOR" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: unknown operator" + ANSI_RESET);
         System.err.println(String.format("The operator '%s' is not an appropriate operator for an expression. Please refer to the formal docs", operator));
         logLines(line, col);
         System.exit(1);
     }
 
     public void funcCallInForLoopInit(int line, int col) {
-        System.err.println(ANSI_RED + "NO FUNC-CALL IN FOR LOOP INITIALIZATION" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: no func-call in for loop initialization" + ANSI_RESET);
         logLines(line, col);
         System.exit(1);
     }
 
     public void arrayAccessInForLoopInit(int line, int col) {
-        System.err.println(ANSI_RED + "NO ARRAY-ACCESS IN FOR LOOP INITIALIZATION" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: no array-access in for loop initialization" + ANSI_RESET);
         logLines(line, col);
         System.exit(1);
     }
 
     public void forLoopInit(int line, int col)  {
-        System.err.println(ANSI_RED + "FOR LOOP'S INITIALIZER CAN ONLY BE A VARIABLE ASSIGNMENT/DECLARATION" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: for loops' initializer can only be a variable assignment/declaration" + ANSI_RESET);
         logLines(line, col);
         System.exit(1);
     }
 
     public void receivedWrongToken(TokenType expected, TokenType received, int line, int col) {
-        System.err.println(ANSI_RED + "RECEIVED INCORRECT TOKEN IN PARSER" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: received incorrect token in parser" + ANSI_RESET);
         System.err.println(String.format("The XY parser expected to receive a token '%s', but instead received '%s'", expected, received));
         logLines(line, col);
         System.exit(1);
     }
 
     public void scanArray(int line, int col) {
-        System.err.println(ANSI_RED + "CAN'T SCAN IN AN ARRAY" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: can't scan in an array" + ANSI_RESET);
         logLines(line, col);
         System.exit(1);
     }
 
     public void NoTermParse(int line, int col) {
-        System.err.println(ANSI_RED + "CAN'T PARSE TERM IN FUNC CALL" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: can't parse term in func call" + ANSI_RESET);
         logLines(line, col);
         System.exit(1);
     }
 
     public void unexpectedTokenParameters(TokenType received, int line, int col) {
-        System.err.println(ANSI_RED + "UNEXPECTED TOKEN WHEN PARSING PARAMETERS" + ANSI_RESET);
+        System.err.println(ANSI_RED + "error: unexpected token when parsing parameters" + ANSI_RESET);
         System.err.println("Expected to receive COMMA or CLOSE_PAREN but received " + received);
         logLines(line, col);
         System.exit(1);
     }
 
+    public void undeclaredVariable(String name, int line, int col) {
+        System.err.println(ANSI_RED + "error: accessing undeclared variable" + ANSI_RESET);
+        System.err.println(String.format("Variable '%s' is used but has not been declared", name));        
+        logLines(line, col);
+        System.exit(1);
+    }
+
+    public void undeclaredFunction(String name, int line, int col) {
+        System.err.println(ANSI_RED + "error: accessing undeclared function" + ANSI_RESET);
+        System.err.println(String.format("Function '%s' is called but has not been declared", name));        
+        logLines(line, col);
+        System.exit(1);
+    }
+
+    public void wrongNumArgumentsFunction(String name, int expected, int received, int line, int col) {
+        System.err.println(ANSI_RED + "error: args parsed wrong to function" + ANSI_RESET);
+        System.err.println(String.format("Function '%s' requires %s arguments but received %s arguments", name, expected, received));        
+        logLines(line, col);
+        System.exit(1);
+    }
+
     public void unnecessaryMutable(String name, int line, int col) {
-        System.err.println(ANSI_BLUE + "UNNECESSARY MUTABLE DECLARATION" + ANSI_RESET);
+        System.err.println(ANSI_BLUE + "error: unnecessary mutable declaration" + ANSI_RESET);
         System.err.println(String.format("Variable '%s' is declared as mutable but never reassigned", name));        
         logLines(line, col);
     }
 
     public void unusedVariable(String name, int line, int col) {
-        System.err.println(ANSI_BLUE + "UNUSED VARIABLE" + ANSI_RESET);
+        System.err.println(ANSI_BLUE + "error: unused variable" + ANSI_RESET);
         System.err.println(String.format("Variable '%s' is declared but never used", name));        
         logLines(line, col);
     }

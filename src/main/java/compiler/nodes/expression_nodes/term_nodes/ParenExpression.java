@@ -2,6 +2,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Generator;
 import compiler.Verifier;
+import compiler.Error;
 import compiler.nodes.expression_nodes.NodeExpression;
 
 public class ParenExpression extends NodeTerm {
@@ -14,8 +15,8 @@ public class ParenExpression extends NodeTerm {
         super();
     }
     
-    public String getType(Verifier v) {
-        return expression.getType(v);
+    public String getType(Verifier v, Error handler) {
+        return expression.getType(v, handler);
     }
 
     @Override

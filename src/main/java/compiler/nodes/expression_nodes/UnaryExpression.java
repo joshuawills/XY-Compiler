@@ -3,6 +3,7 @@ package compiler.nodes.expression_nodes;
 import compiler.Generator;
 import compiler.TokenType;
 import compiler.Verifier;
+import compiler.Error;
 
 public class UnaryExpression implements NodeExpression {
     
@@ -18,9 +19,9 @@ public class UnaryExpression implements NodeExpression {
         this.expression = expression;
     }
 
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         if (expression != null)
-            expression.getType(v);
+            expression.getType(v, handler);
         return "numeric";
     }
 

@@ -3,22 +3,23 @@ package compiler.nodes.expression_nodes.term_nodes;
 import java.util.ArrayList;
 
 import compiler.Generator;
+import compiler.Token;
 import compiler.Verifier;
+import compiler.Error;
 import compiler.nodes.statement_nodes.NodeStatement;
 public class FuncCallNode extends NodeTerm implements NodeStatement {
 
-    private String functionName;
+    private Token identifier; // function name
     private ArrayList<NodeTerm> parameters;
     private boolean isIsolatedCall = false;
 
-    public FuncCallNode(String functionName, ArrayList<NodeTerm> parameters) {
-        this.functionName = functionName;
+    public FuncCallNode(Token identifier, ArrayList<NodeTerm> parameters) {
+        this.identifier = identifier;
         this.parameters = parameters;
     }
 
-    
-    public FuncCallNode(String functionName, ArrayList<NodeTerm> parameters, boolean isIsolatedCall) {
-        this.functionName = functionName;
+    public FuncCallNode(Token identifier, ArrayList<NodeTerm> parameters, boolean isIsolatedCall) {
+        this.identifier = identifier;
         this.parameters = parameters;
         this.isIsolatedCall = isIsolatedCall;
     }
@@ -37,15 +38,22 @@ public class FuncCallNode extends NodeTerm implements NodeStatement {
             buffer = buffer.substring(0, buffer.length() - 2);
         }
         
-        return String.format("%s(%s)", functionName, buffer);
+        return String.format("%s(%s)", identifier.getValue(), buffer);
     }
     
-    public String getType(Verifier v) {
-        return v.mapReturnTypes(v.getFunctionReturnType(functionName));
+    public String getType(Verifier v, Error handler) {
+        Token returnType = v.getFunctionReturnType(identifier.getValue());
+        if (returnType == null)
+            handler.undeclaredFunction(getFunctionName(), identifier.getLine(), identifier.getCol());
+        return v.mapReturnTypes(returnType);
     }
 
     public String getFunctionName() {
-        return this.functionName;
+        return this.identifier.getValue();
+    }
+
+    public Token getIdentifier() {
+        return this.identifier;
     }
 
     public ArrayList<NodeTerm> getParameters() {
@@ -54,7 +62,7 @@ public class FuncCallNode extends NodeTerm implements NodeStatement {
 
     public void operator(Generator generator) {
         
-        generator.appendContents(functionName + "(");
+        generator.appendContents(identifier.getValue() + "(");
         int i = 0;
         for (NodeTerm term: parameters) {
             term.operator(generator);

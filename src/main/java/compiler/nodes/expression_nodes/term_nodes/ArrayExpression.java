@@ -34,19 +34,19 @@ public class ArrayExpression extends NodeTerm {
     }
 
 
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         String buffer = "array|";
         if (expressions.size() == 0) {
             return buffer.concat("any");
         } else if (expressions.size() == 1) {
-            return buffer.concat(expressions.get(0).getType(v));
+            return buffer.concat(expressions.get(0).getType(v, handler));
         }
 
-        String typeOne = expressions.get(0).getType(v);
+        String typeOne = expressions.get(0).getType(v, handler);
         Integer i = 1;
         while (i < expressions.size()) {
 
-            if (!expressions.get(i).getType(v).equals(typeOne))
+            if (!expressions.get(i).getType(v, handler).equals(typeOne))
                 Error.handleError("VERIFIER", "Attempting to assign multiple types to a single array");
             i++;
         }

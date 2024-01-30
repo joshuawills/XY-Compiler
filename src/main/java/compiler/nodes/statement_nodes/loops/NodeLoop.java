@@ -35,7 +35,11 @@ public class NodeLoop implements NodeStatement {
     public String toString() {
         if (scope == null)
             return "{}";
-        return String.format("loop%s", scope.toString().replace("\n","\n    "));
+        if (count == null)
+            return String.format("loop%s", scope.toString().replace("\n","\n    "));
+        else
+            return String.format("loop %s%s", count.toString(), scope.toString().replace("\n","\n    "));
+
 
     }
 

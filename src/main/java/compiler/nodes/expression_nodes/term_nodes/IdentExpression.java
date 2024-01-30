@@ -17,12 +17,12 @@ public class IdentExpression extends NodeTerm implements Assignable {
         super();
     }
     // should be handled specifically in Verifier class
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         String variableName = getToken().getValue();
         Variable x = v.getVariable(variableName);
 
         if (x == null)
-            Error.handleError("VERIFIER", "Use of uninitialised variable: " + variableName);
+            handler.undeclaredVariable(variableName, getToken().getLine(), getToken().getCol());
 
         x.setUsed();
         return v.mapReturnTypes(x.getType());

@@ -19,10 +19,10 @@ public class BinaryExpression implements NodeExpression {
 
     public BinaryExpression() {}
 
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
 
         if (!(lhs instanceof ArrayAccess)) {
-            String type = lhs.getType(v);
+            String type = lhs.getType(v, handler);
             if (type.equals("it"))  {
                 ItExpression x = (ItExpression) lhs;
                 x.setDepth(v.getITCount());
@@ -34,7 +34,7 @@ public class BinaryExpression implements NodeExpression {
         }
 
         if (!(rhs instanceof ArrayAccess)) {
-            String type = rhs.getType(v);
+            String type = rhs.getType(v, handler);
             if (type.equals("it"))  {
                 ItExpression x = (ItExpression) rhs;
                 x.setDepth(v.getITCount());

@@ -3,6 +3,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 import compiler.Generator;
 import compiler.Token;
 import compiler.Verifier;
+import compiler.Error;
 import compiler.nodes.expression_nodes.NodeExpression;
 
 public class ArrayAccess extends NodeTerm implements Assignable {
@@ -15,7 +16,7 @@ public class ArrayAccess extends NodeTerm implements Assignable {
         this.index = index;
     }
 
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         return v.mapReturnTypes(v.getVariable(identifier.getValue()).getType());
     }
 

@@ -3,6 +3,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 import compiler.Token;
 import compiler.Verifier;
 import compiler.Generator;
+import compiler.Error;
 
 public class IntLitExpression extends NodeTerm {
     
@@ -15,7 +16,7 @@ public class IntLitExpression extends NodeTerm {
     }
 
     // should be handled specifically in Verifier class
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         return "numeric";
     }
 

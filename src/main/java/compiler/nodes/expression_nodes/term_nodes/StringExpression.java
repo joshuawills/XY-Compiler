@@ -2,6 +2,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Generator;
 import compiler.Token;
+import compiler.Error;
 import compiler.Verifier;
 
 public class StringExpression extends NodeTerm {
@@ -14,7 +15,7 @@ public class StringExpression extends NodeTerm {
         super();
     }
 
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         return "string";
     }
 

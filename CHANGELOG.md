@@ -60,5 +60,4 @@
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods) (difficult)
 - Improve error messages significantly (medium)
-- Add in assert statements (easy)
 - New array declaration approaches

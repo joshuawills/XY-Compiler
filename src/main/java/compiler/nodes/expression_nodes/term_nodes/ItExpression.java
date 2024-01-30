@@ -2,6 +2,7 @@ package compiler.nodes.expression_nodes.term_nodes;
 
 import compiler.Generator;
 import compiler.Verifier;
+import compiler.Error;
 
 public class ItExpression extends NodeTerm {
     
@@ -16,7 +17,7 @@ public class ItExpression extends NodeTerm {
         this.loopDepth = depth;
     }
 
-    public String getType(Verifier v) {
+    public String getType(Verifier v, Error handler) {
         return "it";
     }
 

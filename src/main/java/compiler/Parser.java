@@ -1,7 +1,6 @@
 package compiler;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Handler;
 
 import compiler.nodes.NodeFunction;
 import compiler.nodes.NodeParameters;
@@ -482,7 +481,7 @@ public class Parser {
     }
     
     private FuncCallNode handleFuncCall() {
-        String funcName = consume().getValue();
+        Token funcName = consume();
         expect(TokenType.OPEN_PAREN);
         if (tryConsume(TokenType.CLOSE_PAREN) != null) {
             return new FuncCallNode(funcName, new ArrayList<NodeTerm>());

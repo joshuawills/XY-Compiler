@@ -154,17 +154,17 @@ public class Main {
 			
 		Parser myParser = new Parser(tokens, myCompiler.configSettings, myHandler);
 		NodeProgram myNode = myParser.parseProgram();
+		
+		Generator myGenerator = new Generator(myNode);
+		
+		Verifier myVerifier = new Verifier(myNode, myCompiler.configSettings, myHandler);
+		myVerifier.verify();
+		
 		if (myCompiler.commandArgs.containsKey("parserLog")) {
 			System.out.println("PARSER: \n");
 			for (NodeFunction function: myNode.getNodeFunctions())
 				System.out.println(function.toString());
 		}
-
-		Generator myGenerator = new Generator(myNode);
-
-		Verifier myVerifier = new Verifier(myNode, myCompiler.configSettings, myHandler);
-		myVerifier.verify();
-
 		String contents = myGenerator.generateProgram();
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter("out.c"));

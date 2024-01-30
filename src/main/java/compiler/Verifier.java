@@ -121,14 +121,18 @@ public class Verifier {
 
     }
 
-    public String mapReturnTypes(Token s) 
-    {
-        
+    public String mapReturnTypes(Token s) {
         String buffer = "";
         if (s.getType().equals(TokenType.ARRAY)) 
             buffer = buffer.concat("array|");
 
-            switch (s.getValue()) {
+        if (s.getType().equals(TokenType.VOID)) {
+            if (buffer.equals("array|"))
+                    Error.handleError("VERIFIER", "Can't construct an array<void>");
+            return "void";
+        }
+
+        switch (s.getValue()) {
             case "int":
             case "bool":
             case "it":
@@ -146,7 +150,7 @@ public class Verifier {
     }
 
     private String getExpressionType(NodeExpression expression) {
-        String x = expression.getType(this);
+        String x = expression.getType(this, handler);
         if (expression instanceof FuncCallNode) {
             FuncCallNode expression1 = (FuncCallNode) expression;
             Token returnType = verifyFunctionCall(expression1);
@@ -155,7 +159,7 @@ public class Verifier {
             IdentExpression expression2 = (IdentExpression) expression;
             String name = expression2.getToken().getValue();
             if (!varExists(name))
-                Error.handleError("VERIFIER", "Reference to undeclared variable: " + name);
+                handler.undeclaredVariable(name, expression2.getToken().getLine(), expression2.getToken().getCol());
             return variableReturnType(name);
         } else if (expression instanceof ArrayAccess) {
             x = x.split("\\|")[1];
@@ -165,16 +169,16 @@ public class Verifier {
 
     private Token verifyFunctionCall(FuncCallNode func) {
          
-        String funcName = func.getFunctionName();
+        Token identifier = func.getIdentifier();
+        String funcName = identifier.getValue();
         Token returnType = getFunctionReturnType(funcName);
         if (returnType == null)
-            Error.handleError("VERIFIER", "Call to undeclared function: " + funcName);
+            handler.undeclaredFunction(funcName, identifier.getLine(), identifier.getCol());
         
         ArrayList<NodeTerm> parametersProvided = func.getParameters();
         LinkedHashMap<String, Token> realParameters = getFunction(funcName).getParameters().getVariables();
-
         if (parametersProvided.size() != realParameters.size())
-            Error.handleError("VERIFIER", String.format("Provided %s arguments to %s function that requires %s arguments", parametersProvided.size(), funcName, realParameters.size()));
+            handler.wrongNumArgumentsFunction(funcName, realParameters.size(), parametersProvided.size(), identifier.getLine(), identifier.getCol());
 
         Integer i = 0;
         for (Map.Entry<String, Token> entry : realParameters.entrySet()) {
@@ -214,7 +218,7 @@ public class Verifier {
         }
 
         for (NodeTerm x: parametersProvided)
-            x.getType(this);
+            x.getType(this, handler);
         return returnType;
     }
 
@@ -327,7 +331,7 @@ public class Verifier {
             }
 
             s1.setReturnType(getExpressionType(s1.getTerm()));
-            if (s1.getTerm().getType(this).equals("void"))
+            if (s1.getTerm().getType(this, handler).equals("void"))
                 Error.handleError("VERIFIER", "'out' method can only log types that are numeric or strings, not void");
 
         } else if (s instanceof NodeScan) {

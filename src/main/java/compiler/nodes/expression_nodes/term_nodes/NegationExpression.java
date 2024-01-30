@@ -4,6 +4,7 @@ import compiler.Generator;
 import compiler.Token;
 import compiler.TokenType;
 import compiler.Verifier;
+import compiler.Error;
 import compiler.nodes.expression_nodes.NodeExpression;
 
 public class NegationExpression extends NodeTerm {
@@ -19,8 +20,8 @@ public class NegationExpression extends NodeTerm {
         return this.expression;
     }
 
-    public String getType(Verifier v) {
-        expression.getType(v);
+    public String getType(Verifier v, Error handler) {
+        expression.getType(v, handler);
         return "numeric";
     }
 
