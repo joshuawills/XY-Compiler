@@ -250,7 +250,7 @@ public class Parser {
                     expect(TokenType.ASSIGN);
                     expression = parseExpression(0);
                 }
-                return new NodeAssign(new IdentExpression(ident), expression);
+                return new NodeAssign(new IdentExpression(ident), expression, ident);
             default:
                 Error.handleError("PARSING", "Unrecognized iterator for a for-loop.");            
         }
@@ -303,7 +303,7 @@ public class Parser {
                     expect(TokenType.ASSIGN);
                     expression = parseExpression(0);
                 }
-                return new NodeAssign(new IdentExpression(ident), expression);
+                return new NodeAssign(new IdentExpression(ident), expression, ident);
             default:
                 handler.forLoopInit(peek().getLine(), peek().getCol());
                 return null;
@@ -322,10 +322,10 @@ public class Parser {
         switch (t.getType()) {
             case RETURN:
                 if (tryConsume(TokenType.SEMI) != null)
-                    return new NodeReturn();
+                    return new NodeReturn(t);
                 expression = parseExpression(0);
                 expect(TokenType.SEMI);
-                return new NodeReturn(expression);
+                return new NodeReturn(expression, t);
             
             case MUT:
             case DECLARE:
@@ -471,9 +471,9 @@ public class Parser {
 
                 expect(TokenType.SEMI);
                 if (!isArrayAccess)
-                    return new NodeAssign(new IdentExpression(ident), expression);
+                    return new NodeAssign(new IdentExpression(ident), expression, ident);
                 else 
-                    return new NodeAssign(new ArrayAccess(ident, index), expression);
+                    return new NodeAssign(new ArrayAccess(ident, index), expression, ident);
             default:
                 this.iterator--; // decrement from original consumption at start of method
                 return null;

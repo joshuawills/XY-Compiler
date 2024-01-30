@@ -125,6 +125,13 @@ public class Error
         System.exit(1);
     }
 
+    public void reassigningMutable(String name, int line, int col) {
+        System.err.println(ANSI_RED + "error: re-assigning a constant variable" + ANSI_RESET);
+        System.err.println(String.format("Variable '%s' is not declared as mutable so it's state may not be modified", name));        
+        logLines(line, col);
+        System.exit(1);
+    }
+
     public void undeclaredFunction(String name, int line, int col) {
         System.err.println(ANSI_RED + "error: accessing undeclared function" + ANSI_RESET);
         System.err.println(String.format("Function '%s' is called but has not been declared", name));        
@@ -135,6 +142,33 @@ public class Error
     public void wrongNumArgumentsFunction(String name, int expected, int received, int line, int col) {
         System.err.println(ANSI_RED + "error: args parsed wrong to function" + ANSI_RESET);
         System.err.println(String.format("Function '%s' requires %s arguments but received %s arguments", name, expected, received));        
+        logLines(line, col);
+        System.exit(1);
+    }
+    
+    public void expectedMutable(int argNum, int line, int col) {
+        System.err.println(ANSI_RED + "error: function parameter needs to be mutable" + ANSI_RESET);
+        System.err.println(String.format("Expected arg %s to be mutable", argNum));        
+        logLines(line, col);
+        System.exit(1);
+    }
+
+    public void preExistingVariable(String name, int line, int col) {
+        System.err.println(ANSI_RED + "error: defined variable already exists" + ANSI_RESET);
+        System.err.println(String.format("Attempted declaration of variable '%s' that was previously defined in scope", name));        
+        logLines(line, col);
+        System.exit(1);
+    }
+
+    public void itKeyword(int line, int col) {
+        System.err.println(ANSI_RED + "error: 'it' keyword may only be used in a loop scope" + ANSI_RESET);
+        logLines(line, col);
+        System.exit(1);
+    }
+
+    public void incompatibleReturnTypes(String fName, String expected, String received, int line, int col) {
+        System.err.println(ANSI_RED + "error: incompatible return types" + ANSI_RESET);
+        System.err.println(String.format("In '%s' function, '%s' return type is expected, but '%s' return type was received", fName, expected, received));
         logLines(line, col);
         System.exit(1);
     }

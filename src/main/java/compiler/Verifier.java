@@ -186,15 +186,16 @@ public class Verifier {
             Boolean isRealMutable = getFunction(funcName).getParameters().isMutable(i);
             
             if (parametersProvided.get(i) instanceof IdentExpression) {
-                String varName = ((IdentExpression) parametersProvided.get(i)).getToken().getValue();
+                Token x = ((IdentExpression) parametersProvided.get(i)).getToken();
+                String varName = x.getValue();
                 Boolean isProvidedMutable = isMutable(varName);
                 if (isRealMutable && !isProvidedMutable)
-                    Error.handleError("VERIFIER", String.format("Expected arg %s to be mutable", (i + 1)));
+                    handler.expectedMutable((i + 1), x.getLine(), x.getCol());
 
             } else {
                 String providedType = getExpressionType(parametersProvided.get(i));
                 if (providedType.equals("it") && ITcount <= 0)
-                    Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");  
+                    handler.itKeyword(parametersProvided.get(i).getToken().getLine(), parametersProvided.get(i).getToken().getCol());
                 if (providedType.equals("it"))  {
                     ItExpression x = (ItExpression) parametersProvided.get(i);
                     x.setDepth(ITcount);
@@ -206,7 +207,7 @@ public class Verifier {
 
             String providedType = getExpressionType(parametersProvided.get(i));
             if (providedType.equals("it") && ITcount <= 0)
-                Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");  
+                handler.itKeyword(parametersProvided.get(i).getToken().getLine(), parametersProvided.get(i).getToken().getCol());
             if (providedType.equals("it")) {
                 ItExpression x = (ItExpression) parametersProvided.get(i);
                 x.setDepth(ITcount);
@@ -257,9 +258,8 @@ public class Verifier {
             if (returnT.getValue() != null)
                 returnType = mapReturnTypes(returnT);
 
-            if (!type.equals(returnType)) {
-                Error.handleError("VERIFIER", String.format("Incompatible return types in '%s' function. Expected %s, received %s", fName, returnType, type));
-            }
+            if (!type.equals(returnType))
+                handler.incompatibleReturnTypes(fName, returnType, type, s1.getLine(), s1.getCol());
 
         } else if (s instanceof FuncCallNode) {
             
@@ -273,16 +273,16 @@ public class Verifier {
             if (access)
                 name = name.split("\\[")[0];
             if (!varExists(name))
-                Error.handleError("VERIFIER", "Attempted reassignment to undeclared variable: " +  name);
+                handler.undeclaredVariable(name, s1.getLine(), s1.getCol());
             Variable currentVar = getVariable(name);
             if (!currentVar.isMutable())
-                Error.handleError("VERIFIER", "Attempted reassignment to a constant variable: " + name);
+                handler.reassigningMutable(name, s1.getLine(), s1.getCol());
             currentVar.setReassigned();
             String existingType = (access) ? variableReturnType(name).split("\\|")[1]: variableReturnType(name);
             String assignedType = getExpressionType(s1.getExpression());
 
             if (assignedType.equals("it") && ITcount <= 0)
-                Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");
+                handler.itKeyword(s1.getLine(), s1.getCol());
             if (assignedType.equals("it")) {
                 ItExpression x = (ItExpression) s1.getExpression();
                 x.setDepth(ITcount);
@@ -300,13 +300,13 @@ public class Verifier {
                 checkVariable(name);
 
                 if (varExists(name))
-                    Error.handleError("VERIFIER", "Attempted reassignment to previously declared identifier: " + name);
+                    handler.preExistingVariable(name, s1.getIdentifier().getLine(), s1.getIdentifier().getCol());
 
                 String expectedType = mapReturnTypes(s1.getType());
                 String realType = getExpressionType(s1.getExpression());
 
                 if (realType.equals("it") && ITcount <= 0)
-                    Error.handleError("VERIFIER", "Can't use 'it' keyword in a non-loop context");
+                    handler.itKeyword(s1.getIdentifier().getLine(), s1.getIdentifier().getCol());
                 if (realType.equals("it")) {
                     ItExpression x = (ItExpression) s1.getExpression();
                     x.setDepth(ITcount);
@@ -327,7 +327,7 @@ public class Verifier {
                 x.setDepth(ITcount);
 
                 if (ITcount <= 0)
-                    Error.handleError("VERIFIER", "Can't call 'it' in a non-loop context");
+                    handler.itKeyword(x.getToken().getLine(), x.getToken().getCol());
             }
 
             s1.setReturnType(getExpressionType(s1.getTerm()));

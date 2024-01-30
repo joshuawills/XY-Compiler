@@ -1,7 +1,6 @@
-define hello(int x) -> void {}
-
 define main() -> int {
-    hello(1);
-    out "hello, world!\n";
-    return 0;
+
+    int x = 0;
+    int x = 1;
+
 }

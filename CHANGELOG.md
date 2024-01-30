@@ -60,4 +60,5 @@
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods) (difficult)
 - Improve error messages significantly (medium)
+- Note down unused functions (medium)
 - New array declaration approaches

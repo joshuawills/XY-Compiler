@@ -2,6 +2,7 @@ package compiler.nodes.statement_nodes;
 
 
 import compiler.Generator;
+import compiler.Token;
 import compiler.nodes.expression_nodes.BinaryExpression;
 import compiler.nodes.expression_nodes.NodeExpression;
 import compiler.nodes.expression_nodes.UnaryExpression;
@@ -10,14 +11,25 @@ import compiler.nodes.expression_nodes.term_nodes.Assignable;
 public class NodeAssign implements NodeStatement {
     
     private Assignable identifier = null;
+    private NodeExpression expression = null;
+    private Token location;
 
-    public NodeAssign(Assignable identifier, NodeExpression expression) {
+    public NodeAssign(Assignable identifier, NodeExpression expression, Token location) {
         this.identifier = identifier;
         this.expression = expression;
+        this.location = location;
     }
 
-    public NodeAssign() {
+    public NodeAssign(Token location) {
+        this.location = location;
+    }
 
+    public int getLine() {
+        return this.location.getLine();
+    }
+
+    public int getCol() {
+        return this.location.getCol();
     }
 
     public Assignable getIdentifier() {
@@ -35,9 +47,6 @@ public class NodeAssign implements NodeStatement {
     public void setExpression(NodeExpression expression) {
         this.expression = expression;
     }
-
-    private NodeExpression expression = null;
-
 
     @Override
     public String toString() {
