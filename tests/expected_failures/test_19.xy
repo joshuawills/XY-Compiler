@@ -1,10 +1,10 @@
 // FAIL
 // Duplicate main
 
-define main() -> int {
+fn main() -> int {
 
 }
 
-define main() -> int { 
+fn main() -> int { 
     
 }

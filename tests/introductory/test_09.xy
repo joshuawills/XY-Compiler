@@ -1,6 +1,6 @@
 // 2
 // Brackets BODMAS
-define main() -> int {  
+fn main() -> int {  
     int x = (10 - 2 * 3) / 2;
     int y = x + 5;
     return x;

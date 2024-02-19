@@ -1,7 +1,7 @@
 // FAIL
 // Using it outside of loop 2
 
-define main() -> int {
+fn main() -> int {
 
     while (true) {
         out it;

@@ -1,6 +1,6 @@
 // 4
 // Multiple expression operators
-define main() -> int {  
+fn main() -> int {  
     int y = 1;
     int x = 2 + y + 1;
     return x;

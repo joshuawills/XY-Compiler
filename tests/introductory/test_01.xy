@@ -1,5 +1,5 @@
 // 3
 // Return digit
-define main() -> int {  
+fn main() -> int {  
     return 3;
 }

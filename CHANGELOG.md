@@ -55,10 +55,19 @@
     - Only applies in `loop`, applies to latest
 - Add in tests for UnaryExpression type
 
+## 19.02.24
+
+- Changed syntax
+    - fn instead of define
+    - arr instead of array
+    - str instead of string
+    - $ instead of it
+
+
 
 ## TO-DO
 
 - Make sure something is actually returned for strings and integers (i.e. non void return methods) (difficult)
-- Improve error messages significantly (medium)
+- Improve error messages significantly (medium) --> in progress
 - Note down unused functions (medium)
 - New array declaration approaches

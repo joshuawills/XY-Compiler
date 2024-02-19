@@ -1,6 +1,12 @@
-define main() -> int {
+// 0
+// Ensuring 'it' accesses the latest loop
 
-    int x = 0;
-    int x = 1;
-
+fn main() -> int {
+    loop {
+        loop 1 {
+            out $;
+        }
+        if $ == 5 break;
+    }
+    return 0;
 }

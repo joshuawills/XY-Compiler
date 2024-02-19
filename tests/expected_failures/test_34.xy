@@ -1,7 +1,7 @@
 // FAIL
 // Incorrect array allocations
 
-define main() -> int {
+fn main() -> int {
 
     array<char> x = ['a', 2, "hi"];
 

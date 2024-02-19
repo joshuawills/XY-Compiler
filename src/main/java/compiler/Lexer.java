@@ -134,6 +134,8 @@ public class Lexer {
             switch (peek().toString()) {
                 case ";":
                     appendToken(TokenType.SEMI); break;
+                case "$":
+                    appendToken(TokenType.DOLLAR); break;
                 case "=":
                     appendToken(TokenType.ASSIGN); break;
                 case "+":
@@ -257,15 +259,15 @@ public class Lexer {
         switch (this.buffer) {
             case "return":
                 appendTokenNoConsume(TokenType.RETURN, this.line, real_column); break;
-            case "define":
-                appendTokenNoConsume(TokenType.DEFINE, this.line, real_column); break;
-            case "array":
-                this.tokens.add(new Token(TokenType.ARRAY, this.line, real_column)); break;
+            case "fn":
+                appendTokenNoConsume(TokenType.FN, this.line, real_column); break;
+            case "arr":
+                this.tokens.add(new Token(TokenType.ARR, this.line, real_column)); break;
             case "int":
             case "s32":
                 this.tokens.add(new Token(TokenType.DECLARE, "int", line, real_column)); break;
             case "bool":
-            case "string":
+            case "str":
             case "char":
                 this.tokens.add(new Token(TokenType.DECLARE, this.buffer, line, real_column)); break;
             case "if":
@@ -298,8 +300,6 @@ public class Lexer {
                 this.tokens.add(new Token(TokenType.INT_LIT, "1", line, real_column)); break;
             case "false":
                 this.tokens.add(new Token(TokenType.INT_LIT, "0", line, real_column)); break;
-            case "it":
-                this.tokens.add(new Token(TokenType.IT, this.line, real_column)); break;
             default:
                 checkIdentifier(buffer);
                 this.tokens.add(new Token(TokenType.IDENT, buffer, line, real_column));

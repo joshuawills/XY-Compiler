@@ -1,11 +1,11 @@
 // 0
 // Raw loop
 
-define main() -> int {
+fn main() -> int {
 
     loop {
-        if it == 10 break;
-        out it;
+        if $ == 10 break;
+        out $;
     }
     return 0;
 

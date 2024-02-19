@@ -1,4 +1,4 @@
-define bubble_sort(mut array<int> arr, int size) -> void {
+fn bubble_sort(mut arr<int> myArr, int size) -> void {
 
     mut int i = 0;
     while i < size - 1 {
@@ -7,11 +7,11 @@ define bubble_sort(mut array<int> arr, int size) -> void {
         mut int j = 0;
         while j < (size - i - 1) {
 
-            if arr[j] > arr[j + 1] {
+            if myArr[j] > myArr[j + 1] {
                 swapped = true;
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                int temp = myArr[j];
+                myArr[j] = myArr[j + 1];
+                myArr[j + 1] = temp;
             }
 
             j++;
@@ -24,9 +24,9 @@ define bubble_sort(mut array<int> arr, int size) -> void {
 
 }
 
-define main() -> int {
+fn main() -> int {
 
-    mut array<int> hello = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    mut arr<int> hello = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     mut int i = 0;
     while i < 10 {

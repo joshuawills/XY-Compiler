@@ -1,6 +1,6 @@
 // 12
 // Basic binary hierarchy
-define main() -> int {  
+fn main() -> int {  
     int x = 1 + 2 * 3;
     int y = x + 5;
     return y;

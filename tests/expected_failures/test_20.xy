@@ -9,6 +9,6 @@ define random() -> int {
 
 }
 
-define main() -> int {
+fn main() -> int {
     
 }

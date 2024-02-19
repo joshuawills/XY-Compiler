@@ -1,6 +1,6 @@
 // 8
 // Return variable
-define main() -> int {  
+fn main() -> int {  
     int x = 8;
     return x;
 }

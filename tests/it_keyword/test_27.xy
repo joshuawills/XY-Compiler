@@ -1,13 +1,13 @@
 // 0
 // Testing 'it' in expressions and func calls
 
-define isFifty(int y) -> bool { return y == 50; }
+fn isFifty(int y) -> bool { return y == 50; }
 
-define main() -> int {
+fn main() -> int {
 
     loop 100 {
-        if isFifty(it) break;
-        int x = it + 3;
+        if isFifty($) break;
+        int x = $ + 3;
         out x;
     }
     return 0;

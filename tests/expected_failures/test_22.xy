@@ -1,7 +1,7 @@
 // FAIL
 // Accessing undefined variable
 
-define main() -> int {
+fn main() -> int {
     int x = y + 1;
     return 0;
 }

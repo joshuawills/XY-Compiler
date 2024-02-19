@@ -1,4 +1,4 @@
-define main() -> int {
+fn main() -> int {
     int x = in "Enter your favourite number here :) ";
     if isEven(x) {
         out "This number is even!\n";
@@ -8,6 +8,6 @@ define main() -> int {
     return 0;
 }
 
-define isEven(int x) -> int {
+fn isEven(int x) -> int {
     return (x % 2) == 0;
 }

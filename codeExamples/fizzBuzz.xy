@@ -1,6 +1,6 @@
 // Takes in number, calculates fizzbuzz 
 // from 0 to that number
-define fizzbuzz(int n) -> int {
+fn fizzbuzz(int n) -> int {
     mut int i = 0;
     while i < n {
         if (i % 3 == 0 && i % 5 == 0) {
@@ -18,7 +18,7 @@ define fizzbuzz(int n) -> int {
     return 0;
 }
 
-define main() -> int {
+fn main() -> int {
   int x = fizzbuzz(100);
   return 0;
 }

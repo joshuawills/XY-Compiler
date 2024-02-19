@@ -52,7 +52,7 @@ public class NodeFunction {
     public void operator(Generator generator) {
         generator.setCurrentFunction(this);
         String returnValue = (returnType.getValue() == null) ? "void" : returnType.getValue().toString().toLowerCase();
-        if (returnValue.equals("string"))
+        if (returnValue.equals("str"))
             returnValue = "char *";
         if (returnValue.equals("bool"))
             returnValue = "int";

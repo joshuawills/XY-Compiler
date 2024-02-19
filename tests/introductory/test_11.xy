@@ -1,7 +1,7 @@
 // 3
 // Basic if
 
-define main() -> int {  
+fn main() -> int {  
     int x = 1;
 
     if x - 1 {

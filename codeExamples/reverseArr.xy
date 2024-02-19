@@ -1,4 +1,4 @@
-define reverse(mut array<int> x, int len) -> void {
+fn reverse(mut arr<int> x, int len) -> void {
 
     mut int i = len - 1;
     mut int j = 0;
@@ -11,9 +11,9 @@ define reverse(mut array<int> x, int len) -> void {
 
 }
 
-define main() -> int {
+fn main() -> int {
 
-    mut array<int> x = [1, 2, 3, 4, 5];
+    mut arr<int> x = [1, 2, 3, 4, 5];
     reverse(x, 5);
     out x;
 }

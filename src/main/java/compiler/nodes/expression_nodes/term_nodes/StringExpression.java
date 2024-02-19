@@ -16,7 +16,7 @@ public class StringExpression extends NodeTerm {
     }
 
     public String getType(Verifier v, Error handler) {
-        return "string";
+        return "str";
     }
 
     @Override

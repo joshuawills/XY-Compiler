@@ -78,7 +78,7 @@ public class NodePrint implements NodeStatement {
             return;
         }
         switch (returnType) {
-            case "string":
+            case "str":
             generator.appendContents("printf(\"%s\\n\", ");
             break;
             case "it":
@@ -90,7 +90,7 @@ public class NodePrint implements NodeStatement {
                 break;
             case "array|numeric":
                 printNumArr(generator, term.getToken().getValue()); return;
-            case "array|string":
+            case "array|str":
                 printStringArr(generator, term.getToken().getValue()); return;
             case "array|char":
                 printCharArr(generator, term.getToken().getValue()); return;

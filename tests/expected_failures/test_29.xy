@@ -1,7 +1,7 @@
 // FAIL
 // Using it outside of loop
 
-define main() -> int {
+fn main() -> int {
 
     out it;
 

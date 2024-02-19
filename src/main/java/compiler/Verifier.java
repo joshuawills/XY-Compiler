@@ -123,7 +123,7 @@ public class Verifier {
 
     public String mapReturnTypes(Token s) {
         String buffer = "";
-        if (s.getType().equals(TokenType.ARRAY)) 
+        if (s.getType().equals(TokenType.ARR)) 
             buffer = buffer.concat("array|");
 
         if (s.getType().equals(TokenType.VOID)) {
@@ -137,8 +137,8 @@ public class Verifier {
             case "bool":
             case "it":
                 return buffer.concat("numeric");
-            case "string":
-                return buffer.concat("string");
+            case "str":
+                return buffer.concat("str");
             case "char":
                 return buffer.concat("char");
             case "void":

@@ -1,6 +1,6 @@
 // 2
 // Nesting if's 2
-define main() -> int {  
+fn main() -> int {  
 
     if (0) {
         return 0;

@@ -1,7 +1,7 @@
 // 0
 // Testing 'loop'
 
-define main() -> int {
+fn main() -> int {
 
     mut int i = 0;
     loop {

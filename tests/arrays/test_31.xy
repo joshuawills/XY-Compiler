@@ -1,15 +1,15 @@
 // 0
-// Logging out basic arrays
+// Logging out basic arrs
 
-define main() -> int {
+fn main() -> int {
 
-    array<int> x = [1, 2, 3];
+    arr<int> x = [1, 2, 3];
     out x;
-    array<char> y = ['a', 'b', 'c', 'd'];
+    arr<char> y = ['a', 'b', 'c', 'd'];
     out y;
-    array<bool> z = [true, false, 1 == 1];
+    arr<bool> z = [true, false, 1 == 1];
     out z;
-    array<string> a = ["hello", "world", "!"];
+    arr<str> a = ["hello", "world", "!"];
     out a;
     return 0;
 

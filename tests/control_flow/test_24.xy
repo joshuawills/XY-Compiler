@@ -1,7 +1,7 @@
 // 0
 // Do while test 1
 
-define main() -> int {
+fn main() -> int {
 
     mut int x = 1;
     do {

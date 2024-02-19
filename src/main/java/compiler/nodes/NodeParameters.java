@@ -31,9 +31,9 @@ public class NodeParameters {
     public String toString() {
         ArrayList<String> vars = new ArrayList<>();
         for (String x: variables.keySet()) {
-            boolean isArr = variables.get(x).getType().equals(TokenType.ARRAY);
+            boolean isArr = variables.get(x).getType().equals(TokenType.ARR);
             String var = variables.get(x).getValue().toString().toLowerCase();
-            if (var.equals("string")) var = "char*";
+            if (var.equals("str")) var = "char*";
             if (isArr)
                 var = var.concat(" *");
             vars.add(String.format("%s %s", var, x));

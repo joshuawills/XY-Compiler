@@ -1,4 +1,4 @@
-define maxElement(array<int> data, int size) -> int {
+fn maxElement(arr<int> data, int size) -> int {
 
     if size == 0 {
         return -1;
@@ -19,8 +19,8 @@ define maxElement(array<int> data, int size) -> int {
     return max_value;
 }
 
-define main() -> int {
-    array<int> data = [21, 2, 3, 4, -1, 1888, 4];
+fn main() -> int {
+    arr<int> data = [21, 2, 3, 4, -1, 1888, 4];
     int max_value = maxElement(data, 7);
     out max_value;
     return 0;

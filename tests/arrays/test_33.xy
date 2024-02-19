@@ -1,9 +1,9 @@
 // 3
 // Mutating and accessing arrays
 
-define main() -> int {
+fn main() -> int {
 
-    mut array<int> x = [1, 2, 3, 4];
+    mut arr<int> x = [1, 2, 3, 4];
     x[1] = 2;
     return x[2];
 

@@ -50,7 +50,7 @@ public class NodeReturn implements NodeStatement {
                 switch (returnToken.getValue()) {
                     case "int":
                     case "bool":
-                    case "string":
+                    case "str":
                         generator.appendContents(" ");
                         expression.operator(generator);
                 }

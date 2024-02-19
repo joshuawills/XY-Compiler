@@ -1,6 +1,6 @@
 // 7
 // Constructing scope
-define main() -> int {  
+fn main() -> int {  
 
     int x = (10 - 2 * 3) / 2;
     {

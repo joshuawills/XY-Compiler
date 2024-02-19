@@ -1,7 +1,7 @@
 // 0
 // Basic binary expressions and ordering
 
-define main() -> int {
+fn main() -> int {
 
     int x = 21;
     int y = 3;

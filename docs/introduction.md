@@ -13,7 +13,7 @@ Currently this compiler is only developed for Linux operating systems, so will n
 To use the XY compiler yourself, make sure you have *gcc* installed onto your desktop.
 You will also require the *gradle* build kit and the JDK as well.
 
-Regarding compatability, these are the versions I'm using to develop this compiler.
+Regarding compatibility, these are the versions I'm using to develop this compiler.
 
 ```shell
 ~/personal/xy_java [main *]
@@ -52,7 +52,7 @@ All the command line arguments are summarised below under the "Command Line Argu
 A good initial program to test out would be your hello world program, which is shown below!
 
 ```
-define main() -> int {
+fn main() -> int {
     out "hello, world!";
     return 0;
 }

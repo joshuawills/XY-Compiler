@@ -1,7 +1,7 @@
 // FAIL
 // Reassigning constant variable
 
-define main() -> int {
+fn main() -> int {
 
     int x = 4;
     x++;

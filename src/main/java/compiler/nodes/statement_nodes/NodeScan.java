@@ -50,7 +50,7 @@ public class NodeScan implements NodeStatement {
                         generator.appendContents("    printf(" + output + ");\n");
                         generator.appendContents("    scanf(\"%c\", " + "&" + identifier.getValue() + ");\n");
                         break;
-                    case "string": // 256 bytes max
+                    case "str": // 256 bytes max
                         String name = identifier.getValue();
                         generator.appendContents("    char " + name + "[256 + 1];\n");
                         generator.appendContents("    printf(" + output + ");\n");

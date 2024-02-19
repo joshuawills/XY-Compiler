@@ -70,9 +70,9 @@ public class Parser {
         while (true) {
 
             boolean isMutable = (tryConsume(TokenType.MUT) != null);
-            Token token = expect(TokenType.DECLARE, TokenType.ARRAY);
+            Token token = expect(TokenType.DECLARE, TokenType.ARR);
             String name;
-            if (token.getType().equals(TokenType.ARRAY)) {
+            if (token.getType().equals(TokenType.ARR)) {
                 expect(TokenType.LESS_THAN);
                 String inner = expect(TokenType.DECLARE).getValue();
                 expect(TokenType.GREATER_THAN);
@@ -90,7 +90,7 @@ public class Parser {
     }
 
     private NodeFunction parseFunction() {
-        expect(TokenType.DEFINE);
+        expect(TokenType.FN);
         String functionName = expect(TokenType.IDENT).getValue();
         NodeParameters p = parseParameters();
         expect(TokenType.ARROW);
@@ -116,7 +116,7 @@ public class Parser {
             case CHAR_LIT:
                 return new CharExpression(consume());
 
-            case IT:
+            case DOLLAR:
                 consume(); return new ItExpression(); 
                 
             case OPEN_PAREN:
@@ -329,16 +329,16 @@ public class Parser {
             
             case MUT:
             case DECLARE:
-            case ARRAY:
+            case ARR:
 
                 // Declare
                 boolean isConstant = true;
                 if (t.getType().equals(TokenType.MUT)) {
                     isConstant = false;
-                    t = expect(TokenType.DECLARE, TokenType.ARRAY);
+                    t = expect(TokenType.DECLARE, TokenType.ARR);
                 }
 
-                if (t.getType().equals(TokenType.ARRAY)) {
+                if (t.getType().equals(TokenType.ARR)) {
                     expect(TokenType.LESS_THAN);
                     Token inner = expect(TokenType.DECLARE);
                     t.setValue(inner.getValue());
@@ -348,7 +348,7 @@ public class Parser {
                 ident = expect(TokenType.IDENT);
                 expect(TokenType.ASSIGN);
                 if (tryConsume(TokenType.IN) != null) {
-                    if (t.getType().equals(TokenType.ARRAY))
+                    if (t.getType().equals(TokenType.ARR))
                         handler.scanArray(peek().getLine(), peek().getCol());
                     String value = expect(TokenType.STRING_LIT).getValue();
                     expect(TokenType.SEMI);

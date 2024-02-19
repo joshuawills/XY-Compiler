@@ -1,9 +1,9 @@
-define min(int a, int b) -> int {
+fn min(int a, int b) -> int {
     if a < b return a;
     else return b;
 }
 
-define gcd(int a, int b) -> int {
+fn gcd(int a, int b) -> int {
     mut int result = min(a, b);
     while result > 0 {
         if (a % result == 0 && b % result == 0) break;
@@ -12,7 +12,7 @@ define gcd(int a, int b) -> int {
     return result;
 }
 
-define main() -> int {
+fn main() -> int {
     int a = 98; int b = 56;
     out gcd(a, b);
     return 0;

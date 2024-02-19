@@ -62,7 +62,7 @@ public class Error
 
     public void unknownPunctuation(String name, int line, int col) {
         System.err.println(ANSI_RED + "error: unknown punctuation" + ANSI_RESET);
-        System.err.println(String.format("The punctuation '%s' is unrecognized by the XY compiler. Please refer to the formal docs", name));
+        System.err.println(String.format("The punctuation '%s' is not recognized by the XY compiler. Please refer to the formal docs", name));
         logLines(line, col);
         System.exit(1);
     }

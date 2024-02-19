@@ -15,7 +15,7 @@ All code must be abstracted into functions. Program flow begins at the main func
 Function syntax is as follows
 
 ```
-define <funcName>(<parameters>) -> <returnType> {
+fn <funcName>(<parameters>) -> <returnType> {
     <scope>
 }
 ```
@@ -94,7 +94,7 @@ Currently the only "print" method supported is **out**, that can log static stri
 Currently the only possible thing to read in is integers, using scanf under the hood. Use as follows
 
 ```
-define main() -> int {
+fn main() -> int {
     mut int x = in "What's your favourite number? ";
     out "Your favourite number is... "; out x;
     return 0;

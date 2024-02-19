@@ -44,7 +44,7 @@ public enum TokenType {
     BREAK,
     LOOP,
     FOR,
-    DEFINE,
+    FN,
     ARROW, 
     COMMA,
     PERCENT,
@@ -55,8 +55,8 @@ public enum TokenType {
     BITWISE_RIGHT_SHIFT,
     VOID,
     DECLARE,
-    ARRAY,
+    ARR,
     LEFT_SQUARE,
     RIGHT_SQUARE,
-    IT
+    DOLLAR
 }

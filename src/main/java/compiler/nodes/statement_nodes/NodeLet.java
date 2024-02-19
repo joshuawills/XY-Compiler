@@ -63,7 +63,7 @@ public class NodeLet implements NodeStatement  {
                     case "bool":
                         generator.appendContents("int " + variableName + " = ");
                         break;
-                    case "string":
+                    case "str":
                         generator.appendContents("char *" + variableName + " = ");
                         break;
                     case "char":
@@ -71,13 +71,13 @@ public class NodeLet implements NodeStatement  {
                         break;
                 }
                 break;
-            case ARRAY:
+            case ARR:
                 switch (type.getValue()) {
                     case "int":
                     case "bool":
                         generator.appendContents("int " + variableName + "[] = "); 
                         break;
-                    case "string":
+                    case "str":
                         generator.appendContents("char *" + variableName + "[] = "); 
                         break;
                     case "char":

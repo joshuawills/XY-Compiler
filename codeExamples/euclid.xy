@@ -1,4 +1,4 @@
-define main() -> int {
+fn main() -> int {
 
     int x = in "Enter a positive number here: ";
     int y = in "Enter a positive number here: ";
@@ -13,7 +13,7 @@ define main() -> int {
     return 0;
 }
 
-define euclid(int x, int y) -> int {
+fn euclid(int x, int y) -> int {
     if (x == 0)
         return y;
     return euclid((y % x), x);

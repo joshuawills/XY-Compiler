@@ -1,7 +1,7 @@
 // 5
 // Simple addition
 
-define main() -> int {  
+fn main() -> int {  
     int y = 0;
     int x = 2 + 3;
     return x;
